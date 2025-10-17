@@ -2,18 +2,23 @@
 
 import { useState } from "react";
 import { apiRequest } from "@/utils/api";
+import { useUser } from "@/components/UserContext";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const { setUser } = useUser();
 
   async function handleRegister(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
       const res = await apiRequest("/auth/register", "POST", { email, password });
       localStorage.setItem("token", res.token);
+      localStorage.setItem("email", email);
+      setUser({ email });
       setMessage("注册成功，已自动登录");
+      window.location.href = "/";
     } catch (error: any) {
       setMessage("注册失败: " + error.message);
     }
