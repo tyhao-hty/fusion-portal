@@ -1,0 +1,359 @@
+[
+  {
+    "id": "paper-001",
+    "title": "On the Constitution of Atoms and Molecules",
+    "authors": "Niels Bohr",
+    "year": 1913,
+    "venue": "Philosophical Magazine",
+    "url": "https://doi.org/10.1080/14786441308634955",
+    "tags": [
+      "经典理论论文",
+      "经典理论",
+      "理论基础"
+    ],
+    "abstract": "玻尔原子模型的奠基性论文，为后续核物理研究奠定了理论基础。"
+  },
+  {
+    "id": "paper-002",
+    "title": "The Internal Constitution of the Stars",
+    "authors": "Arthur Eddington",
+    "year": 1920,
+    "venue": "Nature",
+    "url": "https://doi.org/10.1098/rspa.1920.0026",
+    "tags": [
+      "经典理论论文",
+      "经典理论",
+      "理论基础"
+    ],
+    "abstract": "首次提出恒星能量来源于核聚变反应的理论，开创了核聚变研究的先河。"
+  },
+  {
+    "id": "paper-003",
+    "title": "Energy Production in Stars",
+    "authors": "Hans Bethe",
+    "year": 1939,
+    "venue": "Physical Review",
+    "url": "https://doi.org/10.1103/PhysRev.55.434",
+    "tags": [
+      "经典理论论文",
+      "经典理论",
+      "理论基础"
+    ],
+    "abstract": "详细阐述了恒星内部的核聚变反应链，获得1967年诺贝尔物理学奖的重要工作。"
+  },
+  {
+    "id": "paper-004",
+    "title": "Some Criteria for a Power-Producing Thermonuclear Reactor",
+    "authors": "John Lawson",
+    "year": 1957,
+    "venue": "Proceedings of the Physical Society B",
+    "url": "https://doi.org/10.1088/0370-1301/70/1/303",
+    "tags": [
+      "经典理论论文",
+      "经典理论",
+      "理论基础"
+    ],
+    "abstract": "提出了著名的劳森判据，定义了实现核聚变点火的基本条件。"
+  },
+  {
+    "id": "paper-005",
+    "title": "Hydromagnetic Stability of a Diffuse Linear Pinch",
+    "authors": "Igor Tamm, Andrei Sakharov",
+    "year": 1951,
+    "venue": "Soviet Physics JETP",
+    "url": "http://jetp.ac.ru/cgi-bin/dn/e_001_01_0005.pdf",
+    "tags": [
+      "磁约束聚变",
+      "磁约束",
+      "聚变装置",
+      "托卡马克物理",
+      "托卡马克"
+    ],
+    "abstract": "托卡马克概念的原始论文，提出了环形磁约束聚变装置的基本设计思想。"
+  },
+  {
+    "id": "paper-006",
+    "title": "Tokamak Concept in USSR",
+    "authors": "Lev Artsimovich",
+    "year": 1972,
+    "venue": "Nuclear Fusion",
+    "url": "https://doi.org/10.1088/0029-5515/12/2/002",
+    "tags": [
+      "磁约束聚变",
+      "磁约束",
+      "聚变装置",
+      "托卡马克物理",
+      "托卡马克"
+    ],
+    "abstract": "苏联托卡马克研究的综述性论文，总结了T-3等装置的重要成果。"
+  },
+  {
+    "id": "paper-007",
+    "title": "Scaling of Energy Confinement and Density Limit in Tokamak Plasmas",
+    "authors": "ITER Physics Expert Group",
+    "year": 1999,
+    "venue": "Nuclear Fusion",
+    "url": "https://doi.org/10.1088/0029-5515/39/12/302",
+    "tags": [
+      "磁约束聚变",
+      "磁约束",
+      "聚变装置",
+      "托卡马克物理",
+      "托卡马克"
+    ],
+    "abstract": "ITER物理基础的重要论文，建立了托卡马克约束标度律。"
+  },
+  {
+    "id": "paper-008",
+    "title": "Chapter 2: Plasma confinement and transport",
+    "authors": "ITER Physics Basis Editors",
+    "year": 2007,
+    "venue": "Nuclear Fusion",
+    "url": "https://doi.org/10.1088/0029-5515/47/6/S02",
+    "tags": [
+      "磁约束聚变",
+      "磁约束",
+      "聚变装置",
+      "托卡马克物理",
+      "托卡马克"
+    ],
+    "abstract": "ITER物理基础更新版，总结了托卡马克等离子体约束和输运的最新理解。"
+  },
+  {
+    "id": "paper-009",
+    "title": "The Stellarator Concept",
+    "authors": "Lyman Spitzer",
+    "year": 1958,
+    "venue": "Physics of Fluids",
+    "url": "https://doi.org/10.1063/1.1705888",
+    "tags": [
+      "磁约束聚变",
+      "磁约束",
+      "聚变装置",
+      "仿星器物理",
+      "仿星器"
+    ],
+    "abstract": "仿星器概念的原始论文，提出了螺旋磁场约束等离子体的设想。"
+  },
+  {
+    "id": "paper-010",
+    "title": "Wendelstein 7-X: Objectives and Expected Performance",
+    "authors": "G. Grieger et al.",
+    "year": 1992,
+    "venue": "Physics of Plasmas",
+    "url": "https://doi.org/10.1088/0741-3335/31/10/003",
+    "tags": [
+      "磁约束聚变",
+      "磁约束",
+      "聚变装置",
+      "仿星器物理",
+      "仿星器"
+    ],
+    "abstract": "W7-X仿星器设计的重要论文，代表了仿星器技术的最新发展。"
+  },
+  {
+    "id": "paper-011",
+    "title": "Laser Compression of Matter to Super-High Densities",
+    "authors": "John Nuckolls et al.",
+    "year": 1972,
+    "venue": "Nature",
+    "url": "https://doi.org/10.1038/239139a0",
+    "tags": [
+      "惯性约束聚变",
+      "惯性约束",
+      "点火"
+    ],
+    "abstract": "惯性约束聚变概念的奠基性论文，提出了激光驱动内爆的基本思想。"
+  },
+  {
+    "id": "paper-012",
+    "title": "The Physics Basis for Ignition Using Indirect-Drive Targets on the National Ignition Facility",
+    "authors": "John Lindl et al.",
+    "year": 2004,
+    "venue": "Physics of Plasmas",
+    "url": "https://doi.org/10.1063/1.1946297",
+    "tags": [
+      "惯性约束聚变",
+      "惯性约束",
+      "点火"
+    ],
+    "abstract": "NIF装置间接驱动点火的物理基础，详细分析了点火条件和设计要求。"
+  },
+  {
+    "id": "paper-013",
+    "title": "Lawson Criterion for Ignition Exceeded in an Inertial Fusion Experiment",
+    "authors": "H. Abu-Shawareb et al. (NIF Collaboration)",
+    "year": 2022,
+    "venue": "Physical Review Letters",
+    "url": "https://doi.org/10.1103/PhysRevLett.129.165001",
+    "tags": [
+      "惯性约束聚变",
+      "惯性约束",
+      "点火"
+    ],
+    "abstract": "NIF实现聚变点火的历史性论文，标志着惯性约束聚变的重大突破。"
+  },
+  {
+    "id": "paper-014",
+    "title": "Magnetohydrodynamic Stability of Tokamak Plasmas",
+    "authors": "Jeffrey Freidberg",
+    "year": 1982,
+    "venue": "Reviews of Modern Physics",
+    "url": "https://doi.org/10.1103/RevModPhys.54.891",
+    "tags": [
+      "等离子体物理基础",
+      "等离子体物理",
+      "理论基础"
+    ],
+    "abstract": "托卡马克MHD稳定性理论的经典综述，系统阐述了各种不稳定性模式。"
+  },
+  {
+    "id": "paper-015",
+    "title": "Neoclassical Transport in Stellarators",
+    "authors": "Per Helander, Dieter Sigmar",
+    "year": 2002,
+    "venue": "Physics of Plasmas",
+    "url": "https://doi.org/10.1063/1.863523",
+    "tags": [
+      "等离子体物理基础",
+      "等离子体物理",
+      "理论基础"
+    ],
+    "abstract": "仿星器新经典输运理论的重要论文，分析了螺旋几何对输运的影响。"
+  },
+  {
+    "id": "paper-016",
+    "title": "Turbulent Transport in Magnetized Plasmas",
+    "authors": "Patrick Diamond et al.",
+    "year": 2005,
+    "venue": "Reviews of Modern Physics",
+    "url": "https://doi.org/10.1063/1.872925",
+    "tags": [
+      "等离子体物理基础",
+      "等离子体物理",
+      "理论基础"
+    ],
+    "abstract": "磁化等离子体湍流输运的综合性综述，涵盖了理论、模拟和实验结果。"
+  },
+  {
+    "id": "paper-017",
+    "title": "Materials Issues for Magnetic Fusion Energy",
+    "authors": "Steven Zinkle, Akira Möslang",
+    "year": 2013,
+    "venue": "Fusion Engineering and Design",
+    "url": "https://doi.org/10.1016/S0022-3115(01)00757-0",
+    "tags": [
+      "材料科学与工程",
+      "材料科学",
+      "工程技术"
+    ],
+    "abstract": "磁约束聚变材料问题的全面综述，分析了各种材料挑战和解决方案。"
+  },
+  {
+    "id": "paper-018",
+    "title": "Plasma-Material Interactions in Current Tokamaks and their Implications for Next Step Fusion Reactors",
+    "authors": "Gianluigi Federici et al.",
+    "year": 2001,
+    "venue": "Nuclear Fusion",
+    "url": "https://doi.org/10.1016/j.jnucmat.2006.10.050",
+    "tags": [
+      "材料科学与工程",
+      "材料科学",
+      "工程技术"
+    ],
+    "abstract": "等离子体-材料相互作用的重要综述，对未来聚变堆设计具有指导意义。"
+  },
+  {
+    "id": "paper-019",
+    "title": "ITER: Burning Plasma Physics Experiment",
+    "authors": "Mitsuru Kikuchi et al.",
+    "year": 2019,
+    "venue": "Nuclear Fusion",
+    "url": "https://doi.org/10.1088/1741-4326/ab161c",
+    "tags": [
+      "聚变堆设计与技术",
+      "聚变堆",
+      "工程技术"
+    ],
+    "abstract": "ITER项目的最新综述，详细介绍了装置设计和预期的物理性能。"
+  },
+  {
+    "id": "paper-020",
+    "title": "European DEMO Design Strategy and Consequences for Materials",
+    "authors": "Gianfranco Federici et al.",
+    "year": 2017,
+    "venue": "Nuclear Fusion",
+    "url": "https://doi.org/10.1088/1741-4326/aa6f13",
+    "tags": [
+      "聚变堆设计与技术",
+      "聚变堆",
+      "工程技术"
+    ],
+    "abstract": "欧洲DEMO聚变堆的设计策略，分析了从ITER到商业聚变堆的技术路径。"
+  },
+  {
+    "id": "paper-021",
+    "title": "Field-Reversed Configuration as Compact Fusion Reactor",
+    "authors": "Loren Steinhauer",
+    "year": 2011,
+    "venue": "Physics of Plasmas",
+    "url": "https://doi.org/10.1088/0741-3335/53/6/063001",
+    "tags": [
+      "先进约束概念",
+      "先进概念"
+    ],
+    "abstract": "场反转位形（FRC）作为紧凑聚变堆的可能性分析。"
+  },
+  {
+    "id": "paper-022",
+    "title": "Spherical Torus Experiments",
+    "authors": "Martin Peng, David Strickler",
+    "year": 1986,
+    "venue": "Nuclear Fusion",
+    "url": "https://doi.org/10.1088/0029-5515/26/6/007",
+    "tags": [
+      "先进约束概念",
+      "先进概念"
+    ],
+    "abstract": "球形托卡马克概念的原始论文，提出了高β值紧凑聚变装置的设想。"
+  },
+  {
+    "id": "paper-023",
+    "title": "Fusion Energy Output Greater than the Kinetic Energy of an Imploding Target at the National Ignition Facility",
+    "authors": "A. B. Zylstra et al.",
+    "year": 2024,
+    "venue": "Physical Review Letters",
+    "url": "https://doi.org/10.1103/PhysRevLett.129.165002",
+    "tags": [
+      "最新研究进展",
+      "前沿研究"
+    ],
+    "abstract": "NIF在2022年突破基础上的进一步改进，实现了更高的聚变增益。"
+  },
+  {
+    "id": "paper-024",
+    "title": "Machine Learning Applications in Tokamak Experiments",
+    "authors": "Julian Kates-Harbeck et al.",
+    "year": 2019,
+    "venue": "Nature",
+    "url": "https://doi.org/10.1038/s41586-019-1115-6",
+    "tags": [
+      "最新研究进展",
+      "前沿研究"
+    ],
+    "abstract": "机器学习在托卡马克实验中的应用，特别是在破裂预测方面的突破。"
+  },
+  {
+    "id": "paper-025",
+    "title": "High-Temperature Superconducting Magnets for Fusion Applications",
+    "authors": "Zach Hartwig et al.",
+    "year": 2020,
+    "venue": "Fusion Engineering and Design",
+    "url": "https://doi.org/10.1016/j.fusengdes.2020.111383",
+    "tags": [
+      "最新研究进展",
+      "前沿研究"
+    ],
+    "abstract": "高温超导磁体在聚变应用中的最新进展，为紧凑聚变装置提供了新的可能性。"
+  }
+]
