@@ -2,18 +2,23 @@
 
 import { useState } from "react";
 import { apiRequest } from "@/utils/api";
+import { useUser } from "@/components/UserContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const { setUser } = useUser();
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
       const res = await apiRequest("/auth/login", "POST", { email, password });
       localStorage.setItem("token", res.token);
+       localStorage.setItem("email", email);
+      setUser({ email });
       setMessage("登录成功");
+      window.location.href = "/";
     } catch (error: any) {
       setMessage("登录失败: " + error.message);
     }

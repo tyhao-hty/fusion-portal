@@ -97,7 +97,7 @@ router.put('/:id', authenticateToken, async (req, res, next) => {
   }
 });
 
-// 删除文章（需作者或管理员）
+// 删除文章（仅作者本人）
 router.delete('/:id', authenticateToken, async (req, res, next) => {
   try {
     const id = Number(req.params.id);
@@ -110,14 +110,12 @@ router.delete('/:id', authenticateToken, async (req, res, next) => {
       return res.status(404).json({ message: '文章不存在' });
     }
 
-    const isAuthor = article.authorId === req.user.id;
-    const isAdmin = req.user.role === 'admin';
-    if (!isAuthor && !isAdmin) {
-      return res.status(403).json({ message: '无权删除该文章' });
+    if (article.authorId !== req.user.id) {
+      return res.status(403).json({ message: '无权删除此文章' });
     }
 
     await prisma.article.delete({ where: { id } });
-    res.status(204).send();
+    res.json({ message: '删除成功' });
   } catch (error) {
     next(error);
   }
