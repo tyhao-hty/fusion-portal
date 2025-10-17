@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+      window.__PAGE_META__ = {
+        title: '核聚变发展历史 - 核聚变门户',
+        description: '回顾核聚变研究百年历程，了解关键里程碑、代表人物和未来展望。'
+      };
+    </script>
+    <script src="components/meta.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="components/common.js" defer></script>
+</head>
+<body>
+    <div data-component="header"></div>
+
+    <main id="main-content" class="main-content" tabindex="-1">
+        <div class="content-page">
+            <a href="index.html" class="back-button">← 返回首页</a>
+
+            <h1>核聚变发展历史</h1>
+            <p>核聚变研究经历了从理论假设、实验验证到大型工程建设的漫长旅程。一个世纪以来，全世界的科学家都在试图把恒星中的能量带到地球。下方时间线梳理了这一领域的关键事件、技术突破与合作进展。</p>
+
+            <div class="timeline" data-timeline-container></div>
+            <div class="timeline-empty" data-timeline-empty hidden>暂时无法加载发展历程，请稍后重试。</div>
+            <div class="timeline-controls">
+                <button type="button" class="load-more-button" data-timeline-more>加载更多里程碑</button>
+                <p class="timeline-status" data-timeline-status aria-live="polite"></p>
+            </div>
+            <div class="timeline-sentinel" data-timeline-sentinel aria-hidden="true"></div>
+
+            <h2>重要科学家贡献</h2>
+            <div class="company-grid">
+                <div class="company-card">
+                    <div class="company-name">亚瑟·爱丁顿（Arthur Eddington）</div>
+                    <p>英国天体物理学家，首次提出恒星能量来源于核聚变反应，为聚变研究奠定理论基础。</p>
+                </div>
+                <div class="company-card">
+                    <div class="company-name">伊戈尔·塔姆（Igor Tamm）</div>
+                    <p>苏联物理学家，托卡马克概念的提出者之一，1958 年诺贝尔物理学奖获得者。</p>
+                </div>
+                <div class="company-card">
+                    <div class="company-name">安德烈·萨哈罗夫（Andrei Sakharov）</div>
+                    <p>苏联物理学家，托卡马克路线的重要奠基人，后来成为著名的人权活动家。</p>
+                </div>
+                <div class="company-card">
+                    <div class="company-name">莱曼·斯皮策（Lyman Spitzer）</div>
+                    <p>美国科学家，仿星器概念的提出者，普林斯顿等离子体物理实验室创始人。</p>
+                </div>
+                <div class="company-card">
+                    <div class="company-name">约翰·劳森（John Lawson）</div>
+                    <p>英国物理学家，提出著名的劳森判据，定义实现聚变点火所需的基本条件。</p>
+                </div>
+                <div class="company-card">
+                    <div class="company-name">爱德华·泰勒（Edward Teller）</div>
+                    <p>匈牙利裔美国物理学家，被称为“氢弹之父”，对聚变理论和工程均有深远影响。</p>
+                </div>
+            </div>
+
+            <h2>技术发展里程碑</h2>
+            <ul>
+                <li><strong>磁约束聚变：</strong>从早期磁镜装置发展到现代托卡马克与仿星器，设备规模与性能持续提升。</li>
+                <li><strong>惯性约束聚变：</strong>激光、离子束等驱动方案不断增强，为点火实验提供新的可能。</li>
+                <li><strong>等离子体加热：</strong>欧姆加热、射频加热、中性束注入协同应用，推动高温等离子体生成。</li>
+                <li><strong>等离子体控制：</strong>建立实时反馈与主动控制系统，提升稳定性与放电时长。</li>
+                <li><strong>材料科学：</strong>研发耐高热流、抗辐照材料，为聚变堆关键部件护航。</li>
+                <li><strong>超导技术：</strong>高温超导磁体为紧凑装置与高场装置打开全新工程路径。</li>
+            </ul>
+
+            <h2>未来展望</h2>
+            <p>ITER 的建造、私人聚变公司的崛起以及 NIF 点火的突破，进一步增强了人们对聚变能源的信心。预计在 2030-2040 年代，我们将迎来首批实验性聚变电站的示范运行。要实现可持续、经济可行的聚变能源，还需要在材料、工程、控制与商业模式等方面持续创新与协作。</p>
+        </div>
+    </main>
+
+    <div data-component="footer"></div>
+
+    <script>
+        (() => {
+            const DATA_URL = 'data/timeline.json';
+            const PAGE_SIZE = 4;
+
+            const container = document.querySelector('[data-timeline-container]');
+            const emptyState = document.querySelector('[data-timeline-empty]');
+            const loadMoreBtn = document.querySelector('[data-timeline-more]');
+            const statusEl = document.querySelector('[data-timeline-status]');
+            const sentinel = document.querySelector('[data-timeline-sentinel]');
+
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        cardObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            let timelineItems = [];
+            let renderedCount = 0;
+            let loading = false;
+            let exhausted = false;
+
+            function updateStatus() {
+                if (!timelineItems.length) {
+                    statusEl.textContent = '';
+                    return;
+                }
+                statusEl.textContent = `已展示 ${renderedCount} / ${timelineItems.length} 个里程碑`;
+            }
+
+            function toggleControls(isVisible) {
+                loadMoreBtn.hidden = !isVisible;
+                statusEl.hidden = !isVisible;
+                sentinel.toggleAttribute('hidden', !isVisible);
+            }
+
+            function createTimelineNode(item) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'timeline-item';
+                wrapper.style.opacity = '0';
+                wrapper.style.transform = 'translateY(50px)';
+                wrapper.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+
+                const year = document.createElement('div');
+                year.className = 'timeline-year';
+                year.textContent = item.year;
+
+                const content = document.createElement('div');
+                content.className = 'timeline-content';
+
+                const title = document.createElement('h3');
+                title.textContent = item.title;
+
+                const description = document.createElement('p');
+                description.textContent = item.description;
+
+                content.append(title, description);
+                wrapper.append(year, content);
+                return wrapper;
+            }
+
+            function renderChunk() {
+                if (loading || exhausted || !timelineItems.length) {
+                    return;
+                }
+                if (renderedCount >= timelineItems.length) {
+                    exhausted = true;
+                    loadMoreBtn.disabled = true;
+                    loadMoreBtn.setAttribute('aria-disabled', 'true');
+                    return;
+                }
+
+                loading = true;
+                loadMoreBtn.disabled = true;
+                loadMoreBtn.setAttribute('aria-busy', 'true');
+
+                const slice = timelineItems.slice(renderedCount, renderedCount + PAGE_SIZE);
+                slice.forEach(item => {
+                    const node = createTimelineNode(item);
+                    container.appendChild(node);
+                    cardObserver.observe(node);
+                });
+
+                renderedCount += slice.length;
+                updateStatus();
+
+                if (renderedCount >= timelineItems.length) {
+                    exhausted = true;
+                    loadMoreBtn.disabled = true;
+                    loadMoreBtn.setAttribute('aria-disabled', 'true');
+                } else {
+                    loadMoreBtn.disabled = false;
+                    loadMoreBtn.removeAttribute('aria-disabled');
+                }
+
+                loadMoreBtn.removeAttribute('aria-busy');
+                loading = false;
+            }
+
+            async function init() {
+                try {
+                    const response = await fetch(DATA_URL, { cache: 'no-cache' });
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    timelineItems = await response.json();
+
+                    if (!Array.isArray(timelineItems) || !timelineItems.length) {
+                        throw new Error('empty');
+                    }
+
+                    emptyState.hidden = true;
+                    toggleControls(true);
+                    renderChunk();
+                } catch (error) {
+                    console.error('[timeline] 数据加载失败', error);
+                    emptyState.hidden = false;
+                    toggleControls(false);
+                }
+            }
+
+            loadMoreBtn.addEventListener('click', renderChunk);
+
+            const lazyObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        renderChunk();
+                    }
+                });
+            }, { threshold: 0.4 });
+
+            lazyObserver.observe(sentinel);
+            toggleControls(false);
+            init();
+        })();
+    </script>
+</body>
+</html>
