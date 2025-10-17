@@ -1,0 +1,320 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+      window.__PAGE_META__ = {
+        title: '核聚变资源导航 - 核聚变门户',
+        description: '精选全球核聚变组织、研究机构、商业企业、教育资源与会议活动，一站式获取权威链接。'
+      };
+    </script>
+    <script src="components/meta.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="components/common.js" defer></script>
+</head>
+<body>
+    <div data-component="header"></div>
+
+    <main id="main-content" class="main-content" tabindex="-1">
+        <div class="content-page">
+            <a href="index.html" class="back-button">← 返回首页</a>
+
+            <h1>核聚变资源导航</h1>
+            <p>本页汇总核聚变领域的重要网站、研究机构、商业公司、期刊媒体与学习资源，帮助你快速找到可信的资讯来源。资源数量较多，可通过搜索与分页逐步浏览。</p>
+
+            <div class="links-search-slot" data-links-search></div>
+            <div class="links-meta" data-links-meta></div>
+
+            <div class="links-empty" data-links-empty hidden>暂时无法加载资源列表，请稍后重试。</div>
+
+            <div data-links-container></div>
+
+            <div class="links-controls">
+                <button type="button" class="load-more-button" data-links-more>加载更多资源</button>
+                <p class="links-status" data-links-status aria-live="polite"></p>
+            </div>
+            <div class="links-sentinel" data-links-sentinel aria-hidden="true"></div>
+
+            <h2>使用建议</h2>
+            <div class="company-grid">
+                <div class="company-card">
+                    <div class="company-name">📚 学习路径</div>
+                    <p>从教育资源与权威期刊入手，逐步关注大型实验装置、行业报告与商业新闻，构建体系化认知。</p>
+                </div>
+                <div class="company-card">
+                    <div class="company-name">🔄 定期更新</div>
+                    <p>聚变进展日新月异，建议订阅新闻媒体与专业协会动态，保持信息更新。</p>
+                </div>
+                <div class="company-card">
+                    <div class="company-name">🌐 多语言视角</div>
+                    <p>结合中英文资源进行交叉验证，获取更全面的视角，并关注国际合作项目。</p>
+                </div>
+                <div class="company-card">
+                    <div class="company-name">🤝 拓展网络</div>
+                    <p>积极参与会议、社群与论坛，建立科研、产业与投资等多方联系。</p>
+                </div>
+            </div>
+
+            <h2>免责声明</h2>
+            <p>以上链接仅为学习参考之用，本站不对外部网站的内容、准确性或可用性负责。使用前请自行甄别，如发现失效链接欢迎反馈。</p>
+            <p>最后更新时间：2025 年 8 月。</p>
+        </div>
+    </main>
+
+    <div data-component="footer"></div>
+
+    <script>
+        (() => {
+            const DATA_URL = 'data/links.json';
+            const PAGE_SIZE = 3;
+
+            const container = document.querySelector('[data-links-container]');
+            const searchSlot = document.querySelector('[data-links-search]');
+            const metaSlot = document.querySelector('[data-links-meta]');
+            const emptyState = document.querySelector('[data-links-empty]');
+            const loadMoreBtn = document.querySelector('[data-links-more]');
+            const statusEl = document.querySelector('[data-links-status]');
+            const sentinel = document.querySelector('[data-links-sentinel]');
+
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        cardObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            let allSections = [];
+            let renderedCount = 0;
+            let loading = false;
+            let exhausted = false;
+            let totalItems = 0;
+            const renderedCards = new Set();
+            let currentQuery = '';
+
+            function updateStatus() {
+                if (!allSections.length) {
+                    statusEl.textContent = '';
+                    return;
+                }
+                statusEl.textContent = `已展示 ${Math.min(renderedCount, allSections.length)} / ${allSections.length} 个分类`;
+            }
+
+            function toggleControls(visible) {
+                loadMoreBtn.hidden = !visible;
+                statusEl.hidden = !visible;
+                sentinel.toggleAttribute('hidden', !visible);
+            }
+
+            function createSearchInput() {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'links-search-wrapper';
+
+                const input = document.createElement('input');
+                input.type = 'search';
+                input.className = 'paper-search';
+                input.placeholder = '搜索资源名称或简介…';
+                input.setAttribute('aria-label', '搜索聚变资源');
+
+                input.addEventListener('input', (event) => {
+                    const value = (event.target.value || '').trim().toLowerCase();
+                    applySearch(value);
+                });
+
+                wrapper.appendChild(input);
+                searchSlot.appendChild(wrapper);
+                return input;
+            }
+
+            function updateMetaSummary() {
+                if (!allSections.length) {
+                    metaSlot.textContent = '';
+                    return;
+                }
+
+                const sectionCount = allSections.length;
+                metaSlot.innerHTML = `<p><strong>📊 资源统计</strong>：共收录 <strong>${totalItems}</strong> 个站点，覆盖 <strong>${sectionCount}</strong> 个主题分类。</p>`;
+            }
+
+            function createSection(section) {
+                const sectionEl = document.createElement('section');
+                sectionEl.className = 'links-section';
+                sectionEl.dataset.sectionId = section.id;
+
+                const heading = document.createElement('h2');
+                heading.textContent = section.title;
+                sectionEl.appendChild(heading);
+
+                section.groups.forEach((group) => {
+                    if (group.title) {
+                        const subHeading = document.createElement('h3');
+                        subHeading.textContent = group.title;
+                        sectionEl.appendChild(subHeading);
+                    }
+
+                    const grid = document.createElement('div');
+                    grid.className = 'links-grid';
+
+                    group.items.forEach((item) => {
+                        const card = document.createElement('a');
+                        card.className = 'link-card';
+                        card.href = item.url;
+                        card.target = '_blank';
+                        card.rel = 'noopener';
+                        card.dataset.searchText = [
+                            item.name,
+                            item.description,
+                            section.title,
+                            group.title || ''
+                        ].join(' ').toLowerCase();
+
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+
+                        const title = document.createElement('div');
+                        title.className = 'link-title';
+                        title.textContent = item.name;
+
+                        const description = document.createElement('div');
+                        description.className = 'link-description';
+                        description.textContent = item.description;
+
+                        card.append(title, description);
+                        grid.appendChild(card);
+                        renderedCards.add(card);
+                        cardObserver.observe(card);
+                    });
+
+                    sectionEl.appendChild(grid);
+                });
+
+                return sectionEl;
+            }
+
+            function renderNextPage() {
+                if (loading || exhausted || !allSections.length) {
+                    return;
+                }
+
+                if (renderedCount >= allSections.length) {
+                    exhausted = true;
+                    loadMoreBtn.disabled = true;
+                    loadMoreBtn.setAttribute('aria-disabled', 'true');
+                    return;
+                }
+
+                loading = true;
+                loadMoreBtn.disabled = true;
+                loadMoreBtn.setAttribute('aria-busy', 'true');
+
+                const slice = allSections.slice(renderedCount, renderedCount + PAGE_SIZE);
+                slice.forEach(section => {
+                    container.appendChild(createSection(section));
+                });
+
+                renderedCount += slice.length;
+                loadMoreBtn.removeAttribute('aria-busy');
+                loading = false;
+
+                if (renderedCount >= allSections.length) {
+                    exhausted = true;
+                    loadMoreBtn.disabled = true;
+                    loadMoreBtn.setAttribute('aria-disabled', 'true');
+                } else {
+                    loadMoreBtn.disabled = false;
+                    loadMoreBtn.removeAttribute('aria-disabled');
+                }
+
+                updateStatus();
+                applySearch();
+            }
+
+            function applySearch(keyword = '') {
+                currentQuery = keyword;
+
+                const query = (keyword || '').trim();
+                if (query && renderedCount < allSections.length) {
+                    while (renderedCount < allSections.length) {
+                        renderNextPage();
+                        applySearch(currentQuery);
+                    }
+                }
+
+                if (!renderedCards.size) {
+                    return;
+                }
+
+                renderedCards.forEach(card => {
+                    const matches = !query || card.dataset.searchText.includes(query);
+                    card.hidden = !matches;
+                });
+
+                container.querySelectorAll('.links-section').forEach(section => {
+                    const hasVisible = Array.from(section.querySelectorAll('.link-card')).some(card => !card.hidden);
+                    section.hidden = !hasVisible;
+                });
+
+                if (query) {
+                    const visibleCount = Array.from(renderedCards).filter(card => !card.hidden).length;
+                    statusEl.textContent = visibleCount ? `筛选结果：${visibleCount} 个资源` : '未找到匹配的资源';
+                } else {
+                    updateStatus();
+                }
+            }
+
+            async function init() {
+                try {
+                    const response = await fetch(DATA_URL, { cache: 'no-cache' });
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    if (!Array.isArray(data) || !data.length) {
+                        throw new Error('empty');
+                    }
+
+                    allSections = data;
+                    totalItems = data.reduce((sum, section) => {
+                        const groupTotal = section.groups?.reduce((acc, group) => acc + (group.items?.length || 0), 0) || 0;
+                        return sum + groupTotal;
+                    }, 0);
+
+                    emptyState.hidden = true;
+                    createSearchInput();
+                    updateMetaSummary();
+                    toggleControls(true);
+                    renderNextPage();
+                    applySearch('');
+                } catch (error) {
+                    console.error('[links] 数据加载失败', error);
+                    toggleControls(false);
+                    emptyState.hidden = false;
+                }
+            }
+
+            loadMoreBtn.addEventListener('click', () => {
+                renderNextPage();
+                applySearch(currentQuery);
+            });
+
+            const lazyObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        renderNextPage();
+                        applySearch(currentQuery);
+                    }
+                });
+            }, { threshold: 0.4 });
+
+            lazyObserver.observe(sentinel);
+            toggleControls(false);
+            init();
+        })();
+    </script>
+</body>
+</html>
