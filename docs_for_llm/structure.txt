@@ -1,338 +1,116 @@
-.
-├── AGENTS.md
-├── backend
-│   ├── node_modules
-│   │   ├── abbrev
-│   │   ├── accepts
-│   │   ├── agent-base
-│   │   ├── ansi-regex
-│   │   ├── aproba
-│   │   ├── are-we-there-yet
-│   │   ├── array-flatten
-│   │   ├── balanced-match
-│   │   ├── basic-auth
-│   │   ├── bcrypt
-│   │   ├── body-parser
-│   │   ├── brace-expansion
-│   │   ├── buffer-equal-constant-time
-│   │   ├── bytes
-│   │   ├── call-bind-apply-helpers
-│   │   ├── call-bound
-│   │   ├── chownr
-│   │   ├── color-support
-│   │   ├── concat-map
-│   │   ├── console-control-strings
-│   │   ├── content-disposition
-│   │   ├── content-type
-│   │   ├── cookie
-│   │   ├── cookie-signature
-│   │   ├── cors
-│   │   ├── debug
-│   │   ├── delegates
-│   │   ├── depd
-│   │   ├── destroy
-│   │   ├── detect-libc
-│   │   ├── dotenv
-│   │   ├── dunder-proto
-│   │   ├── ecdsa-sig-formatter
-│   │   ├── ee-first
-│   │   ├── emoji-regex
-│   │   ├── encodeurl
-│   │   ├── escape-html
-│   │   ├── es-define-property
-│   │   ├── es-errors
-│   │   ├── es-object-atoms
-│   │   ├── etag
-│   │   ├── express
-│   │   ├── finalhandler
-│   │   ├── forwarded
-│   │   ├── fresh
-│   │   ├── fs-minipass
-│   │   ├── fs.realpath
-│   │   ├── function-bind
-│   │   ├── gauge
-│   │   ├── get-intrinsic
-│   │   ├── get-proto
-│   │   ├── glob
-│   │   ├── gopd
-│   │   ├── hasown
-│   │   ├── has-symbols
-│   │   ├── has-unicode
-│   │   ├── http-errors
-│   │   ├── https-proxy-agent
-│   │   ├── iconv-lite
-│   │   ├── inflight
-│   │   ├── inherits
-│   │   ├── ipaddr.js
-│   │   ├── is-fullwidth-code-point
-│   │   ├── jsonwebtoken
-│   │   ├── jwa
-│   │   ├── jws
-│   │   ├── lodash.includes
-│   │   ├── lodash.isboolean
-│   │   ├── lodash.isinteger
-│   │   ├── lodash.isnumber
-│   │   ├── lodash.isplainobject
-│   │   ├── lodash.isstring
-│   │   ├── lodash.once
-│   │   ├── make-dir
-│   │   ├── @mapbox
-│   │   ├── math-intrinsics
-│   │   ├── media-typer
-│   │   ├── merge-descriptors
-│   │   ├── methods
-│   │   ├── mime
-│   │   ├── mime-db
-│   │   ├── mime-types
-│   │   ├── minimatch
-│   │   ├── minipass
-│   │   ├── minizlib
-│   │   ├── mkdirp
-│   │   ├── morgan
-│   │   ├── ms
-│   │   ├── negotiator
-│   │   ├── node-addon-api
-│   │   ├── node-fetch
-│   │   ├── nopt
-│   │   ├── npmlog
-│   │   ├── object-assign
-│   │   ├── object-inspect
-│   │   ├── once
-│   │   ├── on-finished
-│   │   ├── on-headers
-│   │   ├── parseurl
-│   │   ├── path-is-absolute
-│   │   ├── path-to-regexp
-│   │   ├── @prisma
-│   │   ├── prisma
-│   │   ├── proxy-addr
-│   │   ├── qs
-│   │   ├── range-parser
-│   │   ├── raw-body
-│   │   ├── readable-stream
-│   │   ├── rimraf
-│   │   ├── safe-buffer
-│   │   ├── safer-buffer
-│   │   ├── semver
-│   │   ├── send
-│   │   ├── serve-static
-│   │   ├── set-blocking
-│   │   ├── setprototypeof
-│   │   ├── side-channel
-│   │   ├── side-channel-list
-│   │   ├── side-channel-map
-│   │   ├── side-channel-weakmap
-│   │   ├── signal-exit
-│   │   ├── statuses
-│   │   ├── string_decoder
-│   │   ├── string-width
-│   │   ├── strip-ansi
-│   │   ├── tar
-│   │   ├── toidentifier
-│   │   ├── tr46
-│   │   ├── type-is
-│   │   ├── unpipe
-│   │   ├── util-deprecate
-│   │   ├── utils-merge
-│   │   ├── vary
-│   │   ├── webidl-conversions
-│   │   ├── whatwg-url
-│   │   ├── wide-align
-│   │   ├── wrappy
-│   │   └── yallist
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── prisma
-│   │   ├── migrations
-│   │   └── schema.prisma
-│   ├── README.md
-│   └── src
-│       ├── index.js
-│       ├── middleware
-│       ├── prisma
-│       ├── routes
-│       └── utils
-├── CHANGELOG.md
-├── docs
-│   └── architecture.md
-├── frontend
-│   ├── app
-│   │   ├── admin
-│   │   ├── globals.css
-│   │   ├── layout.tsx
-│   │   ├── login
-│   │   ├── new
-│   │   ├── page.tsx
-│   │   └── register
-│   ├── components
-│   │   ├── Navbar.tsx
-│   │   └── UserContext.tsx
-│   ├── _legacy-static
-│   │   ├── admin.html
-│   │   ├── admin.js
-│   │   ├── assets
-│   │   ├── business.html
-│   │   ├── components
-│   │   ├── data
-│   │   ├── history.html
-│   │   ├── index.html
-│   │   ├── links.html
-│   │   ├── papers.html
-│   │   ├── science.html
-│   │   ├── styles-admin.css
-│   │   ├── styles.css
-│   │   ├── technology.html
-│   │   └── theory.html
-│   ├── next.config.js
-│   ├── next-env.d.ts
-│   ├── node_modules
-│   │   ├── @alloc
-│   │   ├── ansi-regex
-│   │   ├── ansi-styles
-│   │   ├── anymatch
-│   │   ├── any-promise
-│   │   ├── arg
-│   │   ├── autoprefixer
-│   │   ├── balanced-match
-│   │   ├── baseline-browser-mapping
-│   │   ├── binary-extensions
-│   │   ├── brace-expansion
-│   │   ├── braces
-│   │   ├── browserslist
-│   │   ├── busboy
-│   │   ├── camelcase-css
-│   │   ├── caniuse-lite
-│   │   ├── chokidar
-│   │   ├── client-only
-│   │   ├── color-convert
-│   │   ├── color-name
-│   │   ├── commander
-│   │   ├── cross-spawn
-│   │   ├── cssesc
-│   │   ├── csstype
-│   │   ├── didyoumean
-│   │   ├── dlv
-│   │   ├── eastasianwidth
-│   │   ├── electron-to-chromium
-│   │   ├── emoji-regex
-│   │   ├── escalade
-│   │   ├── fast-glob
-│   │   ├── fastq
-│   │   ├── fill-range
-│   │   ├── foreground-child
-│   │   ├── fraction.js
-│   │   ├── function-bind
-│   │   ├── glob
-│   │   ├── glob-parent
-│   │   ├── graceful-fs
-│   │   ├── hasown
-│   │   ├── @isaacs
-│   │   ├── is-binary-path
-│   │   ├── is-core-module
-│   │   ├── isexe
-│   │   ├── is-extglob
-│   │   ├── is-fullwidth-code-point
-│   │   ├── is-glob
-│   │   ├── is-number
-│   │   ├── jackspeak
-│   │   ├── jiti
-│   │   ├── @jridgewell
-│   │   ├── js-tokens
-│   │   ├── lilconfig
-│   │   ├── lines-and-columns
-│   │   ├── loose-envify
-│   │   ├── lru-cache
-│   │   ├── merge2
-│   │   ├── micromatch
-│   │   ├── minimatch
-│   │   ├── minipass
-│   │   ├── mz
-│   │   ├── nanoid
-│   │   ├── @next
-│   │   ├── next
-│   │   ├── @nodelib
-│   │   ├── node-releases
-│   │   ├── normalize-path
-│   │   ├── normalize-range
-│   │   ├── object-assign
-│   │   ├── object-hash
-│   │   ├── package-json-from-dist
-│   │   ├── path-key
-│   │   ├── path-parse
-│   │   ├── path-scurry
-│   │   ├── picocolors
-│   │   ├── picomatch
-│   │   ├── pify
-│   │   ├── pirates
-│   │   ├── @pkgjs
-│   │   ├── postcss
-│   │   ├── postcss-import
-│   │   ├── postcss-js
-│   │   ├── postcss-load-config
-│   │   ├── postcss-nested
-│   │   ├── postcss-selector-parser
-│   │   ├── postcss-value-parser
-│   │   ├── queue-microtask
-│   │   ├── react
-│   │   ├── react-dom
-│   │   ├── read-cache
-│   │   ├── readdirp
-│   │   ├── resolve
-│   │   ├── reusify
-│   │   ├── run-parallel
-│   │   ├── scheduler
-│   │   ├── shebang-command
-│   │   ├── shebang-regex
-│   │   ├── signal-exit
-│   │   ├── source-map-js
-│   │   ├── streamsearch
-│   │   ├── string-width
-│   │   ├── string-width-cjs
-│   │   ├── strip-ansi
-│   │   ├── strip-ansi-cjs
-│   │   ├── styled-jsx
-│   │   ├── sucrase
-│   │   ├── supports-preserve-symlinks-flag
-│   │   ├── @swc
-│   │   ├── tailwindcss
-│   │   ├── thenify
-│   │   ├── thenify-all
-│   │   ├── to-regex-range
-│   │   ├── ts-interface-checker
-│   │   ├── tslib
-│   │   ├── @types
-│   │   ├── typescript
-│   │   ├── undici-types
-│   │   ├── update-browserslist-db
-│   │   ├── util-deprecate
-│   │   ├── which
-│   │   ├── wrap-ansi
-│   │   └── wrap-ansi-cjs
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── postcss.config.js
-│   ├── public
-│   │   ├── admin.html
-│   │   ├── admin.js
-│   │   ├── assets
-│   │   ├── business.html
-│   │   ├── components
-│   │   ├── data
-│   │   ├── history.html
-│   │   ├── index.html
-│   │   ├── links.html
-│   │   ├── papers.html
-│   │   ├── science.html
-│   │   ├── styles-admin.css
-│   │   ├── styles.css
-│   │   ├── technology.html
-│   │   └── theory.html
-│   ├── README.md
-│   ├── tailwind.config.js
-│   ├── tsconfig.json
-│   └── utils
-│       └── api.ts
-├── README.md
-└── structure.txt
-
-288 directories, 48 files
+./
+    AGENTS.md
+    CHANGELOG.md
+    README.md
+backend/
+    README.md
+    package-lock.json
+    package.json
+    prisma/
+        schema.prisma
+        migrations/
+            migration_lock.toml
+            20251017105941_init/
+                migration.sql
+    src/
+        index.js
+        middleware/
+            auth.js
+            errorHandler.js
+        prisma/
+            client.js
+        routes/
+            articles.js
+            auth.js
+        utils/
+            jwt.js
+docs/
+    architecture.md
+docs_for_llm/
+    dev_notes.md
+    readme_plan.md
+    structure.txt
+    tasks/
+        README.md
+        T002_admin_panel.md
+        T003_article_render.md
+        T009_static_merge.md
+        completed.md
+frontend/
+    README.md
+    next-env.d.ts
+    next.config.js
+    package-lock.json
+    package.json
+    postcss.config.js
+    tailwind.config.js
+    tsconfig.json
+    app/
+        globals.css
+        layout.tsx
+        page.tsx
+        admin/
+            page.tsx
+        login/
+            page.tsx
+        new/
+            page.tsx
+        register/
+            page.tsx
+    components/
+        Navbar.tsx
+        UserContext.tsx
+    public/
+        admin.html
+        admin.js
+        business.html
+        history.html
+        index.html
+        links.html
+        papers.html
+        science.html
+        styles-admin.css
+        styles.css
+        technology.html
+        theory.html
+        assets/
+            og-default.png
+        components/
+            common.js
+            footer.html
+            head.html
+            header.html
+            meta.js
+        data/
+            links.json
+            papers.json
+            schema.md
+            timeline.json
+    utils/
+        api.ts
+    _legacy-static/
+        admin.html
+        admin.js
+        business.html
+        history.html
+        index.html
+        links.html
+        papers.html
+        science.html
+        styles-admin.css
+        styles.css
+        technology.html
+        theory.html
+        assets/
+            og-default.png
+        components/
+            common.js
+            footer.html
+            head.html
+            header.html
+            meta.js
+        data/
+            links.json
+            papers.json
+            schema.md
+            timeline.json

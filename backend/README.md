@@ -3,7 +3,12 @@
 基于 Express、Prisma、PostgreSQL 与 JWT 的后端服务，提供用户认证与文章管理接口。
 
 ## 准备工作
-
+0. 安装PostgreSql，并创建用户和数据库
+   ```
+   CREATE USER fusion_user WITH PASSWORD 'StrongPassword123';
+   CREATE DATABASE fusion_portal OWNER fusion_user;
+   GRANT ALL PRIVILEGES ON DATABASE fusion_portal TO fusion_user;
+   ```
 1. 确保本地或远程可用的 PostgreSQL，并在 `backend/.env` 中配置：
    ```
    DATABASE_URL="postgresql://user:password@localhost:5432/fusion_portal"

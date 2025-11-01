@@ -64,3 +64,5 @@ __pycache__/
 docker-compose.override.yml
 *.tar
 *.img
+# ===== AI Agents / 编程助手相关 =====
+AGENTS.md
