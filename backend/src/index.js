@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import articleRoutes from './routes/articles.js';
+import timelineRoutes from './routes/timeline.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(morgan('dev'));
 app.get('/', (req, res) => res.send('Fusion Portal API running'));
 app.use('/auth', authRoutes);
 app.use('/articles', articleRoutes);
+app.use('/api/timeline', timelineRoutes);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;

@@ -5,6 +5,66 @@
 > 时间戳格式：`YYYY-MM-DD HH:mm`（北京时间，UTC+8）
 ---
 
+### 📅 2025-11-03 14:59
+#### 🚧 任务编号：T009 – 阶段一实现（后端 + 前端）
+**[计划阶段]**  
+- 按照评审后的方案执行时间线数据入库、API 设计、站点路由与样式迁移。  
+- 着重记录对全局结构的影响（路由分组、依赖新增）供后续协作参考。
+
+**[开发阶段]**  
+- 后端：扩展 Prisma schema（`TimelineEvent`）、新增 `/api/timeline` 路由、通用错误结构，编写 `prisma/seeds/migrate_timeline.js` 并加入 `npm run seed:timeline`。  
+- 前端：重构 App Router 结构（将既有页面迁移至 `app/(dashboard)/`），新增 `app/site` 路由组（`layout.tsx`、`page.tsx`、`history/page.tsx`）、`SiteHeader`/`SiteFooter`/`buildSiteMetadata` 组件，复制 legacy 样式并引入 SWR 无限滚动。  
+- 配置 rewrites（`/index.html`→`/site`、`/history.html`→`/site/history`），更新 `apiRequest` 错误解析与 `package.json`（新增 `engines`、`swr`）。  
+- 更新相关文档：`backend/README.md`、`frontend/README.md`、`tasks/T009_static_merge.md`。
+
+**[问题与解决]**  
+- Issue: Root layout 中原始 `Navbar` 与静态站导航冲突。  
+- Solution: 引入 `app/(dashboard)` 分组，仅在该分组布局中渲染 `Navbar`，`app/site` 使用独立布局。  
+- Issue: `npm run lint` 触发 Next.js ESLint 初始化向导，当前未启用；保留为后续任务决定是否接管 ESLint 配置。  
+- 注意：历史页依赖 SWR 与 IntersectionObserver，后续开发需延续同一数据接口与 Hook。
+
+**[总结与下步计划]**  
+- 已具备阶段一开发条件并完成代码落地，等待后续联调（数据迁移脚本需在数据库连接环境执行 `npm run prisma:migrate` + `npm run seed:timeline`）。  
+- 下一步：为 T002/T003 同步新的数据库模型和 API 契约，规划测试（API 单测、前端组件测试、E2E）与文档交付物。
+
+---
+
+### 📅 2025-11-03 14:37
+#### 🧾 任务编号：T009 – 方案修订补充
+**[计划阶段]**  
+- 采纳评审意见，细化路由 rewrites、样式迁移分步、数据校验、监控与交付清单。
+
+**[开发阶段]**  
+- 更新 `tasks/T009_static_merge.md`：新增 `/site` 路由策略、完整 rewrites 列表、迁移脚本校验示例、监控/环境要求与交付物 checklist。
+
+**[问题与解决]**  
+- Issue: 原方案未覆盖数据一致性验证与监控告警。  
+- Solution: 增补 `validateMigration` 检查、Sentry/慢查询监控要求，并锁定 Node/npm 版本。
+
+**[总结与下步计划]**  
+- 方案已更新满足评审意见，待你确认后可进入编码阶段。  
+- 需准备 rewrites 配置文档及监控接入细节以便部署时参考。
+
+---
+
+### 📅 2025-11-03 14:12
+#### ✅ 任务编号：T009 – 阶段一开发前准备完成
+**[计划阶段]**  
+- 根据 T009 要求整理 React 布局、API 契约、Prisma 模型、样式迁移与验收标准，确保进入开发前信息齐备。
+
+**[开发阶段]**  
+- 在 `tasks/T009_static_merge.md` 中补充前端组件草案、`GET /timeline` 契约、`TimelineEvent` 模型草图、样式搬迁方案和验收 Checklist，并将阶段一准备清单全部勾选。
+
+**[问题与解决]**  
+- Issue: 旧版文档缺乏可直接交付给开发的契约细节。  
+- Solution: 按条目编写详尽说明，覆盖接口参数、排序策略、索引与缓存建议。
+
+**[总结与下步计划]**  
+- 阶段一准备条件已满足，可在获得排期后启动代码实现（React 页面 + Timeline API + Prisma 迁移）。  
+- 后续开发需与 T002/T003 协调数据库迁移与后台表单实现节奏。
+
+---
+
 ### 📅 2025-10-31 17:27
 #### 🗂️ 维护任务：DOC-20251031B – 任务文档拆解
 **[计划阶段]**  
