@@ -17,7 +17,14 @@ export async function apiRequest(path: string, method = 'GET', data?: unknown, t
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(errorText || response.statusText);
+    let message = errorText || response.statusText;
+    try {
+      const parsed = JSON.parse(errorText);
+      message = parsed?.error?.message ?? parsed?.message ?? message;
+    } catch {
+      // ignore parse error, fall back to raw text
+    }
+    throw new Error(message);
   }
 
   return response.json();

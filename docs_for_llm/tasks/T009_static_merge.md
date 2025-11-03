@@ -25,11 +25,98 @@
 - **阶段三（长期）**：将科普/理论/技术/商业页面迁移为 Markdown 驱动内容，接入未来 CMS 或 Git 驱动发布流程，下线旧版入口。
 
 ## 阶段一准备清单
-- [ ] 输出 `app/(site)/layout.tsx` 与 `Header`/`Footer` React 组件草案，对应现有导航行为；
-- [ ] 定义 `GET /timeline` API 契约（结构、分页、错误码），与后端确认实现方式；
-- [ ] 设计 `TimelineEvent` Prisma 模型字段/索引及与 `Article` 的潜在关联；
-- [ ] 提炼 `styles.css` 必需变量/动画，形成样式迁移指南；
-- [ ] 定义阶段一验收标准（UI 一致性、数据校验、回退机制），准备评审。
+- [x] 输出 `app/(site)/layout.tsx` 与 `Header`/`Footer` React 组件草案，对应现有导航行为；
+- [x] 定义 `GET /timeline` API 契约（结构、分页、错误码），与后端确认实现方式；
+- [x] 设计 `TimelineEvent` Prisma 模型字段/索引及与 `Article` 的潜在关联；
+- [x] 提炼 `styles.css` 必需变量/动画，形成样式迁移指南；
+- [x] 定义阶段一验收标准（UI 一致性、数据校验、回退机制），准备评审。
+
+### 路由与兼容策略
+- 过渡期使用 `/site` 子路径承载新版页面（`app/site/layout.tsx`, `app/site/page.tsx`, `app/site/history/page.tsx`），旧站仍可通过 `/index.html` 访问。
+- 在 `next.config.js` 中配置 rewrites（文档中需列出完整清单）：
+  ```js
+  module.exports = {
+    async rewrites() {
+      return [
+        { source: '/index.html', destination: '/site' },
+        { source: '/history.html', destination: '/site/history' },
+      ];
+    },
+  };
+  ```
+- 部署前在文档中提供 rewrites/redirects 清单，并设置 `<link rel="canonical">` 指向 `/site/...`，防止 SEO 重复。新版稳定后再执行 301 重定向并下线旧 HTML；其他尚未迁移的页面继续使用原静态文件。
+- 将现代应用页面迁移到 `app/(dashboard)/` 路由分组，避免根布局重复渲染两个导航体系。
+
+### 前端布局与组件草案
+- 目录结构：在 `app/(site)/` 下新增 `layout.tsx` 作为公共布局，内部引入 `SiteHeader`, `SiteFooter`, `SiteMeta` 组件；页面文件包括 `page.tsx`（首页）与 `history/page.tsx`（发展历程），其余页面未来按需增补。
+- 组件职责：
+  - `SiteHeader`：以 React 还原 `components/header.html`，保留数据属性用于移动端菜单切换，导航链接根据登录态（`UserContext`）显示写作/管理入口。
+  - `SiteFooter`：渲染版权、快速链接与动态年份；年份逻辑改写为 React `useEffect`。
+  - `buildSiteMetadata`：在页面/server 组件中构造 Next Metadata，统一 title/description/OG，替换原 `meta.js` 动态注入方式。
+- 行为保持：
+  - 移动端菜单：复用 `common.js` 的交互逻辑，在 React 中通过 `useEffect` 绑定/解绑监听，或拆分出 `useMobileNav` hook。
+  - 平滑滚动与跳转：使用 `framer-motion` 之类库非必须，初期保留原 `scrollIntoView` 实现。
+  - 旧站入口：导航保留 `href="/index.html"` 等链接，直到全部页面迁移完成。
+  - 历史页数据：使用 SWR + useSWRInfinite 管理分页加载、错误重试与 IntersectionObserver 自动加载。
+
+### `GET /timeline` API 契约（草案）
+| 项目 | 说明 |
+|------|------|
+| 方法 | `GET` |
+| 路径 | `/api/timeline` |
+| 查询参数 | `page` (默认 1), `limit` (默认 8, 上限 20), `order` (`asc`/`desc`), `year` (可选，年份或关键词) |
+| 成功响应 | `200 OK`，主体：`{ data: TimelineEvent[], meta: { page, limit, total, totalPages, order, hasNext } }` |
+| 失败响应 | `400 Bad Request`（参数非法），`500 Internal Server Error`（数据库异常）；统一返回 `{ error: { code, message }, message }` |
+| 认证 | 阶段一为公共只读，不需认证；后台写操作由 T002 负责 (`POST/PUT/DELETE /timeline`) |
+| 缓存建议 | API 可加 `Cache-Control: max-age=60`；前端配合 SWR/RTK Query 带有 60 秒缓存 |
+
+### Prisma `TimelineEvent` 模型草案
+```prisma
+model Article {
+  id             Int             @id @default(autoincrement())
+  title          String
+  content        String
+  authorId       Int
+  author         User            @relation(fields: [authorId], references: [id])
+  createdAt      DateTime        @default(now())
+  timelineEvents TimelineEvent[]
+}
+
+model TimelineEvent {
+  id          Int       @id @default(autoincrement())
+  slug        String    @unique           // 对应原 JSON 的 id（如 timeline-1991）
+  yearLabel   String                     // 展示用文案，如 “1991年”
+  yearValue   Int?                        // 便于排序/查询（可解析 “YYYY”）
+  title       String
+  description String
+  sortOrder   Int       @default(0)      // 自定义排序，越大越靠前
+  relatedArticleId Int?
+  relatedArticle   Article? @relation(fields: [relatedArticleId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+```
+- 索引：`@@index([sortOrder, id], map: "idx_timeline_order")`、`@@index([yearValue], map: "idx_timeline_year")`。
+- 迁移策略：导入现有 JSON 时按 `year` 推导 `yearValue`（仅数字部分），`sortOrder` 根据原数组顺序递减。
+- 迁移脚本：在 `backend/prisma/seeds/migrate_timeline.js` 读取 JSON、验证字段（slug 唯一、year 数值化、描述非空），执行 `validateMigration({ expectedCount, checksumMatch, sampleRecordIntegrity })` 校验后在事务内批量写入。
+- 所有写操作包裹在事务中，失败自动回滚并保留原 JSON 备份。
+
+### 样式迁移指南（节选）
+1. **基础变量**：保留 `:root` 中的色彩、字体变量（`--color-primary`, `--color-surface`, `--shadow-soft`），在 `app/(site)/globals.css` 中引入，未来可映射至 Tailwind `theme.extend`.
+2. **网格布局**：`modules-grid`, `timeline`, `company-grid` 等类初期作为全局样式导入；后续可拆成 CSS Modules：`modules-grid` → `SiteModules.module.css`.
+3. **动画效果**：`module-card`、`timeline-item` 使用的 `opacity/transform` 过渡改写为 CSS 自定义属性 + React `useEffect`；可选使用 IntersectionObserver hook 统一处理。
+4. **可访问性样式**：保留 `.skip-link`, `.nav-menu--open`, `.back-button` 等辅助类，迁移时重点确保焦点可见性与对比度。
+- **阶段化策略**：
+  1. 完整复制 `styles.css` 为 `app/site/styles-legacy.css`，全局引用，确保像素一致。
+  2. 编制 CSS 变量映射表，逐步迁移通用变量至 `globals.css`。
+  3. 按模块拆分为 CSS Modules/Tailwind，移除对应的 legacy 片段，保持单一来源。
+
+### 阶段一验收标准
+- **UI & 交互**：React 页面与 `frontend/public` 对应页面在桌面/移动端的布局、动画、导航行为一致；移动端菜单与平滑滚动无回归。
+- **数据准确性**：`/timeline` API 返回内容与原 JSON 数据一致，分页/排序可通过手动测试验证；前端加载、空态、错误态处置得当。
+- **SEO & 元数据**：每页提供正确的 `<title>`、`description`、OG/Twitter 标签，并生成静态 `sitemap.xml` 条目。
+- **回退机制**：部署后保留旧版路径（`/index.html` 等），发生异常时可切换至 `_legacy-static`；数据库迁移支持回滚脚本。
+- **质量保障**：完成冒烟测试（Chrome/Safari/移动端），关键交互经 QA 或自测 checklist 确认并在 `dev_notes.md` 登记。
 
 ## 数据迁移建议
 - `timeline.json` → `TimelineEvent`（字段：`id`、`slug`、`year_label`、`title`、`description`、`sort_order`、时间戳）；
@@ -38,8 +125,27 @@
 
 其余纯内容页面可暂存 Markdown/静态文件，后续与 CMS 方案一并规划。
 
+## 监控与运维要求
+- 生产环境接入错误监控（如 Sentry）与日志系统，监控指标包括 API 错误率 > 1%、慢查询、前端错误采样、关键页面停留/跳出率。
+- 部署脚本需在 `NODE_ENV=production` 时初始化监控 SDK。
+- 与运维协调数据库慢查询日志与报警策略。
+
+## 依赖与环境约束
+- 在 `package.json` 声明 `engines`（Node ≥ 18、npm ≥ 9），并锁定关键依赖版本（例如 `@types/node` 使用确定版本）。
+- 前端新增 `swr` 依赖，用于时间线分页/重试逻辑；相关组件需保持一致的 fetcher 接口。
+- CI 环境需遵循相同的 Node/npm 版本，避免迁移脚本或 Next.js 构建出现不一致。
+
 ## 依赖与风险
 - 依赖 T002 后台管理扩展提供数据录入能力；
 - 需与后端确认数据库 schema 与迁移安排；
 - 在未完成阶段一前不建议直接替换生产站点，保留 `_legacy-static` 作为回退。
 
+## 交付物清单
+- [x] 前后端代码实现（含 `/site` 页面与 `/api/timeline` 路由）
+- [ ] 数据迁移脚本与执行日志（含验证输出）
+- [ ] API 文档（Swagger/Postman 或 Markdown 说明）
+- [ ] 测试报告（单元/集成覆盖率、E2E 录屏）
+- [ ] 部署手册（含 rewrites、环境变量、监控接入步骤）
+- [ ] 回滚预案与验证流程
+- [ ] 性能对比报告（首屏、API 响应）
+- [ ] 风险评估表（含监控与告警配置）

@@ -1,6 +1,6 @@
 # Fusion Portal Backend
 
-基于 Express、Prisma、PostgreSQL 与 JWT 的后端服务，提供用户认证与文章管理接口。
+基于 Express、Prisma、PostgreSQL 与 JWT 的后端服务，提供用户认证、文章管理与时间线数据接口。
 
 ## 准备工作
 0. 安装PostgreSql，并创建用户和数据库
@@ -22,8 +22,14 @@
    ```
 3. 同步数据库结构并生成 Prisma 客户端：
    ```bash
-   npx prisma migrate dev --name init
+   npm run prisma:migrate
    ```
+4. 导入历史时间线数据（可先执行 dry-run 验证）：
+   ```bash
+   npm run seed:timeline -- --dry-run
+   npm run seed:timeline
+   ```
+   > 默认读取 `frontend/public/data/timeline.json`，可通过 `--data /path/to/file.json` 或环境变量 `TIMELINE_JSON` 指定路径。
 
 ## 启动服务
 
@@ -41,6 +47,7 @@ npm run dev
 | `npm run start`      | 以生产模式启动服务      |
 | `npm run prisma:generate` | 重新生成 Prisma 客户端 |
 | `npm run prisma:migrate`  | 运行 `prisma migrate dev` |
+| `npm run seed:timeline`   | 导入/更新时间线数据（支持 `--dry-run`） |
 
 ## API 速览
 
@@ -51,10 +58,11 @@ npm run dev
 - `POST /articles`：创建文章（需 `Authorization: Bearer <token>`）。
 - `PUT /articles/:id`：更新文章（作者或管理员）。
 - `DELETE /articles/:id`：删除文章（作者或管理员）。
+- `GET /api/timeline`：分页查询历史时间线，支持 `page`/`limit`/`order`/`year` 参数。
 
 ## 错误处理与日志
 
-- 请求链路中的异常会由全局错误处理中间件捕获并统一返回 `message` 字段。
+- 请求链路中的异常会由全局错误处理中间件捕获并统一返回 `{ error: { code, message }, message }` 结构。
 - 使用 `morgan` 输出访问日志，便于调试与审计。
 
 ## 开发提示

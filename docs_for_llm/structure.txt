@@ -12,6 +12,8 @@ backend/
             migration_lock.toml
             20251017105941_init/
                 migration.sql
+        seeds/
+            migrate_timeline.js
     src/
         index.js
         middleware/
@@ -22,6 +24,7 @@ backend/
         routes/
             articles.js
             auth.js
+            timeline.js
         utils/
             jwt.js
 docs/
@@ -48,18 +51,31 @@ frontend/
     app/
         globals.css
         layout.tsx
-        page.tsx
-        admin/
+        (dashboard)/
+            layout.tsx
             page.tsx
-        login/
+            admin/
+                page.tsx
+            login/
+                page.tsx
+            new/
+                page.tsx
+            register/
+                page.tsx
+        site/
+            layout.tsx
             page.tsx
-        new/
-            page.tsx
-        register/
-            page.tsx
+            styles-legacy.css
+            history/
+                TimelineFeed.tsx
+                page.tsx
     components/
         Navbar.tsx
         UserContext.tsx
+        site/
+            SiteFooter.tsx
+            SiteHeader.tsx
+            metadata.ts
     public/
         admin.html
         admin.js
