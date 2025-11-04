@@ -10,9 +10,11 @@
   "scripts": {
     "dev": "node src/index.js",
     "start": "NODE_ENV=production node src/index.js",
+    "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "seed:timeline": "node prisma/seeds/migrate_timeline.js"
+    "seed:timeline": "node prisma/seeds/migrate_timeline.js",
+    "test": "vitest"
   },
   "dependencies": {
     "@prisma/client": "^5.15.0",
@@ -24,6 +26,10 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "prisma": "^5.15.0"
+    "prisma": "^5.15.0",
+    "vitest": "^1.6.0",
+    "supertest": "^6.3.4",
+    "@vitest/ui": "^1.6.0",
+    "@vitest/coverage-v8": "^1.6.0"
   }
 }

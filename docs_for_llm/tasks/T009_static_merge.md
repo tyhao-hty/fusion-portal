@@ -125,14 +125,28 @@ model TimelineEvent {
 
 其余纯内容页面可暂存 Markdown/静态文件，后续与 CMS 方案一并规划。
 
+## 测试与验证计划
+- **后端单测**：已补充 Vitest + Supertest 配置及 `tests/timeline.test.js` 示例，覆盖分页、排序和年份筛选（需在可联网环境执行 `cd backend && npm install && npm run prisma:migrate && npm run test`）。
+- **前端组件测试（待实现）**：使用 React Testing Library 验证 `TimelineFeed` 的加载、空态、错误重试按钮与 IntersectionObserver 触发行为（待安装相关依赖后编写测试用例）。
+- **E2E 测试（待实现）**：使用 Playwright 模拟 `访客 -> /site -> /site/history -> 加载更多` 流程，断言时间线数据展示与回退链接可用。
+- **性能与可用性检查**：记录 `/site` 与旧版 `/index.html` 的首屏加载、API 响应时间，并关注 Lighthouse 基线。
+- **监控校验**：与运维确认 Sentry/慢查询告警阈值，在部署前演练 API 故障回退（旧站切换/静态数据回退）。
+
+
 ## 监控与运维要求
 - 生产环境接入错误监控（如 Sentry）与日志系统，监控指标包括 API 错误率 > 1%、慢查询、前端错误采样、关键页面停留/跳出率。
-- 部署脚本需在 `NODE_ENV=production` 时初始化监控 SDK。
-- 与运维协调数据库慢查询日志与报警策略。
+- 部署脚本需在 `NODE_ENV=production` 时初始化监控 SDK，并验证告警通道（如测试触发一次故障）。
+- 与运维协调数据库慢查询日志与报警策略，定期检查 `timelineEvent` 查询性能。
+
+## 部署与回滚建议
+- 部署流程：依次执行 `npm run prisma:migrate`、`npm run seed:timeline -- --dry-run`、`npm run seed:timeline`；前端运行 `npm run build` 并确认 rewrites 生效。
+- 回滚策略：保留 `frontend/public/` 旧版页面，必要时切换导航至旧版 `/index.html` / `/history.html` 并停止 `/api/timeline` 调用；数据库可使用 JSON 备份重新导入。
+- 配置校验：上线前确认 `NEXT_PUBLIC_API_URL`、监控 DSN、数据库凭据、Sentry/慢查询告警阈值，部署后记录性能对比。
 
 ## 依赖与环境约束
 - 在 `package.json` 声明 `engines`（Node ≥ 18、npm ≥ 9），并锁定关键依赖版本（例如 `@types/node` 使用确定版本）。
 - 前端新增 `swr` 依赖，用于时间线分页/重试逻辑；相关组件需保持一致的 fetcher 接口。
+- 已提交基础 ESLint 配置（extends `next/core-web-vitals`），后续如需新增规则/插件请同步更新脚本与 CI；`npm run lint` 已通过，当前存在 TypeScript 版本提示（5.9.3 超出 @typescript-eslint 官方支持范围），如需升级需同步更新 linter 生态或锁定 TypeScript 版本。
 - CI 环境需遵循相同的 Node/npm 版本，避免迁移脚本或 Next.js 构建出现不一致。
 
 ## 依赖与风险
@@ -144,8 +158,8 @@ model TimelineEvent {
 - [x] 前后端代码实现（含 `/site` 页面与 `/api/timeline` 路由）
 - [ ] 数据迁移脚本与执行日志（含验证输出）
 - [ ] API 文档（Swagger/Postman 或 Markdown 说明）
-- [ ] 测试报告（单元/集成覆盖率、E2E 录屏）
-- [ ] 部署手册（含 rewrites、环境变量、监控接入步骤）
+- [ ] 测试报告（单元/集成覆盖率、E2E 录屏）——计划覆盖 `/api/timeline` 接口（分页/筛选/错误）、TimelineFeed 无限滚动组件、以及“访问首页→发展历史→加载更多”关键用户流程
+- [ ] 部署手册（含 rewrites、环境变量、监控接入步骤）——需要补充生产 rewrites/重定向及监控告警配置
 - [ ] 回滚预案与验证流程
-- [ ] 性能对比报告（首屏、API 响应）
-- [ ] 风险评估表（含监控与告警配置）
+- [ ] 性能对比报告（首屏、API 响应）——上线前记录 `/site` 与旧版页面的加载对比
+- [ ] 风险评估表（含监控与告警配置）——覆盖 API 失败回退方案与旧站切换路径
