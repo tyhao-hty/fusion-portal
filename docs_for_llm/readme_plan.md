@@ -8,20 +8,20 @@
 ---
 
 ## 🧩 当前架构
-- 前端：`frontend/` 基于 Next.js 14（App Router）+ TypeScript + Tailwind CSS，负责文章阅读与管理界面
-- 后端：`backend/` 基于 Express + Prisma + PostgreSQL，提供认证与文章 CRUD API
-- 状态管理：React Context（`UserContext`）维护登录态，令牌存储于浏览器 `localStorage`
-- 旧版站点：静态文件保留在 `frontend/public/`（用于部署）与 `frontend/_legacy-static/`（完整备份）
-- 运行方式：`cd backend && npm run dev`（API 默认端口 4000）与 `cd frontend && npm run dev`（前端默认端口 3000，需配置 `NEXT_PUBLIC_API_URL` 指向 API）
+- 前端：`frontend/` 基于 Next.js 14（App Router）+ TypeScript + Tailwind CSS，现代交互页面位于 `app/(dashboard)/`，迁移后的静态站点位于 `app/site/`（/site、/site/history），通过 rewrites 将 `/index.html` 与 `/history.html` 对应至新版路由。
+- 后端：`backend/` 基于 Express + Prisma + PostgreSQL，提供认证、文章 CRUD，以及分页时间线接口 `/api/timeline`；`npm run seed:timeline` 可导入 `frontend/public/data/timeline.json`。
+- 状态管理：React Context（`UserContext`）维护登录态，令牌存储于浏览器 `localStorage`。
+- 旧版站点：静态文件保留在 `frontend/public/`（对外部署）与 `frontend/_legacy-static/`（完整备份），可作为回退方案。
+- 运行方式：分别执行 `cd backend && npm run dev`（默认端口 4000）与 `cd frontend && npm run dev`（默认端口 3000，需将 `NEXT_PUBLIC_API_URL` 指向后端）。
 
 ---
 
 ## 📘 已实现功能
-- ✅ 后端完成邮箱 + 密码注册/登录，JWT 鉴权，以及文章的增删查改接口
-- ✅ Prisma 初始迁移（`20251017105941_init`）同步了 `User` / `Article` 数据模型
+- ✅ 后端完成邮箱 + 密码注册/登录，JWT 鉴权，以及文章增删查改接口
+- ✅ `/api/timeline` 提供分页、排序、关键字筛选能力，统一错误响应结构
 - ✅ 前端实现登录、注册、文章列表、发布与删除，并通过 `apiRequest` 与后端通信
-- ✅ `Navbar` 依据登录态显示写作、后台管理、退出等入口，同时提供旧版站点链接
-- ✅ Tailwind + 全局样式骨架为页面提供统一排版与响应式布局
+- ✅ `/site` 子站复刻旧版首页与发展历史页面，保留动画与响应式行为，并支持 SWR 无限滚动加载时间线
+- ✅ Tailwind + 全局样式骨架为页面提供统一排版与响应式布局；旧版样式通过 `styles-legacy.css` 渐进迁移
 
 ---
 

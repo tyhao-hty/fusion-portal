@@ -5,6 +5,120 @@
 > 时间戳格式：`YYYY-MM-DD HH:mm`（北京时间，UTC+8）
 ---
 
+
+
+### 📅 2025-11-04 11:54
+#### 🛠 任务：Vercel 后端部署 Prisma 生成修复
+**[行动]**
+- 在 `backend/package.json` 新增 `postinstall` 钩子，内容为 `prisma generate`，确保 Vercel 安装阶段自动生成 Prisma Client。
+- 校验 `.gitignore` 已包含 `backend/node_modules/`，避免 `.prisma` 客户端目录被提交。
+
+**[结果]**
+- Prisma Client 将在 Vercel 缓存命中时依旧重新生成，避免 “Prisma has detected…” 报错。
+- 无需调整 Build Command；默认安装流程即可满足生成需求。
+
+**[后续]**
+- 部署前可本地执行 `npm install` 验证 `postinstall` 生效；如需额外 build 步骤再补充 `build` 脚本。
+
+---
+
+### 📅 2025-11-04 00:44
+#### 🛠 维护任务：OPS-20251104A – 前后端联调排查
+**[诊断]**
+- 用户报告“前端可通过 `localhost:4000` 访问但无法请求后端接口”。
+- 核查 `frontend/utils/api.ts:1`，发现默认基地址仍指向 `http://127.0.0.1:4000`。
+- 若后端端口改为 3000（Express `PORT` 环境变量被覆盖），前端未同步 `NEXT_PUBLIC_API_URL` 将导致请求落在 Next.js 服务器自身而非后端。
+
+**[关键发现]**
+- `NEXT_PUBLIC_API_URL` 必须显式指向实际后端地址；未设置时会回退到 4000 端口。
+- （已修正）`.env.local.example` 曾使用旧变量名 `NEXT_PUBLIC_API_BASE_URL`，容易误导协作者。
+
+**[建议处理]**
+- 在 `frontend/.env.local` 中设置 `NEXT_PUBLIC_API_URL=http://127.0.0.1:<后端端口>`，与 Express 服务保持一致。
+- 已将 `.env.local.example` 更新为示例配置 `NEXT_PUBLIC_API_URL`，避免协作者沿用旧变量。
+
+**[后续行动]**
+- 待确认团队常用端口映射后，评估是否更新默认值或提供端口切换指南。
+- 若频繁在 3000/4000 之间切换，可在 README 中补充本地联调流程。
+
+
+### 📅 2025-11-03 18:05
+#### ✅ 任务编号：T009 – ESLint 验证
+**[计划阶段]**  
+- 在网络恢复后重新执行依赖安装并确认 `npm run lint` 能正常运行。
+
+**[开发阶段]**  
+- `frontend/npm install` 执行成功，`npm run lint` 通过，当前代码无 ESLint 报错。
+
+**[问题与解决]**  
+- Issue: `next lint` 提示 TypeScript 5.9.3 超出 `@typescript-eslint` 支持范围（>=4.7.4 <5.5）。  
+- Solution: 记录该告警，保留 `package.json` 中的 TypeScript 版本（^5.4.5）；若未来升级需同步更新 `@typescript-eslint` 相关依赖。
+
+**[总结与下步计划]**  
+- 后续在引入测试依赖时保持 Lint 流程运行；考虑锁定 TypeScript 版本或升级 lint 生态以消除告警。
+
+---
+
+### 📅 2025-11-03 17:52
+#### 🔧 任务编号：T009 – ESLint 基础配置
+**[计划阶段]**  
+- 采纳 Next.js 推荐规则，避免每次 `npm run lint` 触发交互式向导。  
+- 记录网络安装受限的情况，提醒后续在可联网环境完成依赖安装。
+
+**[开发阶段]**  
+- 在 `frontend/package.json` 增加 `eslint@^9.11.1`、`eslint-config-next@14.2.3`，提交 `.eslintrc.json`（extends `next/core-web-vitals`）与 `.eslintignore`。  
+- 运行 `npm install`（多次尝试因代理限制 `EPERM connect 127.0.0.1:10808` 失败），需要在具备外网的环境重新执行。
+
+**[问题与解决]**  
+- Issue: 无法通过当前网络安装 ESLint 依赖。  
+- Solution: 记录失败原因，等待网络可用时重新运行 `npm install`。配置文件已就绪。
+
+**[总结与下步计划]**  
+- 后续在有权限的环境重新安装依赖并验证 `npm run lint`。  
+- 准备添加 Vitest/Supertest、React Testing Library、Playwright 依赖以支持测试计划。
+
+---
+
+### 📅 2025-11-03 17:42
+#### 🧭 任务编号：T009 – 测试计划与协作指南整理
+**[计划阶段]**  
+- 根据最新代码结构制定时间线模块的单测/组件测试/E2E 方案，并同步到任务文档。  
+- 校准协作指南（AGENTS.md）与 `readme_plan.md`，加入 `/site` 子站、数据脚本、rewrites 等现状描述。
+
+**[开发阶段]**  
+- 更新 `AGENTS.md`，说明前后端架构、build 流程与测试规划；将项目最新状态写入 `readme_plan.md`。  
+- 在 `tasks/T009_static_merge.md` 中增加“测试与验证计划”章节，明确后端、前端、E2E、性能与监控的后续工作。
+
+**[问题与解决]**  
+- Issue: 文档仍沿用纯静态站描述，无法指导新的 Next.js/Prisma 结构。  
+- Solution: 重写相关段落，指出 `/app/(dashboard)` 与 `/app/site` 路由分组、`npm run seed:timeline`、SWR 依赖，以及未完成交付项。
+
+**[总结与下步计划]**  
+- 下一步执行测试计划：准备 Vitest/Supertest、React Testing Library、Playwright 基础配置，并实现首批时间线测试。  
+- 对 ESLint 方案做决策（采用 Next 推荐或自定义），落实后更新脚本与文档。
+
+---
+
+### 📅 2025-11-03 17:37
+#### 🧾 维护任务：DOC-20251103A – 文档校验与运行确认
+**[计划阶段]**  
+- 对照最新代码状态核对 `readme_plan.md`、任务文档与仓库结构，确保描述包含 `/site` 子站、时间线 API 与数据脚本。  
+- 记录前后端运行验证结果，便于后续协作者了解当前基线。
+
+**[开发阶段]**  
+- 更新 `readme_plan.md`，补充 `/api/timeline`、`/site` 路由结构、rewrites 及 `npm run seed:timeline` 说明。  
+- 复核 T009 文档、任务概览与目录结构；保持未完成交付物（测试、文档、监控）为待办状态。
+
+**[问题与解决]**  
+- Issue: 文档仍标注旧版首页布局信息。  
+- Solution: 重新编写架构与已实现功能段落，强调新子站与数据接口。
+
+**[总结与下步计划]**  
+- 用户已完成前后端运行验证，当前基线可作为后续开发起点。  
+- 下一阶段优先落实测试计划（API 单测、SWR 组件测试、E2E）与 ESLint 配置决策，并在 T009 交付物列表逐项勾选。
+
+---
+
 ### 📅 2025-11-03 14:59
 #### 🚧 任务编号：T009 – 阶段一实现（后端 + 前端）
 **[计划阶段]**  
@@ -228,4 +342,4 @@
 
 ---
 
-*文件最后更新：2025-10-31 16:23 由 AI 初始化*
+*文件最后更新：2025-11-03 15:12 由 AI 更新*
