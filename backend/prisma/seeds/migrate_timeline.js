@@ -14,9 +14,15 @@ const DEFAULT_JSON_PATH = path.resolve(
   __dirname,
   '../../../frontend/public/data/timeline.json',
 );
+const LOG_DIR = path.resolve(__dirname, 'logs');
 
 function parseArgs(argv) {
   const args = new Set(argv.slice(2));
+  const checksumFlagIndex = argv.indexOf('--checksum');
+  const expectedChecksum =
+    checksumFlagIndex !== -1 && argv[checksumFlagIndex + 1]
+      ? argv[checksumFlagIndex + 1]
+      : process.env.TIMELINE_JSON_CHECKSUM || null;
   return {
     dryRun: args.has('--dry-run'),
     dataPath: (() => {
@@ -26,6 +32,7 @@ function parseArgs(argv) {
       }
       return process.env.TIMELINE_JSON ?? DEFAULT_JSON_PATH;
     })(),
+    expectedChecksum,
   };
 }
 
@@ -47,8 +54,8 @@ async function validateMigration({ expectedCount, checksumMatch, sampleRecordInt
   if (expectedCount <= 0) {
     throw new Error('Timeline migration aborted: expectedCount must be greater than zero.');
   }
-  if (!checksumMatch) {
-    throw new Error('Timeline migration aborted: checksum mismatch detected.');
+  if (checksumMatch === false) {
+    throw new Error('Timeline migration aborted: timeline checksum mismatch detected.');
   }
   if (!sampleRecordIntegrity) {
     throw new Error('Timeline migration aborted: sample record validation failed.');
@@ -56,7 +63,7 @@ async function validateMigration({ expectedCount, checksumMatch, sampleRecordInt
 }
 
 async function main() {
-  const { dryRun, dataPath } = parseArgs(process.argv);
+  const { dryRun, dataPath, expectedChecksum } = parseArgs(process.argv);
   const absolutePath = dataPath;
 
   const jsonBuffer = await fs.readFile(absolutePath);
@@ -90,15 +97,89 @@ async function main() {
     };
   });
 
+  const fileChecksum = checksum(jsonBuffer);
+  const existingRecords = await prisma.timelineEvent.findMany({
+    select: {
+      slug: true,
+      yearLabel: true,
+      yearValue: true,
+      title: true,
+      description: true,
+      sortOrder: true,
+    },
+    orderBy: { sortOrder: 'desc' },
+  });
+
+  const existingChecksum =
+    existingRecords.length > 0
+      ? checksum(
+          JSON.stringify(
+            existingRecords.map((record) => ({
+              slug: record.slug,
+              yearLabel: record.yearLabel,
+              yearValue: record.yearValue,
+              title: record.title,
+              description: record.description,
+              sortOrder: record.sortOrder,
+            })),
+          ),
+        )
+      : null;
+
+  const checksumMatch =
+    expectedChecksum === null ? true : expectedChecksum === fileChecksum;
+
+  const existingSlugs = new Set(existingRecords.map((record) => record.slug));
+  const fileSlugs = new Set(records.map((record) => record.slug));
+  const missingInDatabase = records
+    .filter((record) => !existingSlugs.has(record.slug))
+    .map((record) => record.slug);
+  const missingInFile = existingRecords
+    .filter((record) => !fileSlugs.has(record.slug))
+    .map((record) => record.slug);
+
   await validateMigration({
     expectedCount: records.length,
-    checksumMatch: true,
+    checksumMatch,
     sampleRecordIntegrity: records.length > 0 && typeof records[0].slug === 'string',
   });
+
+  const summary = {
+    timestamp: new Date().toISOString(),
+    dryRun,
+    filePath: absolutePath,
+    fileChecksum,
+    expectedChecksum,
+    checksumMatch: expectedChecksum ? checksumMatch : null,
+    recordCount: records.length,
+    databaseCountBefore: existingRecords.length,
+    existingChecksum,
+    missingInDatabase: missingInDatabase.slice(0, 10),
+    missingInFile: missingInFile.slice(0, 10),
+  };
+
+  await fs.mkdir(LOG_DIR, { recursive: true });
+
+  const renderLogFilename = () => {
+    const timestamp = summary.timestamp.replace(/[:.]/g, '-');
+    const suffix = dryRun ? 'dry-run' : 'migrate';
+    return `timeline-${suffix}-${timestamp}.json`;
+  };
+
+  async function writeSummary(extra = {}) {
+    const payload = { ...summary, ...extra };
+    const logPath = path.join(LOG_DIR, renderLogFilename());
+    await fs.writeFile(logPath, JSON.stringify(payload, null, 2), 'utf8');
+    console.log(`[timeline] Summary written to ${logPath}`);
+  }
 
   if (dryRun) {
     console.log('[timeline] Dry-run successful.');
     console.table(records.slice(0, 3));
+    await writeSummary({
+      applied: false,
+      databaseCountAfter: existingRecords.length,
+    });
     await prisma.$disconnect();
     return;
   }
@@ -112,6 +193,10 @@ async function main() {
   });
 
   console.log(`[timeline] Migrated ${records.length} records from ${absolutePath}.`);
+  await writeSummary({
+    applied: true,
+    databaseCountAfter: records.length,
+  });
   await prisma.$disconnect();
 }
 

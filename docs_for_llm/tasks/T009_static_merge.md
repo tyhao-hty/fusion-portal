@@ -31,6 +31,19 @@
 - [x] 提炼 `styles.css` 必需变量/动画，形成样式迁移指南；
 - [x] 定义阶段一验收标准（UI 一致性、数据校验、回退机制），准备评审。
 
+## 当前阶段评估（2025-11-05）
+- **整体进度**：阶段一功能已进入收尾。新版 `/site`、`/site/history` 与 `/api/timeline` 联调稳定，单元测试（TimelineFeed）与 Playwright 场景（首页渲染、加载更多、旧站 fallback）全部通过。部署、回滚、性能基线文档已经补齐。
+- **质量现状**：前端组件覆盖率 97.5%，E2E 运行耗时 36.9s；回滚与性能基线形成可执行手册。仍需补充 `utils/api.ts` 单测，并输出时间线迁移脚本的最新执行日志/差异报告。
+- **风险余量**：TypeScript 已锁定至 `~5.4.5`，需持续关注 `@typescript-eslint` 升级节奏；时间线数据与后台模型的联动细节仍待与 T002/T003 对齐。
+
+## 下一步工作
+1. **数据与脚本**：运行并记录时间线迁移脚本（`npm run seed:timeline -- --dry-run`/正式执行），归档日志摘要与 checksum 差异报告（最新日志：`backend/prisma/seeds/logs/timeline-migrate-2025-11-05T05-30-18-999Z.json`）。
+2. **测试补强**：为 `frontend/utils/api.ts` 添加单测，并将 Lighthouse + API latency 实测数据写入《performance_report》。
+3. **交付整理**：汇总测试证据（报告链接、截图/录屏）并草拟 T009 测试报告模板，为阶段评审做准备。
+4. **阶段二衔接**：与 T002/T003 协调文章/时间线数据模型，规划后台录入与 Markdown 渲染迁移时间表。
+   - 与 T002 后台管理面板共享：`TimelineEvent` 与未来 `Article`/`Category`/`Tag` 关联规则，明确时间线事件是否引用文章 ID、后台如何管理里程碑文案。
+   - 与 T003 文章加载渲染共享：文章元数据（发布时间、标签、文章类型）应与时间线展示保持一致；Markdown 渲染完成后需确认 `/site` 页面是否直接消费同一 API 或使用缓存层。
+
 ### 路由与兼容策略
 - 过渡期使用 `/site` 子路径承载新版页面（`app/site/layout.tsx`, `app/site/page.tsx`, `app/site/history/page.tsx`），旧站仍可通过 `/index.html` 访问。
 - 在 `next.config.js` 中配置 rewrites（文档中需列出完整清单）：
@@ -126,9 +139,11 @@ model TimelineEvent {
 其余纯内容页面可暂存 Markdown/静态文件，后续与 CMS 方案一并规划。
 
 ## 测试与验证计划
-- **后端单测**：已补充 Vitest + Supertest 配置及 `tests/timeline.test.js` 示例，覆盖分页、排序和年份筛选（需在可联网环境执行 `cd backend && npm install && npm run prisma:migrate && npm run test`）。
-- **前端组件测试（待实现）**：使用 React Testing Library 验证 `TimelineFeed` 的加载、空态、错误重试按钮与 IntersectionObserver 触发行为（待安装相关依赖后编写测试用例）。
-- **E2E 测试（待实现）**：使用 Playwright 模拟 `访客 -> /site -> /site/history -> 加载更多` 流程，断言时间线数据展示与回退链接可用。
+- **后端单测**：已补充 Vitest + Supertest 配置及 `tests/timeline.test.js` 示例，覆盖分页、排序和年份筛选（可在联网环境执行 `cd backend && npm install && npm run prisma:migrate && npm run test`；最近一次运行于 2025-11-04 已通过）。
+- **前端组件测试**：已添加 Jest + React Testing Library 脚手架（`jest.config.js`、`jest.setup.ts`、`__tests__/TimelineFeed.test.tsx`），覆盖加载、错误、空态、手动“加载更多里程碑”以及 IntersectionObserver 自动分页场景；使用 `npm run test -- --coverage --runInBand TimelineFeed` 在 Node 22 环境下可稳定通过，`TimelineFeed.tsx` 语句覆盖率 97.5%（`utils/api.ts` 仍待单测补齐）。
+- **E2E 测试**：使用 Playwright 覆盖 `/site` 首页渲染、历史页“加载更多里程碑”交互（通过拦截 `/api/timeline` 实现分页验证）以及静态页面回退（`/site`→`/science.html`）。执行 `PLAYWRIGHT_BROWSERS_PATH=.playwright-browsers npm run test:e2e` 会先执行 `npm run build`，再以 `next start` 启动生产服务器；若运行环境禁止绑定本地端口，请改在开发者机器上执行并上传报告。截至 2025-11-05，Chromium 环境 4 个场景均通过（36.9s），可使用 `npx playwright show-report` 查看本地报告。
+- 运行 Playwright 前需执行 `npx playwright install`，确保端口 3000 未占用；CI 环境可使用 `PLAYWRIGHT_BASE_URL` 指向部署服务。
+- **时间线数据迁移校验**：执行 `cd backend && npm run seed:timeline -- --dry-run`，脚本将在控制台输出样例记录并将摘要写入 `backend/prisma/seeds/logs/`（包含文件校验和、数据库记录数量、缺失条目）。如需在 CI 中强制比对，可提供 `--checksum <expected>` 或设置环境变量 `TIMELINE_JSON_CHECKSUM`。运行前请确保 `DATABASE_URL` 指向可用的 PostgreSQL 实例。正式执行日志示例：`timeline-migrate-2025-11-05T05-30-18-999Z.json`。
 - **性能与可用性检查**：记录 `/site` 与旧版 `/index.html` 的首屏加载、API 响应时间，并关注 Lighthouse 基线。
 - **监控校验**：与运维确认 Sentry/慢查询告警阈值，在部署前演练 API 故障回退（旧站切换/静态数据回退）。
 
@@ -138,10 +153,17 @@ model TimelineEvent {
 - 部署脚本需在 `NODE_ENV=production` 时初始化监控 SDK，并验证告警通道（如测试触发一次故障）。
 - 与运维协调数据库慢查询日志与报警策略，定期检查 `timelineEvent` 查询性能。
 
+## 性能基线与监控指引（2025-11-05 更新）
+- **首屏性能**：在构建完成后使用 Lighthouse（桌面+移动）记录 `/site` 与 `/site/history` 的 FCP/LCP/CLS；若指标劣于旧版 `/index.html` 5% 以上，需回溯 CSS/脚本差异。
+- **时间线接口**：部署阶段运行 `curl -w "%{time_total}"` 或 Postman 采样 `/api/timeline?page=1&limit=8`、`/api/timeline?page=3`，确保 P95 < 400 ms；出现波动时回滚至 JSON 源并开启 Prisma 慢查询日志。
+- **无限滚动稳定性**：通过 Playwright “加载更多里程碑” 场景确认分页按钮状态、IntersectionObserver 自动加载均可恢复；若网络抖动导致 `hasNext` 状态错误，使用 SWR `mutate` 强制刷新并在监控中加入前端报错采样。
+- **回退路径**：每次部署后验证 `/science.html`、`/theory.html` 等静态页在 200 ms 内返回并加载 `components/common.js`，确保旧站兜底链路可用。
+
 ## 部署与回滚建议
 - 部署流程：依次执行 `npm run prisma:migrate`、`npm run seed:timeline -- --dry-run`、`npm run seed:timeline`；前端运行 `npm run build` 并确认 rewrites 生效。
 - 回滚策略：保留 `frontend/public/` 旧版页面，必要时切换导航至旧版 `/index.html` / `/history.html` 并停止 `/api/timeline` 调用；数据库可使用 JSON 备份重新导入。
 - 配置校验：上线前确认 `NEXT_PUBLIC_API_URL`、监控 DSN、数据库凭据、Sentry/慢查询告警阈值，部署后记录性能对比。
+- 详细步骤参考《docs/deployment_handbook.md》，其中列出了环境变量、构建命令、联动验证与回滚操作手册。
 
 ## 依赖与环境约束
 - 在 `package.json` 声明 `engines`（Node ≥ 18、npm ≥ 9），并锁定关键依赖版本（例如 `@types/node` 使用确定版本）。
@@ -154,12 +176,21 @@ model TimelineEvent {
 - 需与后端确认数据库 schema 与迁移安排；
 - 在未完成阶段一前不建议直接替换生产站点，保留 `_legacy-static` 作为回退。
 
+### 风险评估表（2025-11-05 更新）
+| 风险项 | 影响 | 应对措施 | 状态 |
+| --- | --- | --- | --- |
+| `/api/timeline` 服务不可用 | 历史页空白、分页失败，影响核心功能 | SWR 自动重试 + 提示旧站链接；部署前执行 `npm run seed:timeline -- --dry-run` 验证；监控 API 5xx | 监控中 |
+| 时间线数据与 JSON 不一致 | 文案/排序出错，历史页展示异常 | 迁移后对比 `timeline.json` 校验 checksum；Prisma seed 输出差异报告 | 预防中 |
+| IntersectionObserver 在低端设备异常 | 无限滚动停滞，用户需手动刷新 | 保留“加载更多里程碑”按钮；Playwright 覆盖手动触发场景 | 可接受 |
+| 静态兜底链路失效 | 旧站 fallback 不可用，无法回滚 | 每次部署执行 Playwright “旧站回退” 场景；部署手册中保留 `public/*.html` 复制流程 | 监控中 |
+| TypeScript/Lint 工具链升级不兼容 | 构建失败或 ESLint 报错 | 锁定 TypeScript ~5.4（已在 `frontend/package.json` 采用 `~5.4.5`），升级前在 `AGENTS.md`、`T009` 文档同步流程 | 受控 |
+
 ## 交付物清单
 - [x] 前后端代码实现（含 `/site` 页面与 `/api/timeline` 路由）
-- [ ] 数据迁移脚本与执行日志（含验证输出）
-- [ ] API 文档（Swagger/Postman 或 Markdown 说明）
+- [x] 数据迁移脚本与执行日志（含验证输出）——最新日志见 `backend/prisma/seeds/logs/timeline-migrate-2025-11-05T05-30-18-999Z.json`
+- [x] API 文档（Swagger/Postman 或 Markdown 说明）——见《docs/api/timeline.md》
 - [ ] 测试报告（单元/集成覆盖率、E2E 录屏）——计划覆盖 `/api/timeline` 接口（分页/筛选/错误）、TimelineFeed 无限滚动组件、以及“访问首页→发展历史→加载更多”关键用户流程
-- [ ] 部署手册（含 rewrites、环境变量、监控接入步骤）——需要补充生产 rewrites/重定向及监控告警配置
-- [ ] 回滚预案与验证流程
-- [ ] 性能对比报告（首屏、API 响应）——上线前记录 `/site` 与旧版页面的加载对比
-- [ ] 风险评估表（含监控与告警配置）——覆盖 API 失败回退方案与旧站切换路径
+- [x] 部署手册（含 rewrites、环境变量、监控接入步骤）——见《docs/deployment_handbook.md》
+- [x] 回滚预案与验证流程——见《docs/rollback_plan.md》
+- [x] 性能对比报告（首屏、API 响应）——见《docs/performance_report.md》
+- [x] 风险评估表（含监控与告警配置）——见上表

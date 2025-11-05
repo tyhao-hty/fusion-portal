@@ -1,5 +1,7 @@
 import './globals.css';
 import { UserProvider } from '../components/UserContext';
+import React from 'react';
+
 
 export const metadata = {
   title: {
