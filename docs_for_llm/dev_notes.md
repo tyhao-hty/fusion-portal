@@ -1,12 +1,312 @@
+*文件最后更新：2025-11-05 13:38 由 AI 更新*
 # Dev Notes – AI 开发日志与自动总结
-> 本文件由 AI 自动维护与人类开发者共同审阅。  
-> 所有开发活动、设计决策、问题记录、错误修复与计划总结均应追加至此文件末尾。  
-> 不得覆盖历史内容。
-> 时间戳格式：`YYYY-MM-DD HH:mm`（北京时间，UTC+8）
+> 本文件由 AI 自动维护并由人类开发者定期审阅。  
+> 所有开发活动、设计决策、问题记录、错误修复与阶段总结均应追加至此文件。  
+> ⚠️ 不得覆盖或删除历史记录。  
+
+---
+
+## 🧠 维护规则
+
+1. **追加方式**  
+   - 所有新日志必须追加在“🧩 日志记录区”中，**放在最新一条日志的上方**。  
+   - 禁止在旧日志之间插入或修改已有内容。  
+   - 每条记录应包含完整的时间戳、任务编号（如适用）、问题与解决方案、下一步计划等。
+   - **时间戳格式：** `YYYY-MM-DD HH:mm`（北京时间，UTC+8）
+
+2. **记录顺序**  
+   - 文件采用**时间倒序排列**（最新日志在最上方）。  
+   - 若多个任务在同一时间段内执行，应按时间戳先后顺序记录。
+
+3. **记录内容**  
+   - 应包含任务编号、执行命令、问题与解决、测试结果、后续计划等核心信息，记录结构参考“🧩 日志结构说明”。  
+   - 若为错误日志或异常情况，必须记录完整的解决方案与影响分析。
+
+4. **日志生成者**  
+   - AI 在每次任务完成后应立即追加记录；  
+   - 人类开发者手动修改时，应保留AI原始条目，并注明“人工补充”或“人工修订”。
+
+## 🧩 日志结构说明
+- **[计划阶段]**：AI 对任务的理解与执行思路；
+- **[开发阶段]**：AI 生成或修改的代码摘要；
+- **[问题与解决]**：遇到的错误、依赖问题、架构调整；
+- **[总结与下步计划]**：每次任务完成后的反思与后续行动。
+
+
+## 🧱 示例条目（模板）
+
+### 📅 2025-10-17 18:10
+#### 🔥 任务编号：T001 – 用户注册与登录系统
+**[计划阶段]**  
+- 目标：实现注册和登录逻辑，后端基于 Prisma + PostgreSQL。  
+- 步骤：
+  1. 创建 `User` 数据模型；
+  2. 编写注册 API `/api/auth/register`；
+  3. 编写登录 API `/api/auth/login`；
+  4. 使用 JWT 实现登录态验证；
+  5. 前端表单与后端接口连接。
+
+**[开发阶段]**  
+- 新增文件：`/pages/api/auth/register.js`, `/pages/api/auth/login.js`  
+- 修改文件：`/prisma/schema.prisma`  
+- 代码已通过本地 `npm run dev` 测试；数据库连接正常。
+
+**[问题与解决]**  
+- Issue: Prisma migrate 报错：权限不足创建 shadow database。  
+- Solution: 通过 `ALTER ROLE postgres CREATEDB;` 解决。
+
+**[总结与下步计划]**  
+- 登录验证逻辑可扩展 OAuth 2.0；  
+- 下步任务：T002 后台管理面板框架设计。
+---
+
+### ⚙️ 插入指引（AI请严格遵守）
+> 🧭 **在更新日志时：**
+> - 找到下方的 “🧩 日志记录区” 标题；  
+> - 将新内容插入在该标题下方、第一条日志的上方；  
+> - 不要修改已有记录的顺序或格式。  
+
+---
+
+## 🧩 日志记录区（按时间倒序排列）
+
+---
+
+### 📅 2025-11-05 13:38
+#### 🔥 任务编号：T009 – 性能/测试档案补充
+**[计划阶段]**  
+- 明确性能采集和测试证据的留存方式，便于阶段评审。
+
+**[开发阶段]**  
+- 更新《docs/performance_report.md》加入采集计划表，并说明将报告存放于 `docs/performance/`。  
+- 创建《docs/tests/T009_test_report.md》，汇总单测、E2E、数据脚本执行记录，指向 Playwright 报告与迁移日志；补充与 T002/T003 数据模型协作要点。
+
+**[问题与解决]**  
+- Issue: 无。
+
+**[总结与下步计划]**  
+- 待实测 Lighthouse/API latency 后补充表格结果；准备与 T002/T003 的数据模型对齐说明。
+
+---
+
+### 📅 2025-11-05 13:33
+#### 🔥 任务编号：T009 – 时间线脚本日志接入
+**[计划阶段]**  
+- 记录生产环境执行迁移脚本的摘要日志，确保数据校验结果可追溯。
+
+**[开发阶段]**  
+- 日志文件：`backend/prisma/seeds/logs/timeline-migrate-2025-11-05T05-30-18-999Z.json`（记录数 14，数据库前后均为 14，checksum 匹配）。
+- 更新《docs/performance_report.md》加入采集计划表，《docs/tests/T009_test_report.md》整理单测/E2E/数据脚本证据。
+- 命令由人类在可用数据库环境执行：`cd backend && npm run seed:timeline`。
+
+**[问题与解决]**  
+- Issue: 无。
+
+**[总结与下步计划]**  
+- 后续在性能报告中补充 Lighthouse/API 实测值，并准备测试证据清单。
+
+---
+
+### 📅 2025-11-05 13:00
+#### 🔥 任务编号：T009 – 数据脚本增强与文档补全
+**[计划阶段]**  
+- 强化时间线迁移脚本校验能力，补充 `/api/timeline` 文档及性能/工具链相关记录。
+
+**[开发阶段]**  
+- 更新 `backend/prisma/seeds/migrate_timeline.js`，新增 checksum 校验、数据库差异对比与日志落盘（`backend/prisma/seeds/logs/`）。  
+- 创建《docs/api/timeline.md》梳理参数、响应示例与错误结构；新增《docs/performance_report.md》模板化记录构建指标/性能采集步骤。  
+- 新增 `frontend/__tests__/api.test.ts` 验证 `apiRequest` 成功与错误分支，命令：`cd frontend && npm run test -- --runInBand api`（通过）。  
+- 将前端 TypeScript 版本锁定为 `~5.4.5`（`frontend/package.json`、`package-lock.json`），并在 `AGENTS.md`、`docs_for_llm/tasks/T009_static_merge.md` 更新说明。  
+- 命令：`cd frontend && npm install`（因沙箱限制报 `ERR_INVALID_URL`，未能刷新 package-lock；需在可访问网络/缓存的环境重新执行以更新到 5.4.x）。
+
+**[问题与解决]**  
+- Issue：沙箱环境禁写 `/root/.npm/_logs` 且无法访问 npm registry，导致 `npm install` 失败；同时 `npm run seed:timeline -- --dry-run` 因数据库未运行（`localhost:5432` 不可达）而中止。  
+- Solution：记录手动操作指引，待有权限的环境重新运行 `npm install` 以回写 `package-lock.json`；时间线脚本需在数据库可用时执行以生成摘要日志。
+
+**[总结与下步计划]**  
+- 下一步按任务文档执行：跑通迁移脚本 dry-run 生成日志、补充 `utils/api.ts` 单测和性能实测数据，并准备测试报告草案。
+
+---
+
+### 📅 2025-11-05 12:47
+#### 🔥 任务编号：T009 – 阶段评估与后续规划
+**[计划阶段]**  
+- 根据当前交付成果评估 T009 阶段进度，并梳理剩余风险与下一步工作项。
+
+**[开发阶段]**  
+- 更新 `docs_for_llm/tasks/T009_static_merge.md`，新增“当前阶段评估”“下一步工作”章节，明确已完成事项与待办清单。
+
+**[问题与解决]**  
+- Issue: 无。
+
+**[总结与下步计划]**  
+- 下一阶段聚焦数据迁移脚本、API 文档、性能实测以及 lint/TypeScript 版本决策，确保阶段一正式结项。
+
+---
+
+### 📅 2025-11-05 12:35
+#### 🔥 任务编号：T009 – 回滚预案与性能文档
+**[计划阶段]**  
+- 补全 T009 未交付文档：回滚执行手册与性能对比报告，并在任务清单中标记完成状况。
+
+**[开发阶段]**  
+- 新增《docs/rollback_plan.md》、《docs/performance_report.md》，分别整理触发条件、操作流程、性能指标与采集步骤。  
+- 更新 `docs_for_llm/tasks/T009_static_merge.md` 勾选对应交付项，引用最新文档。
+
+**[问题与解决]**  
+- Issue: 无。
+
+**[总结与下步计划]**  
+- 后续按照性能报告指引补充 Lighthouse/API 实测数据，并在季度内安排一次回滚演练。
+
+---
+
+### 📅 2025-11-05 12:31
+#### ✅ 任务编号：T009 – Playwright 回归验证记录
+**[计划阶段]**  
+- 根据人类运行反馈记录 E2E 通过结果，确认新场景稳定。
+
+**[开发阶段]**  
+- 命令：`PLAYWRIGHT_BROWSERS_PATH=.playwright-browsers npm run test:e2e`（Chromium，4 workers）。  
+- 结果：4 个用例全部通过（36.9s），涵盖首页渲染、时间线加载、手动“加载更多里程碑”、旧站回退。
+
+**[问题与解决]**  
+- Issue: 无。
+
+**[总结与下步计划]**  
+- 保留 `npx playwright show-report` 报告用于交叉验证；后续继续完善性能对比与回滚演练文档。
+
+---
+
+### 📅 2025-11-05 12:22
+#### 🔥 任务编号：T009 – Playwright 复测回馈处理
+**[计划阶段]**  
+- 根据人类运行的 E2E 报告修正首页断言（处理导航/页脚同名链接冲突），并消除 Next 配置告警。
+
+**[开发阶段]**  
+- 更新 `frontend/e2e/site.spec.ts`，将“发展历史”校验限定在 `主导航` 区域。  
+- 移除 `frontend/next.config.js` 中已废弃的 `experimental.appDir` 配置，避免构建警告。
+
+**[问题与解决]**  
+- Issue：Playwright 在 Strict 模式下因重复 Locator 抛错。  
+- Solution：缩小查找范围到命名导航区域，确保唯一元素。构建告警同步清理。
+
+**[总结与下步计划]**  
+- 请在具备端口权限的环境重新运行 `PLAYWRIGHT_BROWSERS_PATH=.playwright-browsers npm run test:e2e`，确认四条用例全部通过；后续继续筹备性能对比与回滚演练。
+
+---
+
+### 📅 2025-11-05 11:48
+#### 🔥 任务编号：T009 – Playwright 场景扩展与发布文档
+**[计划阶段]**  
+- 扩写 E2E 用例覆盖时间线“加载更多里程碑”按钮与旧站静态兜底路径。  
+- 调整测试运行方式，补齐部署/性能/风险文档，并尝试在当前环境执行 Playwright。
+
+**[开发阶段]**  
+- 更新 `frontend/e2e/site.spec.ts`，增加分页拦截、手动加载断言与旧站回退验证。  
+- 调整 `playwright.config.ts` 改用 `next start`、`frontend/package.json` 串联 `npm run build`，并新增 `docs/deployment_handbook.md`。  
+- 执行命令：`cd frontend && PLAYWRIGHT_BROWSERS_PATH=.playwright-browsers npx playwright install chromium`（经授权下载成功）、`PLAYWRIGHT_BROWSERS_PATH=.playwright-browsers npm run test:e2e`。  
+- 更新 `docs_for_llm/tasks/T009_static_merge.md`，补充测试覆盖、性能指引、风险表并引用新的部署手册。
+
+**[问题与解决]**  
+- Issue：在沙箱环境下无法监听本地端口，`next start` 及 `node http.createServer` 均报 `EPERM: operation not permitted 0.0.0.0:3000`，导致 Playwright WebServer 启动失败。  
+- Solution：记录限制并在文档中注明需于具备端口访问权限的环境执行 E2E，同时保留人工验证清单作为替代。
+
+**[总结与下步计划]**  
+- 待补：在开放端口的环境重新运行 `npm run test:e2e` 并保存报告；后续整理性能对比与回滚演练记录。
+
+---
+
+### 📅 2025-11-05 10:39
+#### 🔥 任务编号：T009 – TimelineFeed 单测增强
+**[计划阶段]**  
+- 扩充 TimelineFeed 单测覆盖空态、手动“加载更多里程碑”、IntersectionObserver 自动分页，并记录覆盖率指标。  
+- 确认在 Node 22 环境下使用 `--runInBand` 运行 Jest 的稳定性。
+
+**[开发阶段]**  
+- 修改 `frontend/__tests__/TimelineFeed.test.tsx`，新增通用响应构造函数与 IntersectionObserver stub，补充 3 个测试用例。  
+- 执行 `cd frontend && npm install`；运行 `npm run test -- --coverage --runInBand TimelineFeed`，全部 5 个断言通过，`TimelineFeed.tsx` 语句覆盖率 97.5%、分支覆盖率 96.29%。
+
+**[问题与解决]**  
+- Issue: SWR 触发的 `mutate` 导致 React 发出 `act` 警告。  
+- Solution: 使用 `act` 包装 `userEvent.click` 交互，确保状态更新过程同步到测试断言。
+
+**[总结与下步计划]**  
+- 下一阶段扩展 Playwright E2E（加载更多、旧站回退）并补齐 `utils/api.ts` 的单测覆盖。
+
+---
+
+### 📅 2025-11-04 18:39
+#### ✅ 任务编号：T009 – 前端测试执行&Playwright 搭建
+**[计划阶段]**  
+- 在 Node 18 环境验证 Jest 组件测试，并为 E2E 准备 Playwright 配置。
+
+**[开发阶段]**  
+- 命令：`cd frontend && npm run test -- TimelineFeed` 已通过，确认 `TimelineFeed` 加载/错误场景测试可用。  
+- 新增 `playwright.config.ts`、`e2e/site.spec.ts`，并在 `package.json` 增加 `test:e2e` 脚本，覆盖 `/site` 首页与发展历程页面基础渲染。
+
+**[问题与解决]**  
+- Issue: Playwright 需外部依赖浏览器下载与运行时间较长。  
+- Solution: 在文档中提示需执行 `npx playwright install`，并确保端口 3000 可用。
+
+**[总结与下步计划]**  
+- 后续扩展 E2E 场景（加载更多、旧版回退）、补充性能对比与风险评估；整理完整测试报告。
+
+---
+
+### 📅 2025-11-04 18:12
+#### ⚠️ 任务编号：T009 – Jest 执行异常记录
+**[计划阶段]**  
+- 在添加前端测试脚手架后，验证 `npm run test` 是否可在当前环境运行。
+
+**[开发阶段]**  
+- 命令 `cd frontend && npm run test -- TimelineFeed` 报错：`jest worker process crashed exitCode=0`。
+
+**[问题与解决]**  
+- Issue: Jest 在 Node 22 + next/jest 环境下崩溃，疑似 worker/transform 兼容问题。  
+- Solution: 记录 Blocking 状态，建议在 Node 18 环境启用 `--runInBand` 或升级/调整 `next/jest` 配置后再运行。
+
+**[总结与下步计划]**  
+- 需要在兼容环境重试，若仍失败则考虑降级 Node、使用 Babel Transform 或切换 Vitest + Testing Library。
+
 ---
 
 
+### 📅 2025-11-04 17:03
+#### 🧪 任务编号：T009 – 前端测试脚手架
+**[计划阶段]**  
+- 为 `TimelineFeed` 组件搭建 Jest + React Testing Library 环境，与后端测试计划呼应。
 
+**[开发阶段]**  
+- 新增 `jest.config.js`、`jest.setup.ts`、`__tests__/TimelineFeed.test.tsx`，并在 `package.json` 增加 `test` 脚本。测试覆盖加载/错误两种状态，使用 SWRConfig + mocked `apiRequest`。  
+- 更新依赖（`@testing-library/*`、`jest`、`ts-jest`、`@types/jest`)：需要在前端目录执行 `npm install` 后运行 `npm run test` 验证。
+
+**[问题与解决]**  
+- Issue: 全量测试尚未运行，需待依赖安装完成后执行。  
+- Solution: 在任务文档注明运行指令，后续补充更多场景与 Playwright E2E。
+
+**[总结与下步计划]**  
+- 下阶段：完善组件测试场景（滚动、空态、加载更多）并引入 Playwright E2E；整理测试报告条目。
+
+---
+
+
+### 📅 2025-11-04 16:59
+#### ✅ 任务编号：T009 – 后端测试执行记录
+**[计划阶段]**  
+- 在网络恢复后运行后端依赖安装与时间线单测，验证 Vitest/Supertest 配置。
+
+**[开发阶段]**  
+- 命令：`cd backend && npm install && npm run prisma:migrate && npm run test`，全部通过。
+- 输出：Vitest 报告 `GET /api/timeline` 测试成功，确认分页、年份筛选与参数容错行为。
+
+**[问题与解决]**  
+- Issue: 无。
+
+**[总结与下步计划]**  
+- 下一步继续补充前端组件测试（React Testing Library）与 Playwright E2E，并在测试报告中记录结果。
+
+---
 ### 📅 2025-11-04 11:54
 #### 🛠 任务：Vercel 后端部署 Prisma 生成修复
 **[行动]**
@@ -297,49 +597,6 @@
 - 建议下一步在完成后台管理增强（T002）前先梳理接口与权限设计，必要时拆分子任务。
 
 ---
-## 🧩 文件结构说明
-- **[计划阶段]**：AI 对任务的理解与执行思路；
-- **[开发阶段]**：AI 生成或修改的代码摘要；
-- **[问题与解决]**：遇到的错误、依赖问题、架构调整；
-- **[总结与下步计划]**：每次任务完成后的反思与后续行动。
+
 
 ---
-
-## 🧱 示例条目（模板）
-
-### 📅 2025-10-17 18:10
-#### 🔥 任务编号：T001 – 用户注册与登录系统
-**[计划阶段]**  
-- 目标：实现注册和登录逻辑，后端基于 Prisma + PostgreSQL。  
-- 步骤：
-  1. 创建 `User` 数据模型；
-  2. 编写注册 API `/api/auth/register`；
-  3. 编写登录 API `/api/auth/login`；
-  4. 使用 JWT 实现登录态验证；
-  5. 前端表单与后端接口连接。
-
-**[开发阶段]**  
-- 新增文件：`/pages/api/auth/register.js`, `/pages/api/auth/login.js`  
-- 修改文件：`/prisma/schema.prisma`  
-- 代码已通过本地 `npm run dev` 测试；数据库连接正常。
-
-**[问题与解决]**  
-- Issue: Prisma migrate 报错：权限不足创建 shadow database。  
-- Solution: 通过 `ALTER ROLE postgres CREATEDB;` 解决。
-
-**[总结与下步计划]**  
-- 登录验证逻辑可扩展 OAuth 2.0；  
-- 下步任务：T002 后台管理面板框架设计。
-
----
-
-## 🧠 AI 自动维护约定
-1. 每次 AI 执行任务后，必须在此文件中追加记录；
-2. 若遇到错误、依赖缺失或架构问题，应记录完整解决方案；
-3. 文件采用时间倒序排列（最新记录放在最上方）；
-4. 所有时间戳统一采用 UTC+8（北京时间）；
-5. 不允许删除历史日志，仅可追加。
-
----
-
-*文件最后更新：2025-11-03 15:12 由 AI 更新*

@@ -24,6 +24,9 @@ frontend/.vercel/
 frontend/.turbo/
 frontend/.idea/
 frontend/.vscode/
+frontend/.playwright-browsers/
+frontend/playwright-report/
+frontend/test-results/
 
 # ===== 后端 (Express / Prisma) =====
 backend/dist/
@@ -31,6 +34,7 @@ backend/build/
 backend/node_modules/
 backend/prisma/dev.db
 backend/prisma/migrations/
+backend/prisma/seeds/logs/
 backend/.idea/
 backend/.vscode/
 

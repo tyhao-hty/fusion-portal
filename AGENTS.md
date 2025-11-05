@@ -13,17 +13,18 @@
 
 ## Coding Style & Naming Conventions
 - TypeScript/TSX 使用 2 空格缩进；项目已提供 `.eslintrc.json`（extends `next/core-web-vitals`），调整规则或插件时同步更新文档与 `package.json`。
+- 前端 TypeScript 版本锁定为 `~5.4.5`，若需升级请同步更新 `typescript-eslint` 生态并在 `docs_for_llm/tasks/T009_static_merge.md` 记录。
 - React 组件采用 PascalCase 命名，后端文件/函数使用 camelCase。
 - 文案与元数据保持简体中文，通过 `buildSiteMetadata` 统一生成。
 - 修改任务或协作说明时同步更新 `docs_for_llm`。
 
 ## Testing Guidelines
-- 当前以手动验证为主：启动前后端，测试 `/site` 首页、`/site/history` 无限滚动、后台登录/文章管理流程。
-- 数据脚本：更新 `public/data/timeline.json` 后运行 `npm run seed:timeline` 并检查输出。
-- 自动化测试规划（待落实）：
-  - 后端：使用 Vitest/Supertest 为 `/api/timeline` 编写分页、筛选、错误场景单测。
-  - 前端：使用 React Testing Library 测试 `TimelineFeed` 的加载、错误、无限滚动行为。
-  - E2E：使用 Playwright 覆盖“首页 → 发展历史 → 加载更多”关键流程。详见 `docs_for_llm/tasks/T009_static_merge.md`。
+- 手动验证：启动后端 (`npm run dev`) 与前端 (`npm run dev`)，测试 `/site` 首页、`/site/history` 无限滚动、后台登录/文章管理流程。
+- 数据脚本：更新 `public/data/timeline.json` 后运行 `npm run seed:timeline`（可先加 `-- --dry-run`）。
+- 自动化测试：
+  - 后端：`cd backend && npm run test`（Vitest/Supertest，覆盖 `/api/timeline` 分页/筛选/参数场景）。
+  - 前端：`cd frontend && npm run test`（Jest + Testing Library，覆盖 `TimelineFeed` 加载/错误）。如遇 Node 版本兼容问题，可使用 Node 18 或 `npm run test --runInBand`。
+  - E2E：`cd frontend && npm run test:e2e`（Playwright，当前覆盖 `/site` 基础渲染，需先 `npx playwright install`）。更多场景详见 `docs_for_llm/tasks/T009_static_merge.md`。
 
 ## Commit & Pull Request Guidelines
 The repository currently lacks tracked history; adopt short, descriptive Conventional Commit messages such as `feat: extend timeline data` or `fix: repair smooth scroll focus`. For pull requests, include a concise summary of the change, affected pages or data files, validation steps (manual checks performed), and screenshots or screen recordings when visual updates are made. Link to any relevant issues or TODO items to maintain traceability.
