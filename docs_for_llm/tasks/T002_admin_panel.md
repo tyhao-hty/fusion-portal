@@ -31,10 +31,15 @@
 - 与前端团队对齐文章编辑器选型（Markdown or 富文本）；
 - 与 T009 协调时间线/链接/论文等新模型的共存方式；
 - 与运维协调部署及环境变量更新。
+- 2025-11-05 同步：需确认 `TimelineEvent.relatedArticleId` 的录入流程（是否允许后台直接关联文章），并输出标签/分类数据结构供 T003 复用。临时结论：
+  - 文章新增字段：`publishedAt`（发布日期）、`excerpt`（<= 160 字）、`coverImageUrl`、`categoryId`、`status`（`draft`/`review`/`published`）、`timelineYear`（可选，供 `/site/history` 过滤）。
+  - 分类（`Category`）：`id`、`slug`、`name`、`description`、`sortOrder`；标签（`Tag`）：`id`、`slug`、`name`；两者均需后台 CRUD。
+  - 后台表单需提供 “关联时间线事件” 的选择器（基于 `/api/timeline?order=desc&limit=50`），写入 `TimelineEvent.relatedArticleId`。
+  - 角色权限：作者可草稿 + 提交审核，编辑可改稿并设为 `review`，管理员可发布并管理分类/标签。
+- 2025-11-05 补充：友情链接后台需支持 `LinkSection` / `LinkGroup` / `Link` 的增删改排序，计划在管理界面提供结构化编辑与拖拽排序能力。
 
 ## 验收标准
 - 管理员可完整创建/更新/删除文章，操作可追踪；
 - 角色权限生效，非授权用户无法访问敏感接口；
 - 分类、标签在前端展示正确，且可在后台维护；
 - 通过手动测试（含移动端）确认交互无明显问题。
-

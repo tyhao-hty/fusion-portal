@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import articleRoutes from './routes/articles.js';
 import timelineRoutes from './routes/timeline.js';
+import papersRoutes from './routes/papers.js';
+import linksRoutes from './routes/links.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -19,6 +21,8 @@ app.get('/', (req, res) => res.send('Fusion Portal API running'));
 app.use('/auth', authRoutes);
 app.use('/articles', articleRoutes);
 app.use('/api/timeline', timelineRoutes);
+app.use('/api/papers', papersRoutes);
+app.use('/api/links', linksRoutes);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;

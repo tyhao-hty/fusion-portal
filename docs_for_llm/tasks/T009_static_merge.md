@@ -43,6 +43,13 @@
 4. **阶段二衔接**：与 T002/T003 协调文章/时间线数据模型，规划后台录入与 Markdown 渲染迁移时间表。
    - 与 T002 后台管理面板共享：`TimelineEvent` 与未来 `Article`/`Category`/`Tag` 关联规则，明确时间线事件是否引用文章 ID、后台如何管理里程碑文案。
    - 与 T003 文章加载渲染共享：文章元数据（发布时间、标签、文章类型）应与时间线展示保持一致；Markdown 渲染完成后需确认 `/site` 页面是否直接消费同一 API 或使用缓存层。
+5. **性能基线执行提醒**：2025-11-05 环境禁止占用本地端口且缺乏 PostgreSQL，导致 Lighthouse 与 `/api/timeline` 延迟采样阻塞；需在具备服务能力的主机完成并回传 JSON/HTML 报告。
+
+## 阶段二开发日志
+- **2025-11-05**：初步完成论文数据链路 —— 新增 Prisma 模型 `Paper`/`PaperTag`、迁移脚本 `npm run seed:papers`，并上线 `/api/papers`（分页、年份/标签/关键词筛选）。dry-run 日志：`backend/prisma/seeds/logs/papers-dry-run-2025-11-05T06-47-50-988Z.json`；正式写入日志：`backend/prisma/seeds/logs/papers-migrate-2025-11-05T06-53-37-913Z.json`（25 条论文、24 标签）。后续任务：前端页面重构与后台录入流程。
+- **2025-11-05**：新增 `/site/papers` React 页面与 `PapersCatalog` 组件，支持在线搜索与按主题浏览，导航指向新版路由；执行 `npm run lint` 验证无语法错误。
+- **2025-11-05**：设计并实现 `LinkSection`/`LinkGroup`/`Link` 模型与迁移脚本 `npm run seed:links`，开放 `/api/links`（返回嵌套结构+统计元数据），为 `/site/links` 迁移做准备。
+- **2025-11-05**：完成 `/site/links` 页面迁移，提供搜索、分组展示与加载更多体验，导航更新为 `/site/links`，等待自动化测试补齐。
 
 ### 路由与兼容策略
 - 过渡期使用 `/site` 子路径承载新版页面（`app/site/layout.tsx`, `app/site/page.tsx`, `app/site/history/page.tsx`），旧站仍可通过 `/index.html` 访问。
