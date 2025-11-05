@@ -40,7 +40,6 @@ describe('GET /api/timeline', () => {
         },
       },
     });
-    await prisma.$disconnect();
   });
 
   it('返回默认分页结果', async () => {

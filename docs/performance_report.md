@@ -22,6 +22,7 @@
 
 > **Shared JS**：87.3 kB  
 > **静态页面总数**：8（`/site`、`/site/history` 及后台登录等）
+> **构建日志**：`docs/performance/build-20251105.log`（CI=1 输出，便于追踪编译耗时与后续 diff）。
 
 ### 提示
 - Next.js 构建日志提示 `metadataBase` 未设置，默认使用 `http://localhost:3000`。上线前需在 `buildSiteMetadata` 中引入生产域名，避免社交分享 URL 错误。
@@ -74,14 +75,14 @@
 ## 6.1 采集计划
 | 检测项 | 负责人 | 工具 | 计划时间 | 状态/备注 |
 | --- | --- | --- | --- | --- |
-| Lighthouse – 桌面 `/site` | — | Chrome DevTools Lighthouse | 2025-11-06 | 待执行 |
-| Lighthouse – 桌面 `/site/history` | — | Chrome DevTools Lighthouse | 2025-11-06 | 待执行 |
-| Lighthouse – 移动 `/site` | — | PageSpeed Insights (mobile) | 2025-11-06 | 待执行 |
-| Lighthouse – 移动 `/site/history` | — | PageSpeed Insights (mobile) | 2025-11-06 | 待执行 |
-| `/api/timeline?page=1` 延迟采样 | — | `curl -w "%{time_total}"` | 2025-11-06 | 待执行 |
-| `/api/timeline?page=3` 延迟采样 | — | `curl -w "%{time_total}"` | 2025-11-06 | 待执行 |
+| Lighthouse – 桌面 `/site` | — | Chrome DevTools Lighthouse | 2025-11-05 | 阻塞：沙箱禁止监听端口，无法启动 Next dev/production 服务器。 |
+| Lighthouse – 桌面 `/site/history` | — | Chrome DevTools Lighthouse | 2025-11-05 | 同上，待在可开放端口的环境补测。 |
+| Lighthouse – 移动 `/site` | — | PageSpeed Insights (mobile) | 2025-11-05 | 阻塞：缺乏可访问 URL，等待外部环境。 |
+| Lighthouse – 移动 `/site/history` | — | PageSpeed Insights (mobile) | 2025-11-05 | 阻塞：同上。 |
+| `/api/timeline?page=1` 延迟采样 | — | `curl -w "%{time_total}"` | 2025-11-05 | 阻塞：Express 服务需数据库 + 端口，当前沙箱拒绝。 |
+| `/api/timeline?page=3` 延迟采样 | — | `curl -w "%{time_total}"` | 2025-11-05 | 阻塞：同上。 |
 
-> 采集完成后，在上方表格填写“负责人/状态”，并将原始 JSON/HTML 报告存入 `docs/performance/`（建议命名 `lighthouse-YYYYMMDD-<page>-<device>.json`）。
+> 待拥有可运行 Node 服务器与 PostgreSQL 的环境后，再次执行上述采集，并将原始 JSON/HTML 报告存入 `docs/performance/`（建议命名 `lighthouse-YYYYMMDD-<page>-<device>.json`）。
 
 ---
 
@@ -92,4 +93,4 @@
 
 ---
 
-> 本报告应在每次迭代后更新，若指标下降需在 T009 风险表中登记并制定优化计划。*** End Patch to=functions.apply_patch code```json
+> 本报告应在每次迭代后更新，若指标下降需在 T009 风险表中登记并制定优化计划。

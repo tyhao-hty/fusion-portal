@@ -30,10 +30,13 @@
 - T002 中的文章编辑器与分类/标签设计；
 - 数据库迁移与部署流程；
 - CDN 或缓存策略（若使用 ISR/SSR）需与前端架构协同。
+- 2025-11-05 同步：等待 T002 明确分类/标签/时间线关联字段，文章详情需暴露与 `/site/history` 时间线一致的年份/标签元数据。渲染层需求：
+  - 列表接口响应应包含 `category`, `tags`, `publishedAt`, `excerpt`, `coverImageUrl`, `timelineYear`，供 `/site` 与 `/site/history` 共享 UI。
+  - 详情页需返回 Markdown + `readingTime`、`lastEditedAt`，并暴露关联的 `timelineEvent`（若存在）。
+  - 搜索/过滤应支持：关键词、分类、标签、年份（匹配 `timelineYear`），默认按 `publishedAt` desc。
 
 ## 验收标准
 - API 支持分页 + 搜索并通过示例测试验证；
 - 前端文章页面可渲染 Markdown，UI 与设计稿一致；
 - 搜索与过滤功能响应及时，并提供错误/空态处理；
 - QA 验证关键流程（创建、编辑、展示）无阻塞问题。
-

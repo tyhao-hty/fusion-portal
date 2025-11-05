@@ -16,10 +16,10 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/site/history", label: "发展历史" },
   { href: "/science.html", label: "科普知识", isExternal: true },
   { href: "/theory.html", label: "理论知识", isExternal: true },
-  { href: "/papers.html", label: "论文汇总", isExternal: true },
+  { href: "/site/papers", label: "论文汇总" },
   { href: "/technology.html", label: "技术路线", isExternal: true },
   { href: "/business.html", label: "商业尝试", isExternal: true },
-  { href: "/links.html", label: "相关链接", isExternal: true },
+  { href: "/site/links", label: "相关链接" },
 ];
 
 const MOBILE_MEDIA_QUERY = "(max-width: 991px)";

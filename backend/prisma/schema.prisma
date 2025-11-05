@@ -44,3 +44,72 @@ model TimelineEvent {
   @@index([sortOrder, id], map: "idx_timeline_order")
   @@index([yearValue], map: "idx_timeline_year")
 }
+
+model Paper {
+  id         Int        @id @default(autoincrement())
+  slug       String     @unique
+  title      String
+  authors    String
+  year       Int
+  venue      String?
+  url        String?
+  abstract   String?
+  sortOrder  Int        @default(0)
+  tags       PaperTag[] @relation("PaperTags")
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([year, sortOrder], map: "idx_paper_year_sort")
+}
+
+model PaperTag {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  name      String   @unique
+  papers    Paper[]  @relation("PaperTags")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name], map: "idx_paper_tag_name")
+}
+
+model LinkSection {
+  id        Int         @id @default(autoincrement())
+  slug      String      @unique
+  title     String
+  sortOrder Int         @default(0)
+  groups    LinkGroup[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([sortOrder, id], map: "idx_link_section_order")
+}
+
+model LinkGroup {
+  id         Int          @id @default(autoincrement())
+  slug       String       @unique
+  title      String?
+  sortOrder  Int          @default(0)
+  sectionId  Int
+  section    LinkSection  @relation(fields: [sectionId], references: [id])
+  links      Link[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@index([sectionId, sortOrder, id], map: "idx_link_group_section_order")
+}
+
+model Link {
+  id          Int        @id @default(autoincrement())
+  slug        String     @unique
+  name        String
+  url         String
+  description String?
+  sortOrder   Int        @default(0)
+  groupId     Int
+  group       LinkGroup  @relation(fields: [groupId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([groupId, sortOrder, id], map: "idx_link_order")
+}

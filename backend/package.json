@@ -11,9 +11,11 @@
     "dev": "node src/index.js",
     "start": "NODE_ENV=production node src/index.js",
     "postinstall": "prisma generate",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "seed:timeline": "node prisma/seeds/migrate_timeline.js",
+  "prisma:generate": "prisma generate",
+  "prisma:migrate": "prisma migrate dev",
+  "seed:links": "node prisma/seeds/migrate_links.js",
+  "seed:papers": "node prisma/seeds/migrate_papers.js",
+  "seed:timeline": "node prisma/seeds/migrate_timeline.js",
     "test": "vitest"
   },
   "dependencies": {
