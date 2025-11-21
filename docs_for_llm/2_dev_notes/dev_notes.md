@@ -1,4 +1,4 @@
-*文件最后更新：2025-11-05 16:45 由 AI 更新*
+*文件最后更新：2025-11-05 17:52 由 AI 更新*
 # Dev Notes – AI 开发日志与自动总结
 > 本文件由 AI 自动维护并由人类开发者定期审阅。  
 > 所有开发活动、设计决策、问题记录、错误修复与阶段总结均应追加至此文件。  
@@ -71,6 +71,68 @@
 ## 🧩 日志记录区（按时间倒序排列）
 
 ---
+
+### 📅 2025-11-05 17:52
+#### 🔥 任务编号：T010 – 文档一致性巡检
+**[计划阶段]**  
+- 目标：对齐仓库实际结构与协作文档内容，降低后续 AI 接力的沟通成本。  
+- 步骤：核对 AGENTS 与 docs_for_llm 文档 ➜ 刷新项目结构索引 ➜ 建立任务记录并准备日志更新。
+
+**[开发阶段]**  
+- 更新 `AGENTS.md`（补充 `/site/links`、`/site/papers`、links/papers API 种子脚本及 ESLint 配置文件名）。  
+- 重写 `docs_for_llm/structure.txt`，同步 backend/tests、frontend/__tests__、e2e 等目录。  
+- 调整 `docs_for_llm/readme_plan.md` 以描述新静态页面与后端接口；新增 `docs_for_llm/tasks/T010_docs_alignment.md` 并在任务总览登记。
+
+**[问题与解决]**  
+- Issue: 无。
+
+**[总结与下步计划]**  
+- 已将任务状态标记为完成并更新 `completed.md`；持续关注其它文档是否需追加说明。
+
+
+
+---
+
+### 📅 2025-11-05 17:31
+#### 🔥 任务编号：T009 – `seed:links` 事务修复
+**[计划阶段]**  
+- 目标：解决远程 PostgreSQL 执行 `npm run seed:links` 时的超时/事务关闭问题。  
+- 步骤：对 `migrate_links` 脚本应用与论文脚本相同策略，取消单次大事务。
+
+**[开发阶段]**  
+- 修改 `backend/prisma/seeds/migrate_links.js`：弃用 `$transaction`，按 section → group → link 顺序逐条创建，避免长事务。  
+- 未重新运行脚本，等待用户再次执行 `npm run seed:links`。
+
+**[问题与解决]**  
+- Issue: 事务超时导致 `P2028`。  
+- Solution: 改为顺序写入，避免长事务。
+
+**[总结与下步计划]**  
+- 请重新执行 `npm run seed:links -- --dry-run` 与 `npm run seed:links`，成功后更新测试报告。
+
+
+---
+
+### 📅 2025-11-05 17:27
+#### 🔥 任务编号：T009 – `seed:papers` 事务修复
+**[计划阶段]**  
+- 目标：解决远程 PostgreSQL 环境执行 `npm run seed:papers` 时出现的 `P2028 Transaction not found` 错误。  
+- 步骤：定位事务内 `connectOrCreate` 造成的长事务问题 → 预创建标签 → 使用 `connect` 简化事务。
+
+**[开发阶段]**  
+- 修改 `backend/prisma/seeds/migrate_papers.js`：先 `createMany` 写入所有标签，再依次创建论文并 `connect` 标签，避免长事务超时。  
+- 未重新运行脚本，等待用户在远程数据库环境再次 `npm run seed:papers`。
+
+**[问题与解决]**  
+- Issue: Prisma 报错 `P2028 Transaction not found`（长事务关闭）。  
+- Solution: 去除事务内 `connectOrCreate`，改为预创建标签并 `connect`。
+
+**[总结与下步计划]**  
+- 请在远程数据库环境重新执行 `npm run seed:papers`（可先 `-- --dry-run` 验证），成功后更新测试报告。
+
+---
+
+
 
 ### 📅 2025-11-05 16:45
 #### 🔥 任务编号：T009 – 前后端测试回归

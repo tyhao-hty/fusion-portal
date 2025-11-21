@@ -4,8 +4,8 @@
     README.md
 backend/
     README.md
-    package-lock.json
     package.json
+    package-lock.json
     prisma/
         schema.prisma
         migrations/
@@ -13,6 +13,9 @@ backend/
             20251017105941_init/
                 migration.sql
         seeds/
+            logs/
+            migrate_links.js
+            migrate_papers.js
             migrate_timeline.js
     src/
         index.js
@@ -24,11 +27,31 @@ backend/
         routes/
             articles.js
             auth.js
+            links.js
+            papers.js
             timeline.js
         utils/
             jwt.js
+    tests/
+        links.test.js
+        papers.test.js
+        timeline.test.js
+    vitest.config.mjs
 docs/
     architecture.md
+    api/
+        links.md
+        papers.md
+        timeline.md
+    deployment_handbook.md
+    performance/
+        README.md
+        build-20251105.log
+    performance_report.md
+    rollback_plan.md
+    tests/
+        T009_test_report.md
+        playwright-20251105/
 docs_for_llm/
     dev_notes.md
     readme_plan.md
@@ -41,34 +64,33 @@ docs_for_llm/
         completed.md
 frontend/
     README.md
-    next-env.d.ts
-    next.config.js
-    package-lock.json
     package.json
-    postcss.config.js
-    tailwind.config.js
-    tsconfig.json
+    package-lock.json
     app/
-        globals.css
         layout.tsx
+        globals.css
         (dashboard)/
             layout.tsx
             page.tsx
-            admin/
-                page.tsx
-            login/
-                page.tsx
-            new/
-                page.tsx
-            register/
-                page.tsx
+            admin/page.tsx
+            login/page.tsx
+            new/page.tsx
+            register/page.tsx
         site/
             layout.tsx
             page.tsx
             styles-legacy.css
             history/
-                TimelineFeed.tsx
                 page.tsx
+                TimelineFeed.tsx
+            links/
+                LinksDirectory.tsx
+                page.tsx
+                types.ts
+            papers/
+                PapersCatalog.tsx
+                page.tsx
+                types.ts
     components/
         Navbar.tsx
         UserContext.tsx
@@ -76,6 +98,27 @@ frontend/
             SiteFooter.tsx
             SiteHeader.tsx
             metadata.ts
+    utils/
+        api.ts
+    __tests__/
+        api.test.ts
+        LinksDirectory.test.tsx
+        PapersCatalog.test.tsx
+        TimelineFeed.test.tsx
+    e2e/
+        site.spec.ts
+    coverage/
+    eslint.config.mts
+    jest.config.js
+    jest.setup.ts
+    next-env.d.ts
+    next.config.js
+    playwright-report/
+    playwright.config.ts
+    postcss.config.js
+    tailwind.config.js
+    test-results/
+    tsconfig.json
     public/
         admin.html
         admin.js
@@ -102,31 +145,53 @@ frontend/
             papers.json
             schema.md
             timeline.json
-    utils/
-        api.ts
     _legacy-static/
-        admin.html
-        admin.js
-        business.html
-        history.html
-        index.html
-        links.html
-        papers.html
-        science.html
-        styles-admin.css
-        styles.css
-        technology.html
-        theory.html
-        assets/
-            og-default.png
-        components/
-            common.js
-            footer.html
-            head.html
-            header.html
-            meta.js
-        data/
-            links.json
-            papers.json
-            schema.md
-            timeline.json
+        (与 public/ 结构一致的备份)
+
+# --- 最新目录快照（2025-11-21，含编号子目录与新增文件） ---
+./
+    AGENTS.md
+    CHANGELOG.md
+    README.md
+    backend/…（同上，包含 links/papers 路由与 seeds）
+    docs/…（同上）
+    docs_for_llm/
+        readme_plan.md
+        structure.txt（本文件）
+        1_rules/
+            ai_edit_rules.md
+            file_naming_rules.md
+            writing_guidelines.md
+        2_dev_notes/
+            dev_notes.md
+        3_tasks/
+            README.md
+            T002_admin_panel.md
+            T003_article_render.md
+            T009_static_merge.md
+            T010_docs_alignment.md
+            completed.md
+        4_design/
+            architecture.md
+            site_layout_design.md
+            static_migration_plan.md
+            styling_migration.md
+            uncategorized_notes.md
+        5_specs/
+            api_timeline.md
+            api_papers.md
+            api_links.md
+            prisma_schema.md
+        6_reports/
+            operations/T009_static_merge_operations.md
+            performance/T009_static_merge_performance.md
+            risks/T009_static_merge_risks.md
+            testing/T009_static_merge_testing.md
+        tasks/  # 兼容旧路径（含 T009_static_merge_original.md）
+            README.md
+            T002_admin_panel.md
+            T003_article_render.md
+            T009_static_merge_original.md
+            T010_docs_alignment.md
+            completed.md
+    frontend/…（同上，新增 /site/links 与 /site/papers 组件）

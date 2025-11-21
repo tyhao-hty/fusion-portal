@@ -29,6 +29,10 @@
    npm run prisma:migrate
    npm run seed:timeline -- --dry-run   # 校验 JSON 与数据库模型一致性
    npm run seed:timeline                # 确认后写入真实数据
+   npm run seed:links -- --dry-run      # 校验友情链接数据
+   npm run seed:links
+   npm run seed:papers -- --dry-run     # 校验论文数据
+   npm run seed:papers
    ```
 2. **后端构建与启动**
    ```bash
@@ -59,6 +63,8 @@
   - `page=1&limit=8` 返回 8 条以内数据；
   - `page` 越界时返回 `hasNext: false`；
   - 关键字筛选（`keyword=ITER`）返回包含关键词的记录。
+- `/site/links`、`/site/papers`：列表、搜索、分组展示与跳转正常；
+- `/api/links`、`/api/papers`：返回结构化数据，分页/筛选参数生效。
 - **旧站兜底**：访问 `/science.html`、`/theory.html`，确认 `components/common.js` 加载成功、返回首页链接可用。
 - **自动化测试**：
   ```bash
@@ -94,6 +100,7 @@
 - **常见问题**：
   - *EACCES/EPERM 绑定端口失败*：在受限环境下使用自托管 Playwright 时，可改用本地机器运行 `npm run test:e2e`。
   - *TypeScript ESLint 告警*：保持 TypeScript 版本在 `~5.4`，升级需同步调整 `typescript-eslint` 系列依赖并更新 `AGENTS.md`。
+  - *Next rewrites 未生效*：确认 `next.config.js` 已包含 `/index.html`、`/history.html`、`/links.html`、`/papers.html` 至对应 `/site/*` 的映射。
 
 ---
 

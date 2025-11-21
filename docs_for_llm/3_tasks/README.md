@@ -1,5 +1,5 @@
 # Tasks Overview
-> ⚠️ 本文件保留作兼容旧链接；当前主任务目录为 `../3_tasks/`。更新任务时请优先编辑 `docs_for_llm/3_tasks/README.md` 并同步 `2_dev_notes/dev_notes.md`。
+> 当前主任务目录（取代 `../tasks/`，旧目录仅作兼容）；更新此处后请同步 `2_dev_notes/dev_notes.md`。  
 > 此目录用于维护当前任务、优先级与关联文档。  
 > 高复杂度任务拆分为独立 Markdown 文件，便于记录细节与进度。  
 > 更新任务后请同步 `dev_notes.md`。
@@ -40,3 +40,11 @@
 
 ## ✅ 已完成任务
 详见 [completed.md](completed.md)。
+
+---
+
+### 状态校验（2025-11-21 13:53 CST）
+- 与 `dev_notes.md` 最新记录一致：T010 已完成，其余任务为规划/开发中，暂无新增条目。
+- T008/T004/T005/T006/T007 尚未创建子文件，待立项后补充；保留在表格中以维持优先级排序。
+- T009 使用精简版概述文件，完整历史文档存于 `../tasks/T009_static_merge_original.md` 以供追溯。
+- 后续若新增任务，需同时在此表和 `completed.md` 记录并附时间戳。

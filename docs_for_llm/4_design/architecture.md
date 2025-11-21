@@ -3,11 +3,11 @@
 本文档记录核聚变门户网站的前端架构、数据契约与页面交互关系。未来对脚本或数据结构的任何改动，均需同步更新此文档以保持一致。
 
 ## 2025-11-21 架构状态（Next.js + Express/Prisma）
-- 前端：Next.js 14（App Router），站点路由集中在 `app/(dashboard)/` 与 `app/site/`，已上线 `/site`、`/site/history`、`/site/links`、`/site/papers`，复用 `SiteHeader`/`SiteFooter`/`buildSiteMetadata`。
-- 后端：Express + Prisma + PostgreSQL，暴露 `/api/timeline`、`/api/links`、`/api/papers` 与文章/认证接口；种子脚本 `npm run seed:timeline|links|papers`。
-- 旧版静态站：`frontend/public/` 保留 `*.html` 及 `components/*.js` 作为回退; `_legacy-static/` 存完整备份。Next.js `rewrites` 将 `/index.html`、`/history.html`、`/links.html`、`/papers.html` 指向新版路由。
-- Lint/工具链：前端使用 `eslint.config.mts`（extends `next/core-web-vitals`），TypeScript 锁定 `~5.4.5`；Playwright/Jest 覆盖 `/site` 及 API 交互。
-- 本文余下章节保留旧版静态实现的细节（common.js/meta.js/页面脚本），供回退与比对参考；新增内容以本节为准。更多设计笔记参见 `docs_for_llm/4_design/architecture.md`（需与本文件保持同步）。
+- 前端：Next.js 14（App Router），`app/(dashboard)/` + `app/site/` 已启用 `/site`、`/site/history`、`/site/links`、`/site/papers`，共享 `SiteHeader`/`SiteFooter`/`buildSiteMetadata`。
+- 后端：Express + Prisma + PostgreSQL，提供 `/api/timeline`、`/api/links`、`/api/papers`、文章增删改查与认证；种子脚本 `npm run seed:timeline|links|papers`。
+- 旧版静态站：`frontend/public/` 仍保留 `*.html` 与 `components/*.js` 做兜底，`_legacy-static/` 备份；Next rewrites 将旧路径映射到新路由。
+- 开发工具链：`eslint.config.mts`、TypeScript `~5.4.5`，Jest/Playwright/Vitest 覆盖主要交互与 API；性能/测试报告存于 `docs/` 与 `docs_for_llm/6_reports/`。
+- 本节为最新架构快照；下方保留的 legacy 说明对应静态实现，供回退与比对使用。保持与 `docs/architecture.md` 同步为准。
 
 ## 1. JavaScript 模块职责与依赖
 

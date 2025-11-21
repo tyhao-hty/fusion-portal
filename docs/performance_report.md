@@ -4,6 +4,8 @@
 > 数据来源：Next.js `npm run build` 输出（Chromium Playwright 回归前）  
 > 维护人：AI 协作者（最新更新），审核人：郝天一
 
+> 2025-11-21 状态：新增 `/site/links`、`/site/papers` 路由，性能数据尚未采集；请在下次构建时一并记录并同步 `docs_for_llm/6_reports/performance/T009_static_merge_performance.md`。
+
 ---
 
 ## 1. 目标与范围
@@ -38,6 +40,7 @@
 | TBT | ≤ 100 ms | ≤ 150 ms | 180 ms | 待测 |
 
 > 请在 Chrome DevTools / PageSpeed Insights 分别运行桌面与移动测试，并更新本表。
+> `/site/links`、`/site/papers` 亦需采集桌面/移动指标，按同表格式追加记录。
 
 ---
 
@@ -88,7 +91,7 @@
 
 ## 6. 优化建议与 TODO
 - **短期**：配置 `metadataBase`，减少社交分享错误 URL；对 `/site/history` 进行图片懒加载压缩，降低首屏 JS/K。
-- **中期**：将 TimelineFeed 的描述部分转为 server components，降低客户端渲染开销；引入 HTTP 缓存头减轻 API 压力。
+- **中期**：将 TimelineFeed 的描述部分转为 server components，降低客户端渲染开销；引入 HTTP 缓存头减轻 API 压力；对 `/site/links`、`/site/papers` 搜索交互进行懒加载与分片。
 - **长期**：引入 Web Vitals 监控（如 Vercel Analytics、Sentry Performance），持续跟踪实测 LCP/CLS。
 
 ---

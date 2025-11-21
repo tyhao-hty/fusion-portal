@@ -223,41 +223,39 @@ async function main() {
     return;
   }
 
-  await prisma.$transaction(async (tx) => {
-    await tx.paper.deleteMany();
-    await tx.paperTag.deleteMany();
+  await prisma.paper.deleteMany();
+  await prisma.paperTag.deleteMany();
 
-    for (const record of records) {
-      await tx.paper.create({
-        data: {
-          slug: record.slug,
-          title: record.title,
-          authors: record.authors,
-          year: record.year,
-          venue: record.venue,
-          url: record.url,
-          abstract: record.abstract,
-          sortOrder: record.sortOrder,
-          createdAt: now,
-          updatedAt: now,
-          tags: {
-            connectOrCreate: record.tagSlugs.map((tagSlug) => {
-              const tag = tagBySlug.get(tagSlug);
-              return {
-                where: { slug: tag.slug },
-                create: {
-                  slug: tag.slug,
-                  name: tag.name,
-                  createdAt: now,
-                  updatedAt: now,
-                },
-              };
-            }),
-          },
+  if (tagRecords.length) {
+    await prisma.paperTag.createMany({
+      data: tagRecords.map((tag) => ({
+        slug: tag.slug,
+        name: tag.name,
+        createdAt: now,
+        updatedAt: now,
+      })),
+    });
+  }
+
+  for (const record of records) {
+    await prisma.paper.create({
+      data: {
+        slug: record.slug,
+        title: record.title,
+        authors: record.authors,
+        year: record.year,
+        venue: record.venue,
+        url: record.url,
+        abstract: record.abstract,
+        sortOrder: record.sortOrder,
+        createdAt: now,
+        updatedAt: now,
+        tags: {
+          connect: record.tagSlugs.map((tagSlug) => ({ slug: tagSlug })),
         },
-      });
-    }
-  });
+      },
+    });
+  }
 
   console.log(`[papers] Migrated ${records.length} records from ${absolutePath}.`);
   await writeSummary({

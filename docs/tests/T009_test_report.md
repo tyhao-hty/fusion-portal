@@ -3,6 +3,8 @@
 > 最近更新：2025-11-05  
 > 维护人：AI 协作者（基于最新执行结果）
 
+> 2025-11-21 状态：未新增测试执行；/site/links、/site/papers 覆盖保持通过，待补充 `seed:links` 命令的执行证据与最新 Lighthouse/延迟数据。更新时请同步 `docs_for_llm/6_reports/testing/T009_static_merge_testing.md`。
+
 ---
 
 ## 1. 单元测试

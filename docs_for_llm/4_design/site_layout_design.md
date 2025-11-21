@@ -1,0 +1,11 @@
+### 前端布局与组件草案
+- 目录结构：在 `app/(site)/` 下新增 `layout.tsx` 作为公共布局，内部引入 `SiteHeader`, `SiteFooter`, `SiteMeta` 组件；页面文件包括 `page.tsx`（首页）与 `history/page.tsx`（发展历程），其余页面未来按需增补。
+- 组件职责：
+  - `SiteHeader`：以 React 还原 `components/header.html`，保留数据属性用于移动端菜单切换，导航链接根据登录态（`UserContext`）显示写作/管理入口。
+  - `SiteFooter`：渲染版权、快速链接与动态年份；年份逻辑改写为 React `useEffect`。
+  - `buildSiteMetadata`：在页面/server 组件中构造 Next Metadata，统一 title/description/OG，替换原 `meta.js` 动态注入方式。
+- 行为保持：
+  - 移动端菜单：复用 `common.js` 的交互逻辑，在 React 中通过 `useEffect` 绑定/解绑监听，或拆分出 `useMobileNav` hook。
+  - 平滑滚动与跳转：使用 `framer-motion` 之类库非必须，初期保留原 `scrollIntoView` 实现。
+  - 旧站入口：导航保留 `href="/index.html"` 等链接，直到全部页面迁移完成。
+  - 历史页数据：使用 SWR + useSWRInfinite 管理分页加载、错误重试与 IntersectionObserver 自动加载。
