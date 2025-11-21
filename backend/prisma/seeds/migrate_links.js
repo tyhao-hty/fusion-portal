@@ -220,55 +220,53 @@ async function main() {
     return;
   }
 
-  await prisma.$transaction(async (tx) => {
-    await tx.link.deleteMany();
-    await tx.linkGroup.deleteMany();
-    await tx.linkSection.deleteMany();
+  await prisma.link.deleteMany();
+  await prisma.linkGroup.deleteMany();
+  await prisma.linkSection.deleteMany();
 
-    for (const section of sections) {
-      const createdSection = await tx.linkSection.create({
+  for (const section of sections) {
+    const createdSection = await prisma.linkSection.create({
+      data: {
+        slug: section.slug,
+        title: section.title,
+        sortOrder: section.sortOrder,
+        createdAt: section.createdAt,
+        updatedAt: section.updatedAt,
+      },
+    });
+
+    const sectionGroups = groups.filter((group) => group.sectionSlug === section.slug);
+
+    for (const group of sectionGroups) {
+      const createdGroup = await prisma.linkGroup.create({
         data: {
-          slug: section.slug,
-          title: section.title,
-          sortOrder: section.sortOrder,
-          createdAt: section.createdAt,
-          updatedAt: section.updatedAt,
+          slug: group.slug,
+          title: group.title,
+          sortOrder: group.sortOrder,
+          sectionId: createdSection.id,
+          createdAt: group.createdAt,
+          updatedAt: group.updatedAt,
         },
       });
 
-      const sectionGroups = groups.filter((group) => group.sectionSlug === section.slug);
+      const groupLinks = links.filter((link) => link.groupSlug === group.slug);
 
-      for (const group of sectionGroups) {
-        const createdGroup = await tx.linkGroup.create({
+      for (const link of groupLinks) {
+        await prisma.link.create({
           data: {
-            slug: group.slug,
-            title: group.title,
-            sortOrder: group.sortOrder,
-            sectionId: createdSection.id,
-            createdAt: group.createdAt,
-            updatedAt: group.updatedAt,
+            slug: link.slug,
+            name: link.name,
+            url: link.url,
+            description: link.description,
+            sortOrder: link.sortOrder,
+            groupId: createdGroup.id,
+            createdAt: link.createdAt,
+            updatedAt: link.updatedAt,
           },
         });
-
-        const groupLinks = links.filter((link) => link.groupSlug === group.slug);
-
-        for (const link of groupLinks) {
-          await tx.link.create({
-            data: {
-              slug: link.slug,
-              name: link.name,
-              url: link.url,
-              description: link.description,
-              sortOrder: link.sortOrder,
-              groupId: createdGroup.id,
-              createdAt: link.createdAt,
-              updatedAt: link.updatedAt,
-            },
-          });
-        }
       }
     }
-  });
+  }
 
   console.log(`[links] Migrated ${sections.length} sections, ${groups.length} groups, ${links.length} links from ${dataPath}.`);
   await writeSummary({
