@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { fetchArticles } from "@/lib/articles";
+import { fetchArticles, type ArticleSummary } from "@/lib/articles";
 
 type SearchParams = {
   q?: string;
@@ -20,7 +20,7 @@ export default async function ArticlesPage({
   const sort = searchParams.sort || "published_desc";
   const status = searchParams.status?.trim() || "published";
 
-  let articles = [];
+  let articles: ArticleSummary[] = [];
   let meta = {
     total: 0,
     page,
@@ -93,10 +93,7 @@ export default async function ArticlesPage({
                 </span>
               </div>
               <p className="mt-1 text-gray-700">
-                {article.excerpt ??
-                  (article.content && article.content.length > 180
-                    ? `${article.content.slice(0, 180)}...`
-                    : article.content)}
+                {article.excerpt ?? ""}
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-gray-500">
                 {article.category && (
