@@ -30,10 +30,12 @@
 - **风险余量**：TypeScript 锁定 `~5.4.5`，需关注 `@typescript-eslint` 升级；时间线数据与后台模型联动仍待 T002/T003 对齐；性能/延迟数据未在可用环境采集，需尽快补测。
 
 ## 下一步计划
-1. **数据与脚本**：复核并重新记录 `npm run seed:timeline -- --dry-run`/正式执行日志，与 2025-11-05 版本比对 checksum；确保存档路径与 `dev_notes.md` 一致。
-2. **测试与指标**：补充 `frontend/utils/api.ts` 单测；在可运行服务的环境采集 `/site`、`/site/history`、`/site/links`、`/site/papers` 的 Lighthouse/延迟数据，并同步 `docs/performance_report.md` 与 `docs_for_llm/6_reports/performance/T009_static_merge_performance.md`。
-3. **交付整理**：将最新测试证据（Jest/Playwright/seed 日志）归档到 `docs/tests/T009_test_report.md`，并保留报告链接/截图以备评审。
-4. **阶段二衔接**：与 T002/T003 确认文章/时间线/链接/论文模型的后台录入流程与 schema 对齐，明确阶段二的 PRD/里程碑后更新本任务文件。
+1. **后端 API 扩展**：按 `T009_backend_api_expansion.md` 执行 timeline/links/papers 的筛选、分页元信息与参数防御。（已完成，文档移至 `completed/`）
+2. **前端增强**：按 `T009_frontend_site_enhancements.md` 执行 `/site/history`/`links`/`papers` 的筛选、交互与导航优化。（已完成，文档移至 `completed/`）
+3. **数据脚本与导航体验**：按 `T009_data_scripts_ux.md` 健壮化 seeds、调整导航一致性与基础体验。（已完成，文档移至 `completed/`）
+4. **阶段二衔接**：与 T002/T003 确认文章/时间线/链接/论文模型的后台录入流程与 schema 对齐，明确阶段二的 PRD/里程碑后更新本任务文件。  
+   - 跟进动作清单见《completed/T009_phase2_followups.md》（重写上线验证、筛选后端化、性能微调、seed 验证、Schema 对齐）。
+   - Schema/接口对齐建议与工单草案见《completed/T009_phase2_alignment_notes.md》。
 
 ## 关联任务 / Dependencies
 - 与 T002 后台管理面板共享：`TimelineEvent` 与未来 `Article`/`Category`/`Tag` 关联规则，明确时间线事件是否引用文章 ID、后台如何管理里程碑文案。
@@ -54,7 +56,7 @@
 
 ---
 
-### 状态校验（2025-11-21 13:53 CST）
+### 状态校验（2025-11-21 20:03 CST）
 - 本文件为精简版任务描述，详细历史记录与技术方案见 `../tasks/T009_static_merge_original.md`。
-- 当前状态保持“进行中”，与 `Tasks Overview` 和 `dev_notes.md` 一致；最新进展停留在 2025-11-05。
+- T009 三个子任务（后端扩展/前端增强/数据脚本与导航体验）已全部完成；阶段状态保持“进行中”以便后续阶段二衔接。
 - 后续更新（测试报告、性能数据、阶段交付确认）需追加于此并同步 `dev_notes.md` 与目录索引。

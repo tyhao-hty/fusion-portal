@@ -16,7 +16,57 @@ function sanitizeLimit(value) {
   return Math.min(Math.max(value, 1), MAX_LIMIT);
 }
 
-function buildWhereClause({ year, tag, search }) {
+function parseYear(value) {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+function parseTags(input) {
+  if (!input) return [];
+  if (Array.isArray(input)) {
+    return input.flatMap((item) => String(item).split(',')).map((item) => item.trim()).filter(Boolean);
+  }
+  return String(input)
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function resolveSort(sortParam = 'year_desc') {
+  const value = String(sortParam).toLowerCase();
+
+  if (value === 'year_asc') {
+    return [
+      { year: 'asc' },
+      { sortOrder: 'desc' },
+      { id: 'desc' },
+    ];
+  }
+
+  if (value === 'name_asc') {
+    return [
+      { title: 'asc' },
+      { year: 'desc' },
+      { id: 'desc' },
+    ];
+  }
+
+  if (value === 'name_desc') {
+    return [
+      { title: 'desc' },
+      { year: 'desc' },
+      { id: 'desc' },
+    ];
+  }
+
+  return [
+    { year: 'desc' },
+    { sortOrder: 'desc' },
+    { id: 'desc' },
+  ];
+}
+
+function buildWhereClause({ year, yearFrom, yearTo, tags, search }) {
   const conditions = [];
 
   if (year) {
@@ -33,16 +83,26 @@ function buildWhereClause({ year, tag, search }) {
     }
   }
 
-  if (tag) {
+  if (yearFrom) {
+    conditions.push({ year: { gte: yearFrom } });
+  }
+
+  if (yearTo) {
+    conditions.push({ year: { lte: yearTo } });
+  }
+
+  if (tags && tags.length > 0) {
     conditions.push({
-      tags: {
-        some: {
-          OR: [
-            { slug: tag },
-            { name: tag },
-          ],
+      AND: tags.map((tagValue) => ({
+        tags: {
+          some: {
+            OR: [
+              { slug: tagValue },
+              { name: tagValue },
+            ],
+          },
         },
-      },
+      })),
     });
   }
 
@@ -69,10 +129,25 @@ router.get('/', async (req, res, next) => {
     const page = Math.max(parseInteger(req.query.page, DEFAULT_PAGE), 1);
     const limit = sanitizeLimit(parseInteger(req.query.limit ?? req.query.pageSize, DEFAULT_LIMIT));
     const search = req.query.search ?? req.query.q ?? null;
-    const tag = req.query.tag ?? req.query.tagSlug ?? null;
+    const tagParam = req.query.tags ?? req.query.tag ?? req.query.tagSlug ?? null;
+    const tags = parseTags(tagParam);
+    const yearFrom = parseYear(req.query.yearFrom);
+    const yearTo = parseYear(req.query.yearTo);
+
+    if (yearFrom !== null && yearTo !== null && yearFrom > yearTo) {
+      return res.status(400).json({
+        message: 'Invalid year range: yearFrom must be less than or equal to yearTo',
+        error: { code: 400, message: 'Bad Request' },
+      });
+    }
+
+    const sort = resolveSort(req.query.sort);
+
     const where = buildWhereClause({
       year: req.query.year,
-      tag,
+      yearFrom,
+      yearTo,
+      tags,
       search,
     });
 
@@ -85,11 +160,7 @@ router.get('/', async (req, res, next) => {
             orderBy: { name: 'asc' },
           },
         },
-        orderBy: [
-          { year: 'desc' },
-          { sortOrder: 'desc' },
-          { id: 'desc' },
-        ],
+        orderBy: sort,
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -115,9 +186,11 @@ router.get('/', async (req, res, next) => {
       meta: {
         page,
         limit,
+        pageSize: limit,
         total,
         totalPages: total === 0 ? 0 : Math.ceil(total / limit),
         hasNext: page * limit < total,
+        hasMore: page * limit < total,
       },
     });
   } catch (error) {

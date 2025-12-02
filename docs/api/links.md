@@ -1,13 +1,13 @@
 # API 文档 – `/api/links`
 
 > 状态：β（阶段二开发中）  
-> 最后更新：2025-11-05  
+> 最后更新：2025-11-21  
 > 维护人：后端团队（Express + Prisma）
 
 ---
 
 ## 1. 概述
-友好链接接口提供核聚变相关组织、机构、资源的结构化数据，供新版 `/site/links` 页面展示。数据来自 `LinkSection` → `LinkGroup` → `Link` 三层模型（由 `frontend/public/data/links.json` 迁移），返回嵌套结构并包含统计元信息。
+友好链接接口提供核聚变相关组织、机构、资源的结构化数据，供新版 `/site/links` 页面展示。数据来自 `LinkSection` → `LinkGroup` → `Link` 三层模型（由 `frontend/public/data/links.json` 迁移），返回嵌套结构并可按条件过滤或平铺。
 
 - **基础路径**：`/api/links`
 - **鉴权**：无（公开只读）
@@ -15,7 +15,17 @@
 
 ---
 
-## 2. 成功响应
+## 2. 查询参数
+| 参数 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `section`/`sectionSlug` | string | — | 按分类筛选。 |
+| `group`/`groupSlug` | string | — | 按分组筛选（需与所属 section 匹配）。 |
+| `q`/`search` | string | — | 按 `name`/`description`/`url` 模糊匹配。 |
+| `view` | string | `nested` | `nested`（默认嵌套结构）或 `flat`（扁平列表，含 section/group 元信息）。 |
+
+> 过滤后会自动移除为空的分组/分类；`view=flat` 下 `data` 为扁平数组。
+
+## 3. 成功响应
 ```json
 {
   "data": [
@@ -44,7 +54,13 @@
   "meta": {
     "sectionCount": 6,
     "groupCount": 12,
-    "linkCount": 52
+    "linkCount": 52,
+    "filters": {
+      "section": null,
+      "group": null,
+      "keyword": null,
+      "view": "nested"
+    }
   }
 }
 ```
@@ -56,7 +72,7 @@
 | `data[].slug` | 与原 JSON `id` 对应，唯一标识 section。 |
 | `data[].groups[].title` | 允许为 `null`，对应 JSON 中未命名的小节。 |
 | `sortOrder` | 根据原数组索引反序生成，越大越靠前。 |
-| `meta` | 统计本次响应中的 section/group/link 数量，用于前端展示或监控。 |
+| `meta` | 统计本次响应中的 section/group/link 数量及过滤信息，用于前端展示或监控。 |
 
 ---
 

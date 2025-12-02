@@ -15,6 +15,9 @@ const DEFAULT_JSON_PATH = path.resolve(
   '../../../frontend/public/data/papers.json',
 );
 const LOG_DIR = path.resolve(__dirname, 'logs');
+const DEFAULT_BATCH_SIZE = 200;
+const MAX_RETRY = 3;
+const RETRY_DELAY_MS = 500;
 
 function parseArgs(argv) {
   const args = new Set(argv.slice(2));
@@ -23,6 +26,12 @@ function parseArgs(argv) {
     checksumFlagIndex !== -1 && argv[checksumFlagIndex + 1]
       ? argv[checksumFlagIndex + 1]
       : process.env.PAPERS_JSON_CHECKSUM || null;
+
+  const batchSizeFlagIndex = argv.indexOf('--batch');
+  const batchSize =
+    batchSizeFlagIndex !== -1 && argv[batchSizeFlagIndex + 1]
+      ? Number.parseInt(argv[batchSizeFlagIndex + 1], 10)
+      : Number.parseInt(process.env.PAPERS_BATCH_SIZE ?? DEFAULT_BATCH_SIZE, 10);
 
   return {
     dryRun: args.has('--dry-run'),
@@ -34,6 +43,7 @@ function parseArgs(argv) {
       return process.env.PAPERS_JSON ?? DEFAULT_JSON_PATH;
     })(),
     expectedChecksum,
+    batchSize: Number.isNaN(batchSize) ? DEFAULT_BATCH_SIZE : Math.max(1, batchSize),
   };
 }
 
@@ -62,7 +72,7 @@ async function validateMigration({ expectedCount, checksumMatch, sampleRecordInt
 }
 
 async function main() {
-  const { dryRun, dataPath, expectedChecksum } = parseArgs(process.argv);
+  const { dryRun, dataPath, expectedChecksum, batchSize } = parseArgs(process.argv);
   const absolutePath = dataPath;
 
   const jsonBuffer = await fs.readFile(absolutePath);
@@ -190,6 +200,7 @@ async function main() {
     existingChecksum,
     missingInDatabase: missingInDatabase.slice(0, 10),
     missingInFile: missingInFile.slice(0, 10),
+    batchSize,
   };
 
   await fs.mkdir(LOG_DIR, { recursive: true });
@@ -227,34 +238,61 @@ async function main() {
   await prisma.paperTag.deleteMany();
 
   if (tagRecords.length) {
-    await prisma.paperTag.createMany({
-      data: tagRecords.map((tag) => ({
-        slug: tag.slug,
-        name: tag.name,
-        createdAt: now,
-        updatedAt: now,
-      })),
-    });
+    for (let i = 0; i < tagRecords.length; i += batchSize) {
+      const slice = tagRecords.slice(i, i + batchSize);
+      let attempts = 0;
+      for (;;) {
+        try {
+          await prisma.paperTag.createMany({
+            data: slice.map((tag) => ({
+              slug: tag.slug,
+              name: tag.name,
+              createdAt: now,
+              updatedAt: now,
+            })),
+          });
+          break;
+        } catch (err) {
+          attempts += 1;
+          if (attempts >= MAX_RETRY) {
+            throw err;
+          }
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+        }
+      }
+    }
   }
 
   for (const record of records) {
-    await prisma.paper.create({
-      data: {
-        slug: record.slug,
-        title: record.title,
-        authors: record.authors,
-        year: record.year,
-        venue: record.venue,
-        url: record.url,
-        abstract: record.abstract,
-        sortOrder: record.sortOrder,
-        createdAt: now,
-        updatedAt: now,
-        tags: {
-          connect: record.tagSlugs.map((tagSlug) => ({ slug: tagSlug })),
-        },
-      },
-    });
+    let attempts = 0;
+    for (;;) {
+      try {
+        await prisma.paper.create({
+          data: {
+            slug: record.slug,
+            title: record.title,
+            authors: record.authors,
+            year: record.year,
+            venue: record.venue,
+            url: record.url,
+            abstract: record.abstract,
+            sortOrder: record.sortOrder,
+            createdAt: now,
+            updatedAt: now,
+            tags: {
+              connect: record.tagSlugs.map((tagSlug) => ({ slug: tagSlug })),
+            },
+          },
+        });
+        break;
+      } catch (err) {
+        attempts += 1;
+        if (attempts >= MAX_RETRY) {
+          throw err;
+        }
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      }
+    }
   }
 
   console.log(`[papers] Migrated ${records.length} records from ${absolutePath}.`);

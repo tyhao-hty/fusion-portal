@@ -15,6 +15,9 @@ const DEFAULT_JSON_PATH = path.resolve(
   '../../../frontend/public/data/links.json',
 );
 const LOG_DIR = path.resolve(__dirname, 'logs');
+const DEFAULT_BATCH_SIZE = 200;
+const MAX_RETRY = 3;
+const RETRY_DELAY_MS = 500;
 
 function parseArgs(argv) {
   const args = new Set(argv.slice(2));
@@ -23,6 +26,12 @@ function parseArgs(argv) {
     checksumFlagIndex !== -1 && argv[checksumFlagIndex + 1]
       ? argv[checksumFlagIndex + 1]
       : process.env.LINKS_JSON_CHECKSUM || null;
+
+  const batchSizeFlagIndex = argv.indexOf('--batch');
+  const batchSize =
+    batchSizeFlagIndex !== -1 && argv[batchSizeFlagIndex + 1]
+      ? Number.parseInt(argv[batchSizeFlagIndex + 1], 10)
+      : Number.parseInt(process.env.LINKS_BATCH_SIZE ?? DEFAULT_BATCH_SIZE, 10);
 
   return {
     dryRun: args.has('--dry-run'),
@@ -34,6 +43,7 @@ function parseArgs(argv) {
       return process.env.LINKS_JSON ?? DEFAULT_JSON_PATH;
     })(),
     expectedChecksum,
+    batchSize: Number.isNaN(batchSize) ? DEFAULT_BATCH_SIZE : Math.max(1, batchSize),
   };
 }
 
@@ -55,7 +65,7 @@ async function validateMigration({ sectionCount, checksumMatch }) {
 }
 
 async function main() {
-  const { dryRun, dataPath, expectedChecksum } = parseArgs(process.argv);
+  const { dryRun, dataPath, expectedChecksum, batchSize } = parseArgs(process.argv);
   const jsonBuffer = await fs.readFile(dataPath);
   const raw = JSON.parse(jsonBuffer.toString());
 
@@ -186,6 +196,7 @@ async function main() {
     linkCount: links.length,
     databaseSectionCountBefore: normalizedExisting.length,
     existingChecksum,
+    batchSize,
   };
 
   await fs.mkdir(LOG_DIR, { recursive: true });
@@ -252,18 +263,30 @@ async function main() {
       const groupLinks = links.filter((link) => link.groupSlug === group.slug);
 
       for (const link of groupLinks) {
-        await prisma.link.create({
-          data: {
-            slug: link.slug,
-            name: link.name,
-            url: link.url,
-            description: link.description,
-            sortOrder: link.sortOrder,
-            groupId: createdGroup.id,
-            createdAt: link.createdAt,
-            updatedAt: link.updatedAt,
-          },
-        });
+        const payload = {
+          slug: link.slug,
+          name: link.name,
+          url: link.url,
+          description: link.description,
+          sortOrder: link.sortOrder,
+          groupId: createdGroup.id,
+          createdAt: link.createdAt,
+          updatedAt: link.updatedAt,
+        };
+
+        let attempts = 0;
+        for (;;) {
+          try {
+            await prisma.link.create({ data: payload });
+            break;
+          } catch (err) {
+            attempts += 1;
+            if (attempts >= MAX_RETRY) {
+              throw err;
+            }
+            await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+          }
+        }
       }
     }
   }

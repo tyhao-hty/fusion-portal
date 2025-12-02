@@ -9,7 +9,7 @@ export const metadata: Metadata = buildSiteMetadata({
   path: "/site/papers",
 });
 
-async function fetchPapers(): Promise<Paper[]> {
+async function fetchPapers(): Promise<PapersResponse> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
   const response = await fetch(`${baseUrl}/api/papers?limit=100`, {
     cache: "no-store",
@@ -20,15 +20,18 @@ async function fetchPapers(): Promise<Paper[]> {
   }
 
   const payload = (await response.json()) as PapersResponse;
-  return payload.data;
+  return payload;
 }
 
 export default async function PapersPage() {
   let papers: Paper[] = [];
+  let meta: PapersResponse["meta"] | undefined;
   let error: string | null = null;
 
   try {
-    papers = await fetchPapers();
+    const payload = await fetchPapers();
+    papers = payload.data;
+    meta = payload.meta;
   } catch (err) {
     error = err instanceof Error ? err.message : "未知错误";
   }
@@ -45,13 +48,7 @@ export default async function PapersPage() {
         API，并支持按主题分类浏览或通过搜索快速定位目标文献。
       </p>
 
-      {error ? (
-        <p className="paper-status">论文数据加载失败：{error}</p>
-      ) : papers.length ? (
-        <PapersCatalog papers={papers} />
-      ) : (
-        <p className="paper-status">暂时没有可展示的论文，请稍后再试。</p>
-      )}
+      <PapersCatalog papers={papers} initialMeta={meta} initialError={error} />
 
       <section>
         <h2>常用论文与数据资源</h2>

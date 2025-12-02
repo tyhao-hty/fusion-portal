@@ -9,17 +9,18 @@ type NavItem = {
   href: string;
   label: string;
   isExternal?: boolean;
+  variant?: "primary" | "legacy";
 };
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/site", label: "首页" },
   { href: "/site/history", label: "发展历史" },
-  { href: "/science.html", label: "科普知识", isExternal: true },
-  { href: "/theory.html", label: "理论知识", isExternal: true },
   { href: "/site/papers", label: "论文汇总" },
-  { href: "/technology.html", label: "技术路线", isExternal: true },
-  { href: "/business.html", label: "商业尝试", isExternal: true },
   { href: "/site/links", label: "相关链接" },
+  { href: "/science.html", label: "科普知识", isExternal: true, variant: "legacy" },
+  { href: "/theory.html", label: "理论知识", isExternal: true, variant: "legacy" },
+  { href: "/technology.html", label: "技术路线", isExternal: true, variant: "legacy" },
+  { href: "/business.html", label: "商业尝试", isExternal: true, variant: "legacy" },
 ];
 
 const MOBILE_MEDIA_QUERY = "(max-width: 991px)";
@@ -114,6 +115,27 @@ export function SiteHeader() {
     return isNavOpen ? `${base} nav-menu--open` : base;
   }, [isNavOpen]);
 
+  const isActive = (href: string) => {
+    if (!pathname) return false;
+    if (href === "/site") {
+      return pathname === "/site";
+    }
+    return pathname.startsWith(href);
+  };
+  const buildClassName = (item: NavItem) => {
+    const classes = ["nav-link"];
+    if (item.variant === "legacy") {
+      classes.push("nav-link--legacy");
+    }
+    if (isActive(item.href)) {
+      classes.push("nav-link--active");
+    }
+    if (item.isExternal) {
+      classes.push("nav-link--external");
+    }
+    return classes.join(" ");
+  };
+
   return (
     <header className={`header${isScrolled ? " header--scrolled" : ""}`} role="banner">
       <a className="skip-link" href="#main-content">
@@ -146,11 +168,20 @@ export function SiteHeader() {
             {NAV_ITEMS.map((item) => (
               <li key={item.label}>
                 {item.isExternal ? (
-                  <a href={item.href} onClick={handleNavItemClick}>
+                  <a
+                    href={item.href}
+                    onClick={handleNavItemClick}
+                    className={buildClassName(item)}
+                    rel="noreferrer"
+                  >
                     {item.label}
                   </a>
                 ) : (
-                  <Link href={item.href} onClick={handleNavItemClick}>
+                  <Link
+                    href={item.href}
+                    onClick={handleNavItemClick}
+                    className={buildClassName(item)}
+                  >
                     {item.label}
                   </Link>
                 )}
@@ -159,12 +190,16 @@ export function SiteHeader() {
             {!user ? (
               <>
                 <li>
-                  <Link href="/login" onClick={handleNavItemClick}>
+                  <Link href="/login" onClick={handleNavItemClick} className="nav-link nav-link--auth">
                     登录
                   </Link>
                 </li>
                 <li>
-                  <Link href="/register" onClick={handleNavItemClick}>
+                  <Link
+                    href="/register"
+                    onClick={handleNavItemClick}
+                    className="nav-link nav-link--auth"
+                  >
                     注册
                   </Link>
                 </li>
@@ -172,12 +207,12 @@ export function SiteHeader() {
             ) : (
               <>
                 <li>
-                  <Link href="/new" onClick={handleNavItemClick}>
+                  <Link href="/new" onClick={handleNavItemClick} className="nav-link nav-link--auth">
                     写文章
                   </Link>
                 </li>
                 <li>
-                  <Link href="/admin" onClick={handleNavItemClick}>
+                  <Link href="/admin" onClick={handleNavItemClick} className="nav-link nav-link--auth">
                     管理
                   </Link>
                 </li>

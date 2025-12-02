@@ -15,6 +15,9 @@ const DEFAULT_JSON_PATH = path.resolve(
   '../../../frontend/public/data/timeline.json',
 );
 const LOG_DIR = path.resolve(__dirname, 'logs');
+const DEFAULT_BATCH_SIZE = 200;
+const MAX_RETRY = 3;
+const RETRY_DELAY_MS = 500;
 
 function parseArgs(argv) {
   const args = new Set(argv.slice(2));
@@ -23,6 +26,12 @@ function parseArgs(argv) {
     checksumFlagIndex !== -1 && argv[checksumFlagIndex + 1]
       ? argv[checksumFlagIndex + 1]
       : process.env.TIMELINE_JSON_CHECKSUM || null;
+  const batchSizeFlagIndex = argv.indexOf('--batch');
+  const batchSize =
+    batchSizeFlagIndex !== -1 && argv[batchSizeFlagIndex + 1]
+      ? Number.parseInt(argv[batchSizeFlagIndex + 1], 10)
+      : Number.parseInt(process.env.TIMELINE_BATCH_SIZE ?? DEFAULT_BATCH_SIZE, 10);
+
   return {
     dryRun: args.has('--dry-run'),
     dataPath: (() => {
@@ -33,6 +42,7 @@ function parseArgs(argv) {
       return process.env.TIMELINE_JSON ?? DEFAULT_JSON_PATH;
     })(),
     expectedChecksum,
+    batchSize: Number.isNaN(batchSize) ? DEFAULT_BATCH_SIZE : Math.max(1, batchSize),
   };
 }
 
@@ -63,7 +73,7 @@ async function validateMigration({ expectedCount, checksumMatch, sampleRecordInt
 }
 
 async function main() {
-  const { dryRun, dataPath, expectedChecksum } = parseArgs(process.argv);
+  const { dryRun, dataPath, expectedChecksum, batchSize } = parseArgs(process.argv);
   const absolutePath = dataPath;
 
   const jsonBuffer = await fs.readFile(absolutePath);
@@ -156,6 +166,7 @@ async function main() {
     existingChecksum,
     missingInDatabase: missingInDatabase.slice(0, 10),
     missingInFile: missingInFile.slice(0, 10),
+    batchSize,
   };
 
   await fs.mkdir(LOG_DIR, { recursive: true });
@@ -187,8 +198,21 @@ async function main() {
   await prisma.$transaction(async (tx) => {
     await tx.timelineEvent.deleteMany();
 
-    for (const record of records) {
-      await tx.timelineEvent.create({ data: record });
+    for (let i = 0; i < records.length; i += batchSize) {
+      const slice = records.slice(i, i + batchSize);
+      let attempts = 0;
+      for (;;) {
+        try {
+          await tx.timelineEvent.createMany({ data: slice });
+          break;
+        } catch (err) {
+          attempts += 1;
+          if (attempts >= MAX_RETRY) {
+            throw err;
+          }
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+        }
+      }
     }
   });
 

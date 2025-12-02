@@ -72,6 +72,208 @@
 
 ---
 
+### 📅 2025-12-02 12:49
+#### 🧭 任务编号：T009 – 阶段二跟进行动清单收尾
+**[开发阶段]**  
+- 将《T009_phase2_followups.md》标记完成（✅ 2025-12-02 12:49 CST），子任务 1–5 已记录并落地（重写验证、筛选透传、节流、seed 验证、对齐提案）。
+
+**[问题与解决]**  
+- 无阻塞。
+
+**[总结与下步计划]**  
+- 若后续有新需求，可在 T009 或 T002/T003 下开新工单；当前 followups 文档用于归档参考。
+
+---
+### 📅 2025-12-02 12:48
+#### 🧭 任务编号：T009 – 子任务 5（Schema/接口对齐提案）
+**[开发阶段]**  
+- 撰写《T009_phase2_alignment_notes.md》：梳理 Prisma 现状与差距（Article 缺少 excerpt/cover/publishedAt/readingTime/timelineYear/标签分类），提出 ER/TS 对齐与 API 扩展建议；列出待办工单草案（Prisma 迁移、Article API 扩展、前端类型与数据层、timeline 联动、文档更新）。
+
+**[问题与解决]**  
+- 分类/标签策略需与 T002 确认；暂按多标签 + 可选单分类预案。
+
+**[总结与下步计划]**  
+- 待 T002/T003 确认分类/标签/审核流程后，执行 Prisma 迁移与 API/前端改造；更新 specs 与任务状态。
+
+---
+
+### 📅 2025-12-02 12:44
+#### 🧭 任务编号：T009 – 子任务 4（种子脚本验证）
+**[开发阶段]**  
+- 执行 seeds：  
+  - `npm run seed:timeline -- --dry-run` → log `timeline-dry-run-2025-12-02T04-41-51-977Z.json`  
+  - `npm run seed:links -- --dry-run` → 成功（日志写入 `logs/`，保留 2025-11-05 migrate 记录）  
+  - `npm run seed:papers -- --dry-run` → log `papers-dry-run-2025-12-02T04-43-23-465Z.json`  
+  - `npm run seed:timeline -- --batch 200` → 正式写入，log `timeline-migrate-2025-12-02T04-42-50-069Z.json`  
+- 验证：timeline 数据 14 条，checksum 记录于日志；links/papers 正式未重跑（已有 2025-11-05 migrate）。
+
+**[问题与解决]**  
+- 无阻塞；若需最新 links/papers 正式 checksum，可再执行正式 seed。
+
+**[总结与下步计划]**  
+- 如需刷新 links/papers 正式数据，运行 `npm run seed:links` / `npm run seed:papers` 并保留日志；当前 dry-run 显示数据与 DB 计数一致。
+
+---
+
+### 📅 2025-12-02 12:27
+#### 🔧 任务编号：T009 – 子任务 3（交互节流）
+**[开发阶段]**  
+- `TimelineFeed`：IntersectionObserver 与“加载更多”增加 400ms 节流，避免高频触发。  
+- `LinksDirectory`：滚动与按钮加载增加同样节流，仍使用后端筛选数据；样式未调整（timebox 内保持现状）。
+
+**[问题与解决]**  
+- 无新阻塞；待后续验证真实数据下的滚动体验。
+
+**[总结与下步计划]**  
+- 如需继续样式收敛/移动端检查需另行安排；可转向子任务 4/5。
+
+---
+
+### 📅 2025-12-02 12:12
+#### 🔧 任务编号：T009 – 子任务 2（筛选参数后端化）
+**[开发阶段]**  
+- `/site/links`：`LinksDirectory` 改为按筛选（q/section/group）请求 `/api/links`，使用后端 meta 展示统计，增加加载/错误提示；初始 meta/错误从 page 透传。  
+- `/site/papers`：`PapersCatalog` 将筛选（q/yearFrom/yearTo/tags/sort）透传 `/api/papers`，使用后端返回的 meta 统计，支持错误/加载提示；page 透传初始 meta/错误。  
+- 页面层（links/papers）改为返回响应 meta 并传入组件。
+
+**[问题与解决]**  
+- 当前环境未连后端，未做冒烟；风险在于后端参数兼容与分页行为需上线环境验证。
+
+**[总结与下步计划]**  
+- 待后端可用时，按冒烟清单验证：默认、单一条件、多条件、无结果、加载更多/分页、刷新后持久化。若后端不支持某参数，按回滚策略恢复前端过滤。
+
+---
+
+### 📅 2025-12-02 12:06
+#### 🧭 任务编号：T009 – 子任务 1（站点重写上线确认）
+**[开发阶段]**  
+- 审核 `frontend/next.config.js`：已含 `/index.html`、`/history.html`、`/links.html`、`/papers.html` → `/site/*` rewrites，无额外前端重写。  
+- 在 `docs_for_llm/3_tasks/T009_phase2_followups.md` 记录现状与待办：需在部署层检查是否存在二次 rewrite，验证需用无缓存模式。
+
+**[问题与解决]**  
+- 受限于当前环境无法直接检查网关/CDN 配置；暂以文档标注待验证。
+
+**[总结与下步计划]**  
+- 等待有权限的环境确认 Nginx/CDN 配置与无缓存验证；如缺失重写则准备变更片段与回滚路径。
+
+---
+
+
+### 📅 2025-11-27 19:04
+#### 🔧 任务编号：T009 – 数据脚本与导航体验（lint 修复）
+**[开发阶段]**  
+- `frontend/app/site/history/TimelineFeed.tsx`：将筛选持久化 useEffect 上移，避免在错误分支后调用 Hook 触发 `react-hooks/rules-of-hooks` 告警；保持骨架/筛选逻辑不变。
+
+**[问题与解决]**  
+- ESLint 报“Hook 调用顺序”错误；通过调整 useEffect 位置解决。
+
+**[总结与下步计划]**  
+- 等待后续任务/测试指令；若需继续完善 T009 阶段二再更新。
+
+---
+
+### 📅 2025-11-21 20:03
+#### 🔥 任务编号：T009 – 数据脚本与导航体验（收尾）
+**[计划阶段]**  
+- 完成 T009 data_scripts_ux 剩余项：导航顺序/旧站入口弱化、重写规则补齐，列表页体验微调（骨架/渐显、搜索记忆、加载防抖）。
+
+**[开发阶段]**  
+- `frontend/components/site/SiteHeader.tsx`：重排导航优先级（/site → history → papers → links），旧版 HTML 标记为 legacy，active/legacy/external 样式 class。  
+- `frontend/app/site/styles-legacy.css`：新增 nav-link 状态、骨架屏与淡入动画、通用 shimmer/fadeIn。  
+- `frontend/next.config.js`：补充 `/links.html`、`/papers.html` → `/site/*` rewrites。  
+- `TimelineFeed`：加载更多节流（避免重复触发）、首屏骨架、筛选持久化到 localStorage。  
+- `LinksDirectory` / `PapersCatalog`：筛选条件持久化（localStorage）。
+
+**[问题与解决]**  
+- 未连库/未跑测试（按要求暂停），功能均为前端可视与配置变更，无额外依赖。
+
+**[总结与下步计划]**  
+- T009_data_scripts_ux 可标记完成；同步更新任务文件、`T009_static_merge.md`、`completed.md` 状态。
+
+---
+
+### 📅 2025-11-21 19:30
+#### 🔥 任务编号：T009 – 数据脚本健壮化 & 导航体验（进行中）
+**[计划阶段]**  
+- 目标：按 `T009_data_scripts_ux.md` 强化 seeds（批次/重试/摘要）并梳理导航一致性。
+
+**[开发阶段]**  
+- `backend/prisma/seeds/migrate_timeline.js`：新增批量写入（默认 200，可调 `--batch`/env）、重试与延迟、summary 记录 batchSize。  
+- `backend/prisma/seeds/migrate_links.js`：支持批次参数与重试写入 link；summary 记录 batchSize。  
+- `backend/prisma/seeds/migrate_papers.js`：支持批次参数、tag createMany 分批重试、paper 写入重试，summary 记录 batchSize。
+
+**[问题与解决]**  
+- 未执行 seeds（当前环境缺 DB）；改为提升脚本健壮性。
+
+**[总结与下步计划]**  
+- 下一步：梳理导航/rewrites 一致性、添加 UI 微调（骨架/加载节流/搜索持久化），完成后标记子任务完成。
+
+---
+
+
+### 📅 2025-11-21 19:13
+#### 🔥 任务编号：T009 – 前端样式调整（history/links/papers 筛选与导航）
+**[计划阶段]**  
+- 将新增的筛选/视图控件样式化，保持与现有 `/site` 视觉一致，并兼顾移动端。
+
+**[开发阶段]**  
+- `frontend/app/site/styles-legacy.css`：新增筛选样式（timeline-filters、links-filters、paper-filters），按钮幽灵态 `load-more-button--ghost`，分组折叠/扁平视图/meta 样式，标签胶囊、摘要展开按钮样式，响应式堆叠规则，paper-card 高度适配。
+
+**[问题与解决]**  
+- 无阻塞。
+
+**[总结与下步计划]**  
+- 样式已覆盖新增组件，后续可按需求微调配色/间距或接入 Tailwind 重构。测试仍未执行（按要求暂停）。
+
+---
+
+### 📅 2025-11-21 18:40
+#### 🔥 任务编号：T009 – 前端 `/site` 页面增强（history/links/papers）
+**[计划阶段]**  
+- 目标：依 `T009_frontend_site_enhancements.md` 提升 `/site/history`、`/site/links`、`/site/papers` 交互体验并对齐新 API 筛选参数。  
+- 步骤：时间线筛选 + 按钮；友情链接筛选/折叠/扁平视图；论文多标签/年份/排序与摘要展开；导航高亮。
+
+**[开发阶段]**  
+- `frontend/app/site/history/TimelineFeed.tsx`：增加关键词与年份区间筛选、显式“应用/重置”按钮、加载更多 + IntersectionObserver 并存，错误 UI 显示当前筛选。  
+- `frontend/app/site/links/LinksDirectory.tsx`：新增分类/分组/关键词筛选、重置按钮、扁平/嵌套视图切换、分组折叠、空态提示与加载更多逻辑适配。  
+- `frontend/app/site/papers/PapersCatalog.tsx`：支持多标签复选、年份区间、排序选项、筛选重置，摘要展开/收起，统计信息随筛选更新。  
+- `frontend/components/site/SiteHeader.tsx`：导航项添加 active 高亮（含 `/site/links`、`/site/papers`）。
+
+**[问题与解决]**  
+- Issue: `api_papers` 规格已更新（后端扩展），前端现采用客户端筛选；若需后端透传需后续接入。  
+- Solution: 先在客户端完成筛选与排序，后续可将参数透传到 API。
+
+**[总结与下步计划]**  
+- 未运行测试（按要求暂停测试工作）。  
+- 后续可：a) 将 papers/links 请求透传新筛选参数以减少前端计算；b) 适配样式（timeline/links/papers 新增的 filter UI 如需细化）；c) 根据需要扩展导航样式或可达性提示。
+
+---
+
+
+
+### 📅 2025-11-21 14:20
+#### 🔥 任务编号：T009 – 后端 API 扩展（timeline/links/papers）
+**[计划阶段]**  
+- 目标：按子任务 `T009_backend_api_expansion.md` 扩展 timeline/links/papers 查询能力与返回元信息，保持公共只读接口稳定。  
+- 步骤：新增筛选参数与分页元信息 → 支持 links 扁平视图 → 多标签/区间筛选 → 同步 API 规格文档。
+
+**[开发阶段]**  
+- 更新 `backend/src/routes/timeline.js`：支持 `yearFrom`/`yearTo` 区间、`q` 关键词模糊匹配，`MAX_LIMIT` 提升至 50，返回 `pageSize`/`hasMore`，非法年份区间 400。  
+- 更新 `backend/src/routes/links.js`：新增 `section`/`group`/`q` 过滤和 `view=flat` 扁平返回，meta 增加 filters，去除过滤后空分组/分类。  
+- 更新 `backend/src/routes/papers.js`：多标签（逗号/重复参数）、年份区间、排序选项（year/name asc/desc）与 year range 校验，meta 返回 `pageSize`/`hasMore`。  
+- 文档同步：`docs/api/timeline.md`、`docs/api/links.md`、`docs/api/papers.md`、`docs_for_llm/5_specs/api_timeline.md`、`api_links.md`、重写 `api_papers.md`（原文件仅占位）。
+
+**[问题与解决]**  
+- Issue: `docs_for_llm/5_specs/api_papers.md` 旧文件为占位文本。  
+- Solution: 删除后重新撰写完整规格说明。
+
+**[总结与下步计划]**  
+- 子任务文件已移至 `docs_for_llm/3_tasks/completed/T009_backend_api_expansion.md`。  
+- 待后续阶段补充对应测试与前端适配（按 `T009_frontend_site_enhancements.md`）。  
+- 若有 DB 环境可用，建议回归 `backend/tests/*`；当前未执行自动化测试。
+
+---
+
 ### 📅 2025-11-05 17:52
 #### 🔥 任务编号：T010 – 文档一致性巡检
 **[计划阶段]**  
