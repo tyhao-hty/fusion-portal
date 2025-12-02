@@ -1,13 +1,13 @@
 # API 文档 – `/api/timeline`
 
 > 状态：稳定（v1）  
-> 最后更新：2025-11-05  
+> 最后更新：2025-11-21  
 > 维护人：后端团队（Express + Prisma）
 
 ---
 
 ## 1. 概述
-时间线接口提供核聚变发展历程的分页数据，供新版 `/site/history` 页面使用。数据源来自 `TimelineEvent` 表（由 `frontend/public/data/timeline.json` 迁移而来），支持按年份筛选与自定义排序。
+时间线接口提供核聚变发展历程的分页数据，供新版 `/site/history` 页面使用。数据源来自 `TimelineEvent` 表（由 `frontend/public/data/timeline.json` 迁移而来），支持按年份区间、关键词筛选与自定义排序。
 
 - **基础路径**：`/api/timeline`
 - **鉴权**：无（公开只读）
@@ -19,11 +19,14 @@
 | 参数 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `page` | number | `1` | 页码，从 1 开始。 |
-| `limit` | number | `8` | 每页条数，最大 `20`。可使用兼容参数 `pageSize`。 |
-| `order` | string | `desc` | 排序方向，`asc` 或 `desc`；兼容参数 `sort`。 |
+| `limit`/`pageSize` | number | `8` | 每页条数，最大 `50`。 |
+| `order`/`sort` | string | `desc` | 排序方向，`asc` 或 `desc`。 |
 | `year` | string | — | 年份筛选：纯数字时按 `yearValue` 精确匹配；非数字时模糊匹配 `yearLabel`（例如“1970年代”）。 |
+| `yearFrom` | number | — | 起始年份（含）；与 `yearTo` 组合使用时必须 `yearFrom <= yearTo`。 |
+| `yearTo` | number | — | 结束年份（含）。 |
+| `q`/`search` | string | — | 关键词，模糊匹配 `title`/`description`。 |
 
-> 当 `limit` 超过 20 时将被截断；小于 1 时回退到 1。  
+> 当 `limit` 超过 50 时将被截断；小于 1 时回退到 1。  
 > 未提供或提供非法值时使用默认值。
 
 ---
@@ -47,10 +50,12 @@
   "meta": {
     "page": 1,
     "limit": 8,
+    "pageSize": 8,
     "total": 120,
     "totalPages": 15,
     "order": "desc",
-    "hasNext": true
+    "hasNext": true,
+    "hasMore": true
   }
 }
 ```
@@ -62,14 +67,14 @@
 | `data[i].slug` | 与原 JSON `id` 对应，唯一标识。 |
 | `data[i].yearLabel` / `yearValue` | 展示用年份与数值化年份（若无法解析则为 `null`）。 |
 | `data[i].sortOrder` | 排序权重（越大越靠前），来源于 JSON 索引。 |
-| `meta.hasNext` | 是否存在下一页。 |
+| `meta.hasNext` / `hasMore` | 是否存在下一页。 |
 
 ---
 
 ## 4. 错误响应
 | 状态码 | 场景 | 示例 |
 | --- | --- | --- |
-| `400` | 查询参数非法（由其它中间件抛出） | `{ "message": "Invalid query", "error": { "code": 400, "message": "Invalid query" } }` |
+| `400` | 查询参数非法（如 `yearFrom > yearTo`） | `{ "message": "Invalid year range: yearFrom must be less than or equal to yearTo", "error": { "code": 400, "message": "Bad Request" } }` |
 | `500` | 服务器内部错误（Prisma/数据库异常） | `{ "message": "Internal Server Error", "error": { "code": 500, "message": "Internal Server Error" } }` |
 
 > 所有错误均经过全局 `errorHandler` 处理，保持 `message` 与 `error.code`、`error.message` 字段一致。

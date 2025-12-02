@@ -1,11 +1,19 @@
 # API 规格 – `/api/links`
 
-- **最后更新**：2025-11-05（对齐 `docs/api/links.md`）
+- **最后更新**：2025-11-21（对齐 `docs/api/links.md`）
 - **状态**：β（阶段二开发中）
 - **鉴权**：无（公开只读）
 - **基础路径**：`/api/links`
 - **返回格式**：`application/json`
 - **服务归属**：Express + Prisma（后端）
+
+## 查询参数
+- `section`/`sectionSlug`（可选）：按分类筛选
+- `group`/`groupSlug`（可选）：按分组筛选
+- `q`/`search`（可选）：对 `name`/`description`/`url` 模糊匹配
+- `view`（默认 `nested`）：`nested` 返回嵌套结构；`flat` 返回扁平列表并附带 section/group 元信息
+
+> 过滤后会移除空分组/分类；`view=flat` 时 `data` 为一维数组。
 
 ## 响应结构
 ```json
@@ -36,7 +44,13 @@
   "meta": {
     "sectionCount": 6,
     "groupCount": 12,
-    "linkCount": 52
+    "linkCount": 52,
+    "filters": {
+      "section": null,
+      "group": null,
+      "keyword": null,
+      "view": "nested"
+    }
   }
 }
 ```
@@ -45,7 +59,7 @@
 - `data[].slug` / `groups[].slug` / `links[].slug`：对应 Prisma 中的唯一标识（源自原 JSON `id`）。
 - `title` 可为 `null` 以兼容未命名分组。
 - `sortOrder` 依据原数组索引反向生成，数字越大排序越靠前。
-- `meta` 提供统计数据，供前端展示或监控。
+- `meta` 提供统计与过滤信息，供前端展示或监控。
 
 ## 错误响应
 统一由全局 `errorHandler` 返回，当前接口不接收查询参数：

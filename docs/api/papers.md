@@ -1,13 +1,13 @@
 # API 文档 – `/api/papers`
 
 > 状态：β（阶段二开发中）  
-> 最后更新：2025-11-05  
+> 最后更新：2025-11-21  
 > 维护人：后端团队（Express + Prisma）
 
 ---
 
 ## 1. 概述
-论文接口提供核聚变关键论文的分页数据，服务于新版 `/site` 与待迁移的“papers”页面。数据来自 `Paper` 与 `PaperTag` 模型（由 `frontend/public/data/papers.json` 迁移），支持按年份、标签与关键词检索。
+论文接口提供核聚变关键论文的分页数据，服务于新版 `/site` 与待迁移的“papers”页面。数据来自 `Paper` 与 `PaperTag` 模型（由 `frontend/public/data/papers.json` 迁移），支持按年份区间、标签（多选）、关键词检索与排序。
 
 - **基础路径**：`/api/papers`
 - **鉴权**：无（公开只读）
@@ -19,10 +19,13 @@
 | 参数 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `page` | number | `1` | 页码，从 1 开始。 |
-| `limit` | number | `10` | 每页条数，最大 `50`。兼容参数：`pageSize`。 |
+| `limit`/`pageSize` | number | `10` | 每页条数，最大 `50`。 |
 | `year` | string | — | 年份筛选：纯数字时按整型年份匹配；其它字符串会模糊匹配 `title` 与 `venue`。 |
-| `tag` | string | — | 标签筛选，支持 `PaperTag.slug` 或 `name`（区分度更高建议传 `slug`）。别名：`tagSlug`。 |
-| `search` | string | — | 关键词搜索，模糊匹配标题、作者、摘要与期刊。别名：`q`。 |
+| `yearFrom` | number | — | 起始年份（含）；需满足 `yearFrom <= yearTo`。 |
+| `yearTo` | number | — | 结束年份（含）。 |
+| `tags`/`tag`/`tagSlug` | string | — | 多标签筛选，逗号分隔或重复参数，匹配标签 `slug` 或 `name`。 |
+| `search`/`q` | string | — | 关键词搜索，模糊匹配标题、作者、摘要与期刊。 |
+| `sort` | string | `year_desc` | 支持 `year_desc`、`year_asc`、`name_asc`、`name_desc`。 |
 
 > 当 `limit` 超过 50 时会被截断；小于 1 时回退到 1。  
 > 所有模糊搜索均为大小写不敏感（Prisma `mode: 'insensitive'`）。
@@ -53,9 +56,11 @@
   "meta": {
     "page": 1,
     "limit": 10,
+    "pageSize": 10,
     "total": 32,
     "totalPages": 4,
-    "hasNext": true
+    "hasNext": true,
+    "hasMore": true
   }
 }
 ```
@@ -67,14 +72,14 @@
 | `data[i].slug` | 与原 `papers.json` 的 `id` 一致，唯一标识。 |
 | `data[i].tags[].slug` | 基于标签文本生成的稳定编码（Base64URL）；用于前端筛选。 |
 | `data[i].sortOrder` | JSON 顺序反转后的索引，越大越靠前。 |
-| `meta.hasNext` | 是否存在下一页。 |
+| `meta.hasNext` / `hasMore` | 是否存在下一页。 |
 
 ---
 
 ## 4. 错误响应
 | 状态码 | 场景 | 示例 |
 | --- | --- | --- |
-| `400` | 查询参数非法（保留给未来扩展） | `{ "message": "Invalid query", "error": { "code": 400, "message": "Invalid query" } }` |
+| `400` | 查询参数非法（如 `yearFrom > yearTo`） | `{ "message": "Invalid year range: yearFrom must be less than or equal to yearTo", "error": { "code": 400, "message": "Bad Request" } }` |
 | `500` | 服务器内部错误（数据库/Prisma 异常） | `{ "message": "Internal Server Error", "error": { "code": 500, "message": "Internal Server Error" } }` |
 
 > 所有错误均交由全局 `errorHandler` 统一格式化。

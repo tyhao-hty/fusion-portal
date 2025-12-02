@@ -9,7 +9,7 @@ export const metadata: Metadata = buildSiteMetadata({
   path: "/site/links",
 });
 
-async function fetchLinks(): Promise<LinkSection[]> {
+async function fetchLinks(): Promise<LinksResponse> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
   const response = await fetch(`${baseUrl}/api/links`, {
     cache: "no-store",
@@ -20,15 +20,18 @@ async function fetchLinks(): Promise<LinkSection[]> {
   }
 
   const payload = (await response.json()) as LinksResponse;
-  return payload.data;
+  return payload;
 }
 
 export default async function LinksPage() {
   let sections: LinkSection[] = [];
+  let meta: LinksResponse["meta"] | undefined;
   let error: string | null = null;
 
   try {
-    sections = await fetchLinks();
+    const payload = await fetchLinks();
+    sections = payload.data;
+    meta = payload.meta;
   } catch (err) {
     error = err instanceof Error ? err.message : "未知错误";
   }
@@ -45,17 +48,7 @@ export default async function LinksPage() {
         资源数量较多，可通过搜索与分页逐步浏览。
       </p>
 
-      {error ? (
-        <div className="links-empty" role="status">
-          资源列表加载失败：{error}
-        </div>
-      ) : sections.length ? (
-        <LinksDirectory sections={sections} />
-      ) : (
-        <div className="links-empty" role="status">
-          暂无资源数据，请稍后再试。
-        </div>
-      )}
+      <LinksDirectory sections={sections} initialMeta={meta} initialError={error} />
 
       <section>
         <h2>使用建议</h2>
