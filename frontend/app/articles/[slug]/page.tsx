@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
@@ -50,11 +51,16 @@ export default async function ArticleDetailPage({ params }: PageParams) {
 
         <div className="rounded-2xl border border-slate-100 bg-white/85 p-6 shadow-md shadow-slate-200 backdrop-blur-sm">
           {article.coverImageUrl ? (
-            <img
-              src={article.coverImageUrl}
-              alt={article.title}
-              className="w-full rounded-xl border border-slate-100 object-cover"
-            />
+        <div className="relative h-72 w-full overflow-hidden rounded-xl border border-slate-100">
+          <Image
+            src={article.coverImageUrl}
+            alt={article.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 768px"
+            priority
+          />
+        </div>
           ) : null}
 
           <article className="prose-article mt-4">
