@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@/components/UserContext";
 
@@ -27,10 +26,17 @@ const MOBILE_MEDIA_QUERY = "(max-width: 991px)";
 
 export function SiteHeader() {
   const { user, setUser } = useUser();
-  const pathname = usePathname();
+  const [pathname, setPathname] = useState("");
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const syncPath = () => setPathname(window.location.pathname);
+    syncPath();
+    window.addEventListener("popstate", syncPath);
+    return () => window.removeEventListener("popstate", syncPath);
+  }, []);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(MOBILE_MEDIA_QUERY);
@@ -104,9 +110,12 @@ export function SiteHeader() {
     window.location.href = "/login";
   }
 
-  const handleNavItemClick = () => {
+  const handleNavItemClick = (href?: string) => {
     if (isMobile) {
       setIsNavOpen(false);
+    }
+    if (href?.startsWith("/")) {
+      setPathname(href);
     }
   };
 
@@ -170,7 +179,7 @@ export function SiteHeader() {
                 {item.isExternal ? (
                   <a
                     href={item.href}
-                    onClick={handleNavItemClick}
+                    onClick={() => handleNavItemClick(item.href)}
                     className={buildClassName(item)}
                     rel="noreferrer"
                   >
@@ -179,7 +188,7 @@ export function SiteHeader() {
                 ) : (
                   <Link
                     href={item.href}
-                    onClick={handleNavItemClick}
+                    onClick={() => handleNavItemClick(item.href)}
                     className={buildClassName(item)}
                   >
                     {item.label}
@@ -190,14 +199,18 @@ export function SiteHeader() {
             {!user ? (
               <>
                 <li>
-                  <Link href="/login" onClick={handleNavItemClick} className="nav-link nav-link--auth">
+                  <Link
+                    href="/login"
+                    onClick={() => handleNavItemClick("/login")}
+                    className="nav-link nav-link--auth"
+                  >
                     登录
                   </Link>
                 </li>
                 <li>
                   <Link
                     href="/register"
-                    onClick={handleNavItemClick}
+                    onClick={() => handleNavItemClick("/register")}
                     className="nav-link nav-link--auth"
                   >
                     注册
@@ -207,12 +220,16 @@ export function SiteHeader() {
             ) : (
               <>
                 <li>
-                  <Link href="/new" onClick={handleNavItemClick} className="nav-link nav-link--auth">
+                  <Link href="/new" onClick={() => handleNavItemClick("/new")} className="nav-link nav-link--auth">
                     写文章
                   </Link>
                 </li>
                 <li>
-                  <Link href="/admin" onClick={handleNavItemClick} className="nav-link nav-link--auth">
+                  <Link
+                    href="/admin"
+                    onClick={() => handleNavItemClick("/admin")}
+                    className="nav-link nav-link--auth"
+                  >
                     管理
                   </Link>
                 </li>

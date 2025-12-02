@@ -65,6 +65,7 @@
   - 关键字筛选（`keyword=ITER`）返回包含关键词的记录。
 - `/site/links`、`/site/papers`：列表、搜索、分组展示与跳转正常；
 - `/api/links`、`/api/papers`：返回结构化数据，分页/筛选参数生效。
+- `/articles`：可选运行快速冒烟 `API_BASE_URL=<后端地址> node backend/scripts/articles_smoke.js`，确认分页/状态/404 正常。
 - **旧站兜底**：访问 `/science.html`、`/theory.html`，确认 `components/common.js` 加载成功、返回首页链接可用。
 - **自动化测试**：
   ```bash

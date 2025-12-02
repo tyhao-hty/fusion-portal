@@ -71,6 +71,292 @@
 ## 🧩 日志记录区（按时间倒序排列）
 
 ---
+### 📅 2025-12-02 20:19
+#### ✅ 任务编号：T003 – 归档
+**[总结]**  
+- Step 1/2/3/4/5 全部完成并归档，列表保留搜索+分页，筛选控件暂不开发；Markdown 主题与页面样式已对齐站点。  
+- `status=all` 目前公开可见，如需收紧需新开任务实现鉴权开关。  
+**[后续建议]**  
+- 若要调整权限或增加筛选控件，另起任务；否则 T003 可视为收尾。
+
+---
+
+### 📅 2025-12-02 19:35
+#### 🧪 任务编号：T003 – Step 5 冒烟反馈 & 修复
+**[问题与解决]**  
+- 冒烟反馈：未登录访问 `status=all` 仍可看到全部文章。为解决登录场景仍仅返回已发布的问题，`GET /articles` 现允许 `status=all` 无鉴权直接返回全量，简化使用；如后续需收紧权限，再加鉴权开关。  
+- 管理后台文章过多时无法分页。修复：`(dashboard)/admin/page.tsx` 增加分页状态，接口带 `page/pageSize=20`，展示上一页/下一页。  
+**[总结与下步计划]**  
+- 回归结果：`status=all` 登录/未登录均可见全量；Admin 分页可翻页。若需权限收紧，后续新任务中加入鉴权开关。
+
+---
+
+### 📅 2025-12-02 18:45
+#### 🔧 任务编号：T003 – Step 4 前端筛选扩展
+**[开发阶段]**  
+- 之前尝试为 `/articles` 添加多项筛选控件，现按需求回退，仅保留搜索+分页 UI，移除分类/标签/年份输入和状态/排序下拉；分页仍携带 query。  
+- 文档同步回退：`T003_step4_frontend_pages.md` 更新为仅搜索/分页接入。  
+**[问题与解决]**  
+- 为保持阅读体验，与站点风格对齐，进一步增强 `.prose-article` Markdown 主题：加粗标题层级、深色 code 背景、渐变代码块、柔和引用/表格/图片阴影与分隔线，提升可读性；文章详情页外层加入淡色渐变背景 + 半透明卡片，避免纯白底。  
+**[总结与下步计划]**  
+- 后续若需筛选控件再设计轻量方案；继续 Step 4 样式收尾与 Step 5 冒烟。
+
+---
+
+### 📅 2025-12-02 18:38
+#### 🔒 任务编号：T003 – Step 3 权限补充
+**[开发阶段]**  
+- `backend/src/middleware/auth.js` 增加 `authenticateTokenOptional`，用于注入已登录用户但不强制拦截匿名请求。  
+- `GET /articles` 接入可选鉴权；当 `status=all` 且无合法 token 时回退为 `published`，确保仅授权用户可查看全量状态。  
+- 更新 `docs_for_llm/5_specs/api_articles.md` 说明 `status=all` 需鉴权；`T003_step3_docs_validation.md` 记录调整。  
+**[总结与下步计划]**  
+- 权限策略已落地，后续在 Step 3 收尾时复核。继续 Step 4 的筛选控件与样式对齐。
+---
+
+### 📅 2025-12-02 18:34
+#### 🧪 任务编号：T003 – Step 3 校验（文章接口冒烟）
+**[开发阶段]**  
+- 新增 `backend/scripts/articles_smoke.js`，快速检查 `/articles` 列表/详情的分页、排序、状态、空结果、404。  
+- 编写 `docs/tests/backend_api.md` 汇总后端测试：Vitest（`backend/tests/*.test.js`）与文章冒烟脚本的使用说明与实测结果。  
+- 更新 `docs/deployment_handbook.md`，在发布前验证清单加入 `/articles` 冒烟命令；`T003_step3_docs_validation.md` 记录实测结论。  
+**[问题与解决]**  
+- 实测：默认列表 200；`page=0/-1` 回退 page=1；`pageSize=100` 上限 50；未知 sort/status 回退默认；`status=all` 返回 7 条（含非发布）；空关键词 0；不存在 slug 返回 404 message。  
+**[总结与下步计划]**  
+- Step 3 剩余：补充权限策略确认（`status=all` 仅授权使用）后可归档；继续 Step 4 筛选控件/样式对齐。
+---
+
+### 📅 2025-12-02 18:21
+#### 🐛 任务编号：T003 – SiteHeader 报错修复
+**[问题与解决]**  
+- 现象：访问站点时触发 `PathnameContext` 相关的 `useContext` 空指针报错（Next 内部导航 Hook 无上下文）。  
+- 处理：`components/site/SiteHeader.tsx` 移除 `usePathname` 依赖，改为在客户端用 `window.location.pathname` + `popstate`/点击事件同步路径，避免对 App Router 上下文的要求。  
+**[总结与下步计划]**  
+- 待用户复测 `/site` 系列页面确认不再报错，后续按 T003 Step3/4 路线继续做过滤器与样式细化。
+
+---
+### 📅 2025-12-02 18:13
+#### 🔧 任务编号：T003 – Step 4 前端优化（错误态/样式/导航补充）
+**[开发阶段]**  
+- 列表页 `/articles`：增加错误/空态提示，卡片 hover，默认状态仍 published；允许通过 searchParams 传入 status（用于验证）。  
+- 详情页：沿用 Markdown 渲染，保持 `.prose-article` 容器。  
+- 样式：`globals.css` 增强 `.prose-article`（链接色、表格、代码块渐变、标题色等）以提升阅读体验。  
+- 导航：此前已加入 `/articles` 入口。
+
+**[问题与解决]**  
+- 分类/标签/阅读时长仍依赖数据填充；分页按钮在单页时不出现属预期。Markdown 主题仍需与整体风格进一步对齐（后续可再调色）。
+
+**[总结与下步计划]**  
+- 安装依赖后复查样式；补列表过滤控件、错误态 UI 进一步美化；完成 Step 3/4 验证后进入 Step 5。
+
+---
+### 📅 2025-12-02 18:07
+#### 🧪 任务编号：T003 – Step 3 验证反馈修复
+**[问题与解决]**  
+- 发现：前端传 `status=all` 时后端收到 `published`（列表页固定传 published）。  
+- 修复：`app/articles/page.tsx` 读取 `searchParams.status`，默认 published，允许显式传 all 透传给后端，便于验证/调试；公共 fetchArticles 已按传入参数构造查询。
+
+**[总结与下步计划]**  
+- 重新验证 `status=all` 行为；继续补齐 Step 3 全量用例与 Step 4 筛选/错误态。
+
+---
+### 📅 2025-12-02 17:55
+#### 🧪 任务编号：T003 – Step 3 验证进度
+**[开发阶段]**  
+- 冒烟初查：前端请求 `status=all` 时后端实际收到 `status=published`（需排查参数传递/默认值覆盖）；其余基础场景未发现异常。  
+- 尚未完成全量测试，后续需补自动/手动用例。
+
+**[总结与下步计划]**  
+- 排查 `status=all` 被覆盖的原因（可能是前端封装默认值或查询串构造）；修复后补充验证。  
+- 编写/规划测试用例覆盖列表/详情的合法/非法参数、状态过滤、404、空结果。
+
+---
+### 📅 2025-12-02 17:31
+#### 🔧 任务编号：T003 – Step 4 前端补充（导航/Markdown 样式）
+**[开发阶段]**  
+- 导航：在 `frontend/components/Navbar.tsx` 增加 `/articles` 入口，方便访问新列表页。  
+- 样式：在 `globals.css` 新增 `.prose-article` 排版（标题、列表、代码块、引用），详情页改用该容器。  
+- 依赖：沿用已添加的 `react-markdown` + `remark-gfm`（尚未安装验证）。
+
+**[问题与解决]**  
+- 分类/标签/阅读时长若数据缺失仍不显示；列表只有一页时无上一/下一页属预期。
+
+**[总结与下步计划]**  
+- 待安装依赖后手动检查 Markdown 样式与导航；补分类/标签/年份过滤及错误态 UI，再做 Step 5 冒烟。
+
+---
+### 📅 2025-12-02 17:07
+#### 🔧 任务编号：T003 – Step 4 前端文章列表/详情
+**[开发阶段]**  
+- 新增公共类型与数据层：`frontend/lib/articles.ts`（ArticleSummary/Detail 类型，列表/详情 fetch，默认 status=published，支持 filters）。  
+- 新增文章列表页：`app/articles/page.tsx`（服务器组件），支持搜索 q、分页，展示发布状态、分类、标签、阅读时长，meta 导航上一页/下一页。默认仅显示 published。  
+- 新增文章详情页：`app/articles/[slug]/page.tsx`，使用 `react-markdown` + `remark-gfm` 渲染 Markdown，展示作者/分类/标签/阅读时长/时间线关联，提供返回列表链接。  
+- package.json 增加 `react-markdown`、`remark-gfm` 依赖。
+
+**[问题与解决]**  
+- 未运行构建/安装；需后续安装新依赖并验证 Markdown 渲染。  
+- 当前列表仅支持搜索+分页，分类/标签/年份过滤待补。
+
+**[总结与下步计划]**  
+- 下一步：补分类/标签/年份过滤与状态持久化；在可用环境手动验证列表/详情、404、状态可见性，记录结果。进入 Step 5 前完成冒烟。
+
+---
+
+### 📅 2025-12-02 16:49
+#### 🐞 任务编号：T003 – Dashboard 仅显示已发布 & Admin 状态可改
+**[问题与解决]**  
+- 问题：前台 Dashboard 需仅展示已发布；Admin 需显示全部并可修改状态。  
+- 处理：Dashboard 请求改为 `/articles?status=published`；Admin 维持 `status=all`。后端 PUT 支持 status/发布时间等可选字段并在首次发布时自动补 `publishedAt`，Admin 增加状态下拉并调用 PUT 更新。文件：`backend/src/routes/articles.js`, `frontend/app/(dashboard)/page.tsx`, `frontend/app/(dashboard)/admin/page.tsx`。规格 `api_articles.md` 已注明 `status=all`。
+
+**[总结与下步计划]**  
+- 后续可在 Admin 表单完善发布流与权限控制；如需更细校验可限制状态切换规则。
+
+---
+
+### 📅 2025-12-02 16:41
+#### 🐞 任务编号：T003 – Dashboard/Admin 列表信息补全
+**[问题与解决]**  
+- 问题：根目录 dashboard 列表默认只取 published，且仅展示内容，未显示状态/发布日期；Admin 列表仅展示标题/内容。  
+- 处理：dashboard 请求改为 `/articles?status=all` 并展示 status、excerpt/截断内容、发布时间或创建时间；Admin 同步展示 status 与发布时间。文件：`frontend/app/(dashboard)/page.tsx`, `frontend/app/(dashboard)/admin/page.tsx`。
+
+**[总结与下步计划]**  
+- 如需区分草稿/发布展示，可在 UI 增加过滤或状态切换；当前确保新增草稿可见且信息更完整。
+
+---
+
+### 📅 2025-12-02 16:26
+#### 🐞 任务编号：T003 – Admin 列表未显示文章（状态过滤）
+**[问题与解决]**  
+- 问题：新建文章默认 `status=draft`，列表默认只返回 `published`，导致后台页显示“暂无文章”。  
+- 处理：后端允许 `status=all` 不过滤状态；Admin 列表请求改为 `/articles?status=all`。更新规格 `api_articles.md` 说明 status 支持 `all`。
+
+**[总结与下步计划]**  
+- 后续可在后台表单显式设置/切换状态；若需权限控制可限制 `status=all` 仅限认证用户。
+
+---
+
+### 📅 2025-12-02 16:20
+#### 🐞 任务编号：T003 – Admin 列表返回结构兼容
+**[问题与解决]**  
+- 问题：`app/(dashboard)/admin/page.tsx` 期望 `/articles` 返回数组，API 现返回 `{ data, meta }`，导致 `articles.map` 报错。  
+- 处理：同首页列表逻辑，若响应为对象则取 `data`，否则用数组；非数组回退为空数组。文件：`frontend/app/(dashboard)/admin/page.tsx`。
+
+**[总结与下步计划]**  
+- 后续若要使用 meta 做分页/过滤，可在后台 UI 增加 controls；当前先确保不报错。
+
+---
+### 📅 2025-12-02 16:15
+#### 🐞 任务编号：T003 – 文章创建 slug 缺失报错修复
+**[问题与解决]**  
+- 问题：Prisma 迁移后 `slug` 必填，后台创建文章未提供 slug，导致 `/articles` POST 抛 `PrismaClientValidationError`。  
+- 处理：在 `backend/src/routes/articles.js` 为创建接口增加 slug 生成（slugify + 随机后缀），默认 status=draft；兼容可选字段（excerpt/cover/publishedAt/readingTime/timelineYear/categoryId/tagIds），标签连接采用 id 列表。  
+- 目的：确保未传 slug 时可自动生成，避免 500。
+
+**[总结与下步计划]**  
+- 后台表单后续应显式展示 slug/status 等字段；若需更严格校验可再补唯一性或冲突提示。
+
+
+---
+
+### 📅 2025-12-02 16:05
+#### 🐞 任务编号：T003 – Dashboard 列表兼容修复
+**[问题与解决]**  
+- 问题：`app/(dashboard)/page.tsx` 期望 `/articles` 返回数组，API 现返回 `{ data, meta }`，导致 `articles.map` 报错。  
+- 处理：请求结果若为对象则取 `data`，否则直接使用数组；非数组时回退空数组。文件：`frontend/app/(dashboard)/page.tsx`。
+
+**[总结与下步计划]**  
+- 待后续列表对接新 meta 时，可在后台页增加分页/过滤；当前先保证不报错。
+
+---
+
+### 📅 2025-12-02 15:59
+#### 🧭 任务编号：T003 – Step 3 文档与校验筹备
+**[计划阶段]**  
+- 目标：为 `/articles` API 补齐参数白名单、错误处理与规格文档，准备手动验证清单。
+
+**[开发阶段]**  
+- 梳理校验/默认方案：page/pageSize 正整数（上限 50），sort 白名单（published/title asc/desc），status 白名单（draft/review/published，默认 published），tags 逗号分隔去空，category/q 去空白，年份解析 year 或 yearFrom/yearTo（timelineYear + publishedAt 联合过滤），详情 slug 优先，404 `{ message }`。  
+- 新增 `docs_for_llm/5_specs/api_articles.md`，记录列表/详情参数、示例响应与错误码；更新 `T003_step3_docs_validation.md` 与 `T003_article_render.md` 进度。
+
+**[问题与解决]**  
+- 未做运行校验；需在可用环境对非法参数、空结果、404 进行冒烟。
+
+**[总结与下步计划]**  
+- 下一步：执行冒烟验证并记录结论/风险；若发现缺口，再补参数校验或错误处理代码。
+
+---
+
+### 📅 2025-12-02 14:32
+#### 🔧 任务编号：T003 – Step 2 API 扩展
+**[开发阶段]**  
+- 扩展 `/articles` 列表：分页（默认 page=1/pageSize=10，max 50）、搜索 q（title/excerpt/content）、分类 slug、标签多选、年份 year/yearFrom/yearTo、状态（默认 published）、排序（published/title asc/desc），返回 meta（total/page/pageSize/totalPages/hasNext）；返回 author/category/tags。  
+- 详情改为 slug 优先，兼容数字 ID，包含 author/category/tags/timelineEvents。  
+- 补充状态白名单、年份范围构造。文件：`backend/src/routes/articles.js`。
+
+**[问题与解决]**  
+- 无运行校验；需后续冒烟验证新参数行为与默认 status=published 的兼容性。
+
+**[总结与下步计划]**  
+- 下一步 Step 3：完善参数校验/错误响应文档，补 specs；前端对接在 Step 4。
+
+---
+
+### 📅 2025-12-02 14:28
+#### 🔧 任务编号：T003 – Step 2 迁移落地
+**[开发阶段]**  
+- 在可用数据库环境执行 `cd backend && npx prisma migrate dev --name article-schema-expansion`，迁移成功（生成 `migrations/20251202062728_article_schema_expansion`），Prisma Client 生成完毕。  
+- 迁移包含 Article 新字段/索引、Category/Tag 模型与隐式多对多联表。
+
+**[问题与解决]**  
+- 提示 slug 唯一约束，当前数据未冲突；后续新增数据需保证 slug 唯一或填充逻辑。
+
+**[总结与下步计划]**  
+- 继续扩展 `/articles` API（分页/搜索/过滤 + meta + 校验），并更新规格文档；完成后补充日志。
+
+---
+
+### 📅 2025-12-02 14:23
+#### 🔧 任务编号：T003 – Step 2 迁移尝试
+**[开发阶段]**  
+- 尝试在 `backend/` 执行 `npx prisma migrate dev --name article-schema-expansion`，因本地无法连接 `localhost:5432`（P1001）未执行迁移。
+
+**[问题与解决]**  
+- 环境无可用数据库，需在可连接的环境重跑 migrate；或先生成 SQL（`--create-only`）供有权限的环境执行。
+
+**[总结与下步计划]**  
+- 在可用 DB 环境重试迁移并记录日志；随后扩展 `/articles` API 与参数校验。
+
+
+---
+### 📅 2025-12-02 14:12
+#### 🔧 任务编号：T003 – Step 2 后端预备
+**[开发阶段]**  
+- 按 Step 1 结论更新 Prisma：Article 增加 `slug/excerpt/coverImageUrl/status(published flow)/publishedAt/updatedAt/readingTime/timelineYear/categoryId`、多标签关系；新增 `Category`、`Tag` 模型与索引（Tag 采用隐式多对多自动联表），定义 `ArticleStatus` 枚举。  
+- 补充 Step 2 文档进展记录，标明迁移尚未执行、API 扩展待办。
+
+**[问题与解决]**  
+- 未跑 `prisma migrate`（避免在当前环境直接变更 DB）；需在可控环境生成迁移并验证默认值。
+
+**[总结与下步计划]**  
+- 下一步：生成迁移并扩展 `/articles` 列表/详情参数与 meta、参数校验和文档；完成后再更新日志。
+
+---
+### 📅 2025-12-02 13:47
+#### 🧭 任务编号：T003 – Step 1 模型对齐
+**[计划阶段]**  
+- 盘点现有 Article 模型与 `/articles` API，结合 T002/T009 提案对齐目标字段与发布流程。
+
+**[开发阶段]**  
+- 记录现状缺口与最终方案：新增 `slug` 唯一、`excerpt`、`coverImageUrl`、`publishedAt`、`updatedAt`、`readingTime`、`status`（draft/review/published）、`timelineYear`、多标签 + 可选单分类、反向关联时间线。  
+- 提供 Prisma 迁移草案（Category/Tag/ArticleTag/ArticleStatus 枚举与索引）、API 期望（列表过滤+meta、详情按 slug）。  
+- 更新 `T003_step1_schema_alignment.md` 与 `T003_article_render.md` 进度摘记。
+
+**[问题与解决]**  
+- 无运行验证；风险在于迁移默认值/slug/publishedAt 兼容旧数据，已在文件中标注回退策略。
+
+**[总结与下步计划]**  
+- 进入 Step 2：按草案更新 Prisma 与后端 API，增加分页/搜索/过滤与参数校验；随后补文档与前端对接。
+
+---
 
 ### 📅 2025-12-02 12:49
 #### 🧭 任务编号：T009 – 阶段二跟进行动清单收尾
