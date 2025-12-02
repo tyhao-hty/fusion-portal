@@ -3,10 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
-
 }
 
 model User {
@@ -19,45 +18,59 @@ model User {
 }
 
 model Article {
-  id        Int       @id @default(autoincrement())
-  title     String
-  content   String
-  authorId  Int
-  author    User      @relation(fields: [authorId], references: [id])
-  createdAt DateTime  @default(now())
+  id             Int             @id @default(autoincrement())
+  slug           String          @unique
+  title          String
+  excerpt        String?
+  coverImageUrl  String?
+  content        String
+  status         ArticleStatus   @default(draft)
+  publishedAt    DateTime?
+  updatedAt      DateTime        @updatedAt
+  readingTime    Int?
+  timelineYear   Int?
+  authorId       Int
+  author         User            @relation(fields: [authorId], references: [id])
+  categoryId     Int?
+  category       Category?       @relation(fields: [categoryId], references: [id])
+  tags           Tag[]           @relation("ArticleTags")
   timelineEvents TimelineEvent[]
+  createdAt      DateTime        @default(now())
+
+  @@index([publishedAt, id], map: "idx_article_published")
+  @@index([timelineYear], map: "idx_article_year")
 }
 
 model TimelineEvent {
-  id                Int       @id @default(autoincrement())
-  slug              String    @unique
-  yearLabel         String
-  yearValue         Int?
-  title             String
-  description       String
-  sortOrder         Int       @default(0)
-  relatedArticleId  Int?
-  relatedArticle    Article?  @relation(fields: [relatedArticleId], references: [id])
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id               Int      @id @default(autoincrement())
+  slug             String   @unique
+  yearLabel        String
+  yearValue        Int?
+  title            String
+  description      String
+  sortOrder        Int      @default(0)
+  relatedArticleId Int?
+  relatedArticle   Article? @relation(fields: [relatedArticleId], references: [id])
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   @@index([sortOrder, id], map: "idx_timeline_order")
   @@index([yearValue], map: "idx_timeline_year")
 }
 
 model Paper {
-  id         Int        @id @default(autoincrement())
-  slug       String     @unique
-  title      String
-  authors    String
-  year       Int
-  venue      String?
-  url        String?
-  abstract   String?
-  sortOrder  Int        @default(0)
-  tags       PaperTag[] @relation("PaperTags")
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id        Int        @id @default(autoincrement())
+  slug      String     @unique
+  title     String
+  authors   String
+  year      Int
+  venue     String?
+  url       String?
+  abstract  String?
+  sortOrder Int        @default(0)
+  tags      PaperTag[] @relation("PaperTags")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   @@index([year, sortOrder], map: "idx_paper_year_sort")
 }
@@ -73,6 +86,36 @@ model PaperTag {
   @@index([name], map: "idx_paper_tag_name")
 }
 
+model Category {
+  id          Int       @id @default(autoincrement())
+  slug        String    @unique
+  name        String    @unique
+  description String?
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  articles    Article[]
+
+  @@index([sortOrder, id], map: "idx_category_order")
+}
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  slug      String    @unique
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  articles  Article[] @relation("ArticleTags")
+
+  @@index([name], map: "idx_tag_name")
+}
+
+enum ArticleStatus {
+  draft
+  review
+  published
+}
+
 model LinkSection {
   id        Int         @id @default(autoincrement())
   slug      String      @unique
@@ -86,30 +129,30 @@ model LinkSection {
 }
 
 model LinkGroup {
-  id         Int          @id @default(autoincrement())
-  slug       String       @unique
-  title      String?
-  sortOrder  Int          @default(0)
-  sectionId  Int
-  section    LinkSection  @relation(fields: [sectionId], references: [id])
-  links      Link[]
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
+  id        Int         @id @default(autoincrement())
+  slug      String      @unique
+  title     String?
+  sortOrder Int         @default(0)
+  sectionId Int
+  section   LinkSection @relation(fields: [sectionId], references: [id])
+  links     Link[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
   @@index([sectionId, sortOrder, id], map: "idx_link_group_section_order")
 }
 
 model Link {
-  id          Int        @id @default(autoincrement())
-  slug        String     @unique
+  id          Int       @id @default(autoincrement())
+  slug        String    @unique
   name        String
   url         String
   description String?
-  sortOrder   Int        @default(0)
+  sortOrder   Int       @default(0)
   groupId     Int
-  group       LinkGroup  @relation(fields: [groupId], references: [id])
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  group       LinkGroup @relation(fields: [groupId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([groupId, sortOrder, id], map: "idx_link_order")
 }

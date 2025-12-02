@@ -37,6 +37,7 @@
   - 后台表单需提供 “关联时间线事件” 的选择器（基于 `/api/timeline?order=desc&limit=50`），写入 `TimelineEvent.relatedArticleId`。
   - 角色权限：作者可草稿 + 提交审核，编辑可改稿并设为 `review`，管理员可发布并管理分类/标签。
 - 2025-11-05 补充：友情链接后台需支持 `LinkSection` / `LinkGroup` / `Link` 的增删改排序，计划在管理界面提供结构化编辑与拖拽排序能力。
+- 2025-12-02 补充：文章 API 已支持 `status=all`（无状态过滤）和 PUT 状态切换；前台仅展示 published，Admin 需展示全部并可修改状态。上线前需在后台 UI 显式提供状态字段，并用权限限制 `status=all` 访问和发布操作。
 
 ## 验收标准
 - 管理员可完整创建/更新/删除文章，操作可追踪；
