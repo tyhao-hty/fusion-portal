@@ -66,6 +66,12 @@ export default async function ArticlesPage({
           >
             搜索
           </button>
+          <Link
+            href="/"
+            className="rounded border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+          >
+            返回首页
+          </Link>
         </form>
       </div>
 
@@ -93,7 +99,9 @@ export default async function ArticlesPage({
                 </span>
               </div>
               <p className="mt-1 text-gray-700">
-                {article.excerpt ?? ""}
+                {article.excerpt && article.excerpt.length > 0
+                  ? article.excerpt
+                  : "暂无摘要"}
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-gray-500">
                 {article.category && (

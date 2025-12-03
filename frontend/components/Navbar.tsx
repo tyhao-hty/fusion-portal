@@ -20,14 +20,8 @@ export function Navbar() {
           Fusion Portal
         </a>
         <div className="space-x-4 flex items-center">
-          <a href="/articles" className="text-gray-700 hover:text-blue-600">
-            文章
-          </a>
           <a href="/site" className="text-gray-700 hover:text-blue-600">
             新版静态站
-          </a>
-          <a href="/index.html" className="text-gray-500 hover:text-blue-600">
-            旧版首页
           </a>
           {!user ? (
             <>
