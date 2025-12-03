@@ -6,7 +6,7 @@ import type { Paper, PapersResponse } from "./types";
 export const metadata: Metadata = buildSiteMetadata({
   title: "论文汇总",
   description: "搜集核聚变领域的经典论文与前沿研究，支持关键词筛选与主题浏览。",
-  path: "/site/papers",
+  path: "/papers",
 });
 
 async function fetchPapers(): Promise<PapersResponse> {
@@ -38,7 +38,7 @@ export default async function PapersPage() {
 
   return (
     <div className="content-page">
-      <a href="/site" className="back-button">
+      <a href="/" className="back-button">
         ← 返回首页
       </a>
 

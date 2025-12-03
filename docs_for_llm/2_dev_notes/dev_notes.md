@@ -70,6 +70,26 @@
 
 ## 🧩 日志记录区（按时间倒序排列）
 
+## [2025-12-03 12:00] 前台/后台路由重构与样式修复
+### 1. 计划阶段
+- [x] 将 /site 前台提升至根路径，后台迁移至 /dashboard，并抽取 SiteFrame 复用前台框架。
+- [x] 更新导航、metadata、rewrites 与 articles 布局，确保路径一致性。
+- [x] 添加后台访问保护 middleware，排查样式与路径残留问题。
+
+### 2. 开发阶段
+- 新增 `components/layouts/SiteFrame.tsx`，(site) layout 与根首页使用 SiteFrame；articles 目录添加 layout 复用前台框架。
+- 重组路由：前台首页移至 `app/page.tsx`，站点子页迁入 `app/(site)`；后台路由迁至 `/dashboard/*`，登录/注册回归根路径。
+- 更新导航：SiteHeader 去除后台入口，链接改根级；Navbar 指向 `/dashboard` 系列；登录/注册/登出同步写入或清理 token cookie。
+- 调整 rewrites 指向新根路径；新增 middleware 仅保护 `/dashboard/:path*`；根布局全局引入 legacy 样式修复 `/` 刷新无样式问题。
+
+### 3. 问题与解决
+- 刷新 `/` 无样式：根布局未加载 `styles-legacy.css`，改为在 `app/layout.tsx` 全局引入，首屏样式恢复。
+- 旧 `/site` 路径残留：替换导航、metadata、返回链接与 rewrites，确保路径统一为根级与 `/dashboard`。
+
+### 4. 总结与下一步
+- 前台/后台路由与导航已对齐，样式与保护逻辑恢复；建议在可用环境运行 `npm run lint && npm run build` 做最终验证。
+- 若后续引入角色字段，可再细化后台入口显示与登录后跳转策略。
+
 ---
 ### 📅 2025-12-02 20:19
 #### ✅ 任务编号：T003 – 归档

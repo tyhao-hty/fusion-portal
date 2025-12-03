@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import "./styles-legacy.css";
-import "../globals.css";
-import { SiteHeader } from "@/components/site/SiteHeader";
-import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteFrame } from "@/components/layouts/SiteFrame";
 import { buildSiteMetadata } from "@/components/site/metadata";
 
 export const metadata: Metadata = {
@@ -13,13 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="site-shell">
-      <SiteHeader />
-      <main id="main-content" className="main-content" tabIndex={-1}>
-        {children}
-      </main>
-      <SiteFooter />
-    </div>
-  );
+  return <SiteFrame>{children}</SiteFrame>;
 }

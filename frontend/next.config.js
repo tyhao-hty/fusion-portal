@@ -5,19 +5,19 @@ const nextConfig = {
     return [
       {
         source: '/index.html',
-        destination: '/site',
+        destination: '/',
       },
       {
         source: '/history.html',
-        destination: '/site/history',
+        destination: '/history',
       },
       {
         source: '/links.html',
-        destination: '/site/links',
+        destination: '/links',
       },
       {
         source: '/papers.html',
-        destination: '/site/papers',
+        destination: '/papers',
       },
     ];
   },

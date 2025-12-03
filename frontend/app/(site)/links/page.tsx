@@ -6,7 +6,7 @@ import { LinksDirectory } from "./LinksDirectory";
 export const metadata: Metadata = buildSiteMetadata({
   title: "资源导航",
   description: "精选全球核聚变组织、研究机构、商业企业与教育资源，快速获取权威链接。",
-  path: "/site/links",
+  path: "/links",
 });
 
 async function fetchLinks(): Promise<LinksResponse> {
@@ -38,7 +38,7 @@ export default async function LinksPage() {
 
   return (
     <div className="content-page">
-      <a href="/site" className="back-button">
+      <a href="/" className="back-button">
         ← 返回首页
       </a>
 

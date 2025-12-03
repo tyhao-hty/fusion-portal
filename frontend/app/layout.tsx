@@ -1,6 +1,7 @@
-import './globals.css';
-import { UserProvider } from '../components/UserContext';
-import React from 'react';
+import "./globals.css";
+import "./(site)/styles-legacy.css";
+import React from "react";
+import { UserProvider } from "../components/UserContext";
 
 
 export const metadata = {
