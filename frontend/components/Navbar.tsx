@@ -1,7 +1,6 @@
 "use client";
-import React from 'react';
-
-import { useUser } from "./UserContext";
+import React from "react";
+import { useUser } from "@/components/UserContext";
 
 export function Navbar() {
   const { user, setUser } = useUser();
@@ -9,6 +8,7 @@ export function Navbar() {
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     setUser(null);
     window.location.href = "/";
   }
@@ -20,8 +20,8 @@ export function Navbar() {
           Fusion Portal
         </a>
         <div className="space-x-4 flex items-center">
-          <a href="/site" className="text-gray-700 hover:text-blue-600">
-            新版静态站
+          <a href="/" className="text-gray-700 hover:text-blue-600">
+            前台首页
           </a>
           {!user ? (
             <>
@@ -35,10 +35,10 @@ export function Navbar() {
           ) : (
             <>
               <span className="text-gray-700">欢迎，{user.email}</span>
-              <a href="/new" className="text-gray-700 hover:text-blue-600">
+              <a href="/dashboard/new" className="text-gray-700 hover:text-blue-600">
                 写文章
               </a>
-              <a href="/admin" className="text-gray-700 hover:text-blue-600">
+              <a href="/dashboard/admin" className="text-gray-700 hover:text-blue-600">
                 管理
               </a>
               <button

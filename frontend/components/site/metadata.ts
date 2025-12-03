@@ -11,7 +11,7 @@ type BuildMetadataOptions = {
 
 export function buildSiteMetadata({ title, description, path }: BuildMetadataOptions = {}): Metadata {
   const pageTitle = title ? `${title} - ${SITE_TITLE}` : SITE_TITLE;
-  const canonicalPath = path ?? "/site";
+  const canonicalPath = path ?? "/";
 
   return {
     title: pageTitle,

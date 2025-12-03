@@ -12,10 +12,10 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/site", label: "首页" },
-  { href: "/site/history", label: "发展历史" },
-  { href: "/site/papers", label: "论文汇总" },
-  { href: "/site/links", label: "相关链接" },
+  { href: "/", label: "首页" },
+  { href: "/history", label: "发展历史" },
+  { href: "/papers", label: "论文汇总" },
+  { href: "/links", label: "相关链接" },
   { href: "/articles", label: "文章" },
   { href: "/science.html", label: "科普知识", isExternal: true, variant: "legacy" },
   { href: "/theory.html", label: "理论知识", isExternal: true, variant: "legacy" },
@@ -107,6 +107,7 @@ export function SiteHeader() {
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     setUser(null);
     window.location.href = "/login";
   }
@@ -127,8 +128,8 @@ export function SiteHeader() {
 
   const isActive = (href: string) => {
     if (!pathname) return false;
-    if (href === "/site") {
-      return pathname === "/site";
+    if (href === "/") {
+      return pathname === "/";
     }
     return pathname.startsWith(href);
   };
@@ -152,7 +153,7 @@ export function SiteHeader() {
         跳到主要内容
       </a>
       <div className="nav-container" data-nav-container>
-        <Link href="/site" className="logo">
+        <Link href="/" className="logo">
           核聚变门户
         </Link>
         <button
@@ -219,27 +220,11 @@ export function SiteHeader() {
                 </li>
               </>
             ) : (
-              <>
-                <li>
-                  <Link href="/new" onClick={() => handleNavItemClick("/new")} className="nav-link nav-link--auth">
-                    写文章
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/admin"
-                    onClick={() => handleNavItemClick("/admin")}
-                    className="nav-link nav-link--auth"
-                  >
-                    管理
-                  </Link>
-                </li>
-                <li>
-                  <button type="button" className="nav-logout" onClick={handleLogout}>
-                    退出
-                  </button>
-                </li>
-              </>
+              <li>
+                <button type="button" className="nav-logout" onClick={handleLogout}>
+                  退出
+                </button>
+              </li>
             )}
           </ul>
         </nav>

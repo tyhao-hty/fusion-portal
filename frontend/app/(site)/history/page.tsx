@@ -5,13 +5,13 @@ import { TimelineFeed } from "./TimelineFeed";
 export const metadata: Metadata = buildSiteMetadata({
   title: "发展历史",
   description: "回顾核聚变研究百年历程，了解关键里程碑、代表人物和未来展望。",
-  path: "/site/history",
+  path: "/history",
 });
 
 export default function HistoryPage() {
   return (
     <div className="content-page">
-      <a href="/site" className="back-button">
+      <a href="/" className="back-button">
         ← 返回首页
       </a>
 

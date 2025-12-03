@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const FOOTER_LINKS = [
-  { href: "/site/history", label: "发展历史" },
+  { href: "/history", label: "发展历史" },
+  { href: "/papers", label: "论文汇总" },
+  { href: "/links", label: "相关链接" },
   { href: "/science.html", label: "科普知识", external: true },
   { href: "/theory.html", label: "理论知识", external: true },
-  { href: "/papers.html", label: "论文汇总", external: true },
   { href: "/technology.html", label: "技术路线", external: true },
   { href: "/business.html", label: "商业尝试", external: true },
-  { href: "/links.html", label: "相关链接", external: true },
 ];
 
 export function SiteFooter() {
@@ -24,7 +24,7 @@ export function SiteFooter() {
     <footer className="footer" role="contentinfo">
       <div className="footer__inner">
         <div className="footer__branding">
-          <Link href="/site" className="footer__logo">
+          <Link href="/" className="footer__logo">
             核聚变门户
           </Link>
           <p className="footer__tagline">探索人类能源的未来，连接核聚变的过去、现在与明天。</p>
