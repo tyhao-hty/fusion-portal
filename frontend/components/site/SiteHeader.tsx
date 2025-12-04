@@ -17,10 +17,10 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/papers", label: "论文汇总" },
   { href: "/links", label: "相关链接" },
   { href: "/articles", label: "文章" },
-  { href: "/science.html", label: "科普知识", isExternal: true, variant: "legacy" },
-  { href: "/theory.html", label: "理论知识", isExternal: true, variant: "legacy" },
-  { href: "/technology.html", label: "技术路线", isExternal: true, variant: "legacy" },
-  { href: "/business.html", label: "商业尝试", isExternal: true, variant: "legacy" },
+  { href: "/science", label: "科普知识" },
+  { href: "/theory", label: "理论知识" },
+  { href: "/technology", label: "技术路线" },
+  { href: "/business", label: "商业尝试" },
 ];
 
 const MOBILE_MEDIA_QUERY = "(max-width: 991px)";

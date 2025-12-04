@@ -70,7 +70,105 @@
 
 ## 🧩 日志记录区（按时间倒序排列）
 
-## [2025-12-03 12:00] 前台/后台路由重构与样式修复
+### 📅 2025-12-04 23:21
+#### 🧪 任务编号：T009 – 测试修复汇总
+**[计划阶段]**  
+- 清理 Jest 报错与超时：PapersCatalog await 语法、LinksDirectory 渲染等待、TimelineFeed 加载态断言。
+
+**[开发阶段]**  
+- PapersCatalog：测试改为 async 回调，渲染包裹 act，移除 waitFor 内 await。  
+- LinksDirectory：增加异步查询与超时配置，使用 findBy/findAll，避免立即断言导致超时。  
+- TimelineFeed：去掉固定“加载中”文本断言，直接 waitFor 数据渲染。  
+- Jest 忽略 e2e 目录，避免 TransformStream 报错。
+
+**[问题与解决]**  
+- 组件内部 fetch/setState 触发 act 警告与超时；通过 act 包裹渲染、mock fetch、使用异步查询解决。
+
+**[总结与下步计划]**  
+- 单测仍需最终验证；如再有超时，可进一步降低渲染依赖或增加明确的 mock 数据断言。
+
+### 📅 2025-12-04 18:50
+#### 🧪 任务编号：T009 – Jest 忽略 E2E
+**[计划阶段]**  
+- 解决 `e2e/site.spec.ts` 被 Jest 误执行导致 `TransformStream` 未定义错误。
+
+**[开发阶段]**  
+- 在 `frontend/jest.config.js` 增加 `testPathIgnorePatterns`，排除 `<rootDir>/e2e/`，确保 Playwright 用例仅由 `npm run test:e2e` 执行。
+
+**[问题与解决]**  
+- 问题：Jest 默认匹配 `*.spec.ts`，将 Playwright 用例纳入执行；解决：忽略 e2e 目录。
+
+**[总结与下步计划]**  
+- Jest 运行应不再触发 Playwright；后续可在 CI 分别跑单测与 E2E，避免混用。
+
+
+### 📅 2025-12-04 18:46
+#### 🧪 任务编号：T009 – 测试修复（Jest 失败用例）
+**[计划阶段]**  
+- 修复 `LinksDirectory` 与 `PapersCatalog` 测试失败：路径变更后需 mock fetch 与使用更精确的断言，避免下拉选项文本干扰。
+
+**[开发阶段]**  
+- 为两组测试新增 `global.fetch` mock（按查询参数返回过滤数据），使用 heading 断言而非任意文本；更新 PapersCatalog 状态文本预期。  
+- 未改动业务代码，专注测试稳定性。
+
+**[问题与解决]**  
+- 原断言命中过滤后仍存在的 select option 与复用标签，导致“仍在文档中/多元素”错误；通过基于 heading 的查询与服务端数据 mock 解决。
+
+**[总结与下步计划]**  
+- Jest 用例应已通过；如再扩展过滤逻辑，可补充更多 fetch mock 场景或本地过滤测试。
+
+
+### 📅 2025-12-04 18:36
+#### 🧪 任务编号：T009 – 基础测试补全
+**[计划阶段]**  
+- 目标：在根路由结构下补齐基础测试，覆盖核心组件/请求层与关键用户流（首页、历史加载更多、专题页、链接页），并同步文档记录。
+
+**[开发阶段]**  
+- Jest：修正组件测试路径至 `(site)` 路由，新增 `SitePages.test.tsx` 覆盖科普/理论/技术/商业专题渲染；保留 apiRequest 边界用例。  
+- Playwright：更新 `e2e/site.spec.ts` 至根路由 `/`、`/history`、`/links`，拦截 `/api/timeline` 与 `/api/links`，校验“加载更多里程碑”、链接列表与导航至 `/science`。  
+- 无业务代码改动，仅测试与文档同步。
+
+**[问题与解决]**  
+- 发现原测试仍指向 `/site` 与 `.html`，导致路径失效；已统一到根路由并以 route mocking 消除后端依赖。
+
+**[总结与下步计划]**  
+- 基础测试已覆盖根站关键路径，后续可补正式测试报告（覆盖率与截图）并考虑增加 `/papers` 场景及真实后端联调用例。
+
+
+### 📅 2025-12-04 18:25
+#### 🔧 任务编号：T009 – 专题页迁入 App Router
+**[计划阶段]**  
+- 迁移旧站专题页（science/theory/technology/business）至根路由，复用 SiteFrame/metadata，保持文案与链接；更新导航与 rewrites；同步文档记录。
+
+**[开发阶段]**  
+- 新增 `frontend/app/(site)/{science,theory,technology,business}/page.tsx`，抽取旧 HTML 文案与链接，使用 `SiteFrame` 包裹并设置对应 metadata。  
+- 更新 `frontend/components/site/SiteHeader.tsx` 将导航链接切换至新路由；`frontend/next.config.js` 增加 `.html` → 新路由 rewrites。  
+- 文档：`docs_for_llm/3_tasks/T009_static_merge.md` 追加专题迁移说明。
+
+**[问题与解决]**  
+- 无阻塞问题，注意保持旧 `.html` 作为备份。导航与 rewrites 已同步。
+
+**[总结与下步计划]**  
+- 专题页现已在 App Router 根路由可用；后续补正式测试报告与性能基线，并继续与 T002/T003 对齐后台录入/schema。
+
+### 📅 2025-12-04 18:14
+#### 🔧 任务编号：T009 – 路由文档同步
+**[计划阶段]**  
+- 目标：将 T009 文档与项目简介同步到根路由（/、/history、/links、/papers），标注 rewrites 与 middleware 范围，并保留专题页仍为 `.html` 的现状。
+
+**[开发阶段]**  
+- 重构 `docs_for_llm/3_tasks/T009_static_merge.md` 结构，新增“当前路由与兼容策略”“后续行动”等小节，写明 rewrites、middleware 仅保护 `/dashboard/*`、专题页暂存 `.html`。  
+- 更新 `docs_for_llm/readme_plan.md` 的架构与已实现功能描述，改为根级站点路由并注明旧专题页回退。  
+- 未改动业务代码，仅文档整理。
+
+**[问题与解决]**  
+- 风险：旧文档仍引用 `/site` 路径，易误导协作者。  
+- 处理：统一所有描述为根级路由，补充兼容策略与回退说明，避免路径混淆。
+
+**[总结与下步计划]**  
+- 文档已反映最新路由与保护策略；下一步需补测试报告（Jest/Playwright 覆盖与录屏）、规划专题页迁移，并与 T002/T003 对齐后台录入/schema。
+
+## [2025-12-03 18:00] 前台/后台路由重构与样式修复
 ### 1. 计划阶段
 - [x] 将 /site 前台提升至根路径，后台迁移至 /dashboard，并抽取 SiteFrame 复用前台框架。
 - [x] 更新导航、metadata、rewrites 与 articles 布局，确保路径一致性。

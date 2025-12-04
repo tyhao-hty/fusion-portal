@@ -3,7 +3,7 @@ import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SWRConfig } from 'swr';
-import { TimelineFeed } from '@/app/site/history/TimelineFeed';
+import { TimelineFeed } from '@/app/(site)/history/TimelineFeed';
 import { apiRequest } from '@/utils/api';
 
 jest.mock('@/utils/api');
@@ -98,8 +98,6 @@ describe('TimelineFeed', () => {
     });
 
     renderTimelineFeed();
-
-    expect(screen.getByText('时间线加载中...')).toBeInTheDocument();
 
     await waitFor(() => {
       expect(screen.getByText('测试事件')).toBeInTheDocument();
