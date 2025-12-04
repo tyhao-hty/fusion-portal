@@ -2,8 +2,8 @@ import '@testing-library/jest-dom';
 import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { PapersCatalog } from '@/app/site/papers/PapersCatalog';
-import type { Paper } from '@/app/site/papers/types';
+import { PapersCatalog } from '@/app/(site)/papers/PapersCatalog';
+import type { Paper } from '@/app/(site)/papers/types';
 
 const buildPaper = (overrides: Partial<Paper> = {}): Paper => ({
   slug: overrides.slug ?? `paper-${Math.random()}`,
@@ -20,7 +20,14 @@ const buildPaper = (overrides: Partial<Paper> = {}): Paper => ({
 });
 
 describe('PapersCatalog', () => {
-  it('按主题分组展示论文并显示统计信息', () => {
+  const originalFetch = global.fetch;
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    global.fetch = originalFetch;
+  });
+
+  it('按主题分组展示论文并显示统计信息', async () => {
     const papers: Paper[] = [
       buildPaper({
         slug: 'paper-1',
@@ -34,18 +41,25 @@ describe('PapersCatalog', () => {
       }),
     ];
 
-    render(<PapersCatalog papers={papers} />);
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ data: papers }),
+    });
 
-    expect(screen.getByText('磁约束聚变')).toBeInTheDocument();
-    expect(screen.getByText('托卡马克物理')).toBeInTheDocument();
+    await act(async () => {
+      render(<PapersCatalog papers={papers} />);
+    });
+
+    expect(screen.getByRole('heading', { name: '磁约束聚变' })).toBeInTheDocument();
+    expect(screen.getAllByText('托卡马克物理').length).toBeGreaterThan(0);
     expect(screen.getByText('托卡马克研究进展')).toBeInTheDocument();
-    expect(screen.getByText('其他主题')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '其他主题' })).toBeInTheDocument();
     expect(screen.getByText('未知分类论文')).toBeInTheDocument();
-    expect(screen.getByText(/当前收录 2 篇论文/)).toBeInTheDocument();
+    expect(screen.getByText(/当前展示 2 \/ 2 篇论文/)).toBeInTheDocument();
   });
 
   it('根据搜索关键词过滤论文', async () => {
-    const papers: Paper[] = [
+    const initialPapers: Paper[] = [
       buildPaper({
         slug: 'paper-1',
         title: '托卡马克研究进展',
@@ -58,7 +72,19 @@ describe('PapersCatalog', () => {
       }),
     ];
 
-    render(<PapersCatalog papers={papers} />);
+    global.fetch = jest.fn().mockImplementation((input: RequestInfo | URL) => {
+      const url = typeof input === 'string' ? input : input.toString();
+      const search = new URL(url).searchParams.get('q') ?? '';
+      const data = search.includes('材料') ? [initialPapers[1]] : initialPapers;
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ data }),
+      });
+    });
+
+    await act(async () => {
+      render(<PapersCatalog papers={initialPapers} />);
+    });
 
     const user = userEvent.setup();
     const searchInput = screen.getByRole('searchbox', { name: '搜索核聚变论文' });
@@ -71,7 +97,11 @@ describe('PapersCatalog', () => {
     await waitFor(() => {
       expect(screen.queryByText('托卡马克研究进展')).not.toBeInTheDocument();
     });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('heading', { name: '磁约束聚变' })).not.toBeInTheDocument();
+    });
     expect(await screen.findByText('材料工程研究')).toBeInTheDocument();
-    expect(screen.getByText(/共找到 1 篇符合 “材料” 的论文/)).toBeInTheDocument();
+    expect(screen.getByText(/当前展示 1 \/ 1 篇论文/)).toBeInTheDocument();
   });
 });

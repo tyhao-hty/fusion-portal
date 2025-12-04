@@ -1,0 +1,89 @@
+import { buildSiteMetadata } from "@/components/site/metadata";
+
+export const metadata = buildSiteMetadata({
+  title: "核聚变技术路线",
+  path: "/technology",
+  description: "比较托卡马克、仿星器、惯性约束等主流聚变技术路线，了解核心优势与工程挑战。",
+});
+
+export default function TechnologyPage() {
+  return (
+    <div className="content-page">
+      <a href="/" className="back-button">
+        ← 返回首页
+      </a>
+
+      <h1>核聚变技术路线</h1>
+      <p>
+        现阶段聚变研究主要分为磁约束、惯性约束与先进概念等多条技术路线。不同方案在能量增益、装置复杂度与商业化时间上各有优劣，以下对核心路线进行概览与对比。
+      </p>
+
+      <h2>主流方案对比</h2>
+      <div className="tech-comparison">
+        <table className="tech-table">
+          <thead>
+            <tr>
+              <th>技术路线</th>
+              <th>核心特点</th>
+              <th>代表装置 / 公司</th>
+              <th>关键挑战</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>托卡马克</td>
+              <td>环形磁约束，脉冲放电，可实现长时间高温等离子体。</td>
+              <td>ITER、EAST、SPARC、JT-60SA</td>
+              <td>大规模工程复杂、对材料和超导磁体要求高。</td>
+            </tr>
+            <tr>
+              <td>仿星器</td>
+              <td>三维磁场设计，天然稳态运行，无需大电流驱动。</td>
+              <td>Wendelstein 7-X、Helically Symmetric Experiment</td>
+              <td>磁体形状复杂，制造与校准成本高。</td>
+            </tr>
+            <tr>
+              <td>惯性约束聚变</td>
+              <td>使用激光或粒子束快速压缩燃料丸，瞬时点火。</td>
+              <td>NIF、Laser Mégajoule、LaserNetUS</td>
+              <td>目标对称性、驱动效率与重复频率尚待突破。</td>
+            </tr>
+            <tr>
+              <td>场反转位形（FRC）</td>
+              <td>紧凑线圈产生闭合磁场，装置体积小，可脉冲运行。</td>
+              <td>TAE Technologies、Helion Energy</td>
+              <td>等离子体稳定性与能量增益尚未验证。</td>
+            </tr>
+            <tr>
+              <td>球形托卡马克</td>
+              <td>低纵向磁场需求、紧凑设计，提高单位体积功率密度。</td>
+              <td>MAST-U、NSTX-U、Tokamak Energy ST40</td>
+              <td>中性束注入空间有限，磁体工程密度大。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>关键支撑技术</h2>
+      <ul>
+        <li>
+          <strong>高温超导磁体：</strong>提供更强磁场并减少冷却成本，是紧凑聚变装置的核心部件。
+        </li>
+        <li>
+          <strong>等离子体加热与控制：</strong>射频加热、波加热、中性束注入等手段协同，配合实时反馈系统提升稳定性。
+        </li>
+        <li>
+          <strong>聚变堆材料：</strong>面向高热流与高中子环境的第一壁、偏滤器与结构材料研发。
+        </li>
+        <li>
+          <strong>氚燃料循环：</strong>自持氚增殖与在线纯化系统是实现商业化的先决条件。
+        </li>
+      </ul>
+
+      <h2>下一步研究方向</h2>
+      <p>
+        未来十年将重点验证高场紧凑托卡马克、先进仿星器优化、激光点火重复频率提升以及新型燃料循环方案。伴随超导材料、大功率驱动器与数字孪生技术的发展，聚变装置的设计迭代速度将进一步加快。
+      </p>
+    </div>
+  );
+}

@@ -19,6 +19,22 @@ const nextConfig = {
         source: '/papers.html',
         destination: '/papers',
       },
+      {
+        source: '/science.html',
+        destination: '/science',
+      },
+      {
+        source: '/theory.html',
+        destination: '/theory',
+      },
+      {
+        source: '/technology.html',
+        destination: '/technology',
+      },
+      {
+        source: '/business.html',
+        destination: '/business',
+      },
     ];
   },
 };

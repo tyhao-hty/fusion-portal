@@ -22,22 +22,55 @@ type TimelineResponse = {
   };
 };
 
-test.describe('Site pages', () => {
-  test('home page renders legacy modules', async ({ page }) => {
-    await page.goto('/site');
+test.describe('Public site', () => {
+  test('home page renders root modules', async ({ page }) => {
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: '核聚变门户' })).toBeVisible();
     await expect(
       page.getByRole('navigation', { name: '主导航' }).getByRole('link', { name: '发展历史' }),
     ).toBeVisible();
+    const navScience = page.getByRole('navigation', { name: '主导航' }).getByRole('link', { name: '科普知识' });
+    await expect(navScience).toHaveAttribute('href', '/science');
   });
 
-  test('timeline page loads entries', async ({ page }) => {
-    await page.goto('/site/history');
+  test('history page loads entries', async ({ page }) => {
+    await page.route('**/api/timeline**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: [
+            {
+              id: 1,
+              slug: 'timeline-stub-1',
+              yearLabel: '2024年',
+              yearValue: 2024,
+              title: '里程碑 Stub',
+              description: '测试里程碑描述',
+              sortOrder: 1,
+            },
+          ],
+          meta: {
+            page: 1,
+            limit: 8,
+            total: 1,
+            totalPages: 1,
+            order: 'desc',
+            hasNext: true,
+            hasMore: true,
+          },
+        }),
+      });
+    });
+
+    await page.goto('/history');
     await expect(page.getByRole('heading', { name: '核聚变发展历史' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /加载更多里程碑/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /加载更多里程碑/ })).toBeVisible({ timeout: 15000 });
+
+    await page.unroute('**/api/timeline**');
   });
 
-  test('timeline page supports manual “加载更多里程碑” interaction', async ({ page }) => {
+  test('history page supports manual “加载更多里程碑” interaction', async ({ page }) => {
     await page.addInitScript(() => {
       class NoopIntersectionObserver {
         observe() {}
@@ -113,7 +146,7 @@ test.describe('Site pages', () => {
       });
     });
 
-    await page.goto('/site/history');
+    await page.goto('/history');
 
     await expect(page.getByText('里程碑 1')).toBeVisible();
     await expect(page.getByRole('button', { name: '加载更多里程碑' })).toBeEnabled();
@@ -128,14 +161,58 @@ test.describe('Site pages', () => {
     await page.unroute('**/api/timeline**');
   });
 
-  test('users can fall back to legacy static pages', async ({ page }) => {
-    await page.goto('/site');
+  test('links page renders mocked data', async ({ page }) => {
+    await page.route('**/api/links**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          data: [
+            {
+              slug: 'education',
+              title: '教育资源',
+              sortOrder: 10,
+              groups: [
+                {
+                  slug: 'universities',
+                  title: '高校',
+                  sortOrder: 5,
+                  links: [
+                    {
+                      slug: 'example',
+                      name: '示例资源',
+                      url: 'https://example.com',
+                      description: '示例描述',
+                      sortOrder: 1,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          meta: {
+            linkCount: 1,
+            groupCount: 1,
+            sectionCount: 1,
+            filters: {},
+          },
+        }),
+      });
+    });
 
-    const scienceCard = page.getByRole('heading', { name: '🔬 科普知识' }).locator('..');
-    await scienceCard.getByRole('link', { name: '立即查看' }).click();
+    await page.goto('/links');
+    await expect(page.getByRole('heading', { name: '核聚变资源导航' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '教育资源' })).toBeVisible();
+    await expect(page.getByRole('link', { name: '示例资源' })).toHaveAttribute('href', 'https://example.com');
 
-    await page.waitForURL('**/science.html');
+    await page.unroute('**/api/links**');
+  });
+
+  test('science page accessible via nav', async ({ page }) => {
+    await page.goto('/');
+    const navScience = page.getByRole('navigation', { name: '主导航' }).getByRole('link', { name: '科普知识' });
+    await navScience.click();
+    await expect(page).toHaveURL(/\/science$/);
     await expect(page.getByRole('heading', { name: '核聚变科普知识' })).toBeVisible();
-    await expect(page.getByRole('link', { name: /返回首页/ })).toHaveAttribute('href', 'index.html');
   });
 });
