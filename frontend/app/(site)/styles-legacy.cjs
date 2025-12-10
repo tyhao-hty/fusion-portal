@@ -1,0 +1,1 @@
+require("./styles-legacy.css");

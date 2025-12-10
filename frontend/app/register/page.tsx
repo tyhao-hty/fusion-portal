@@ -20,8 +20,9 @@ export default function RegisterPage() {
       setUser({ email });
       setMessage("注册成功，已自动登录");
       window.location.href = "/";
-    } catch (error: any) {
-      setMessage("注册失败: " + error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      setMessage("注册失败: " + message);
     }
   }
 
