@@ -31,8 +31,9 @@ export default function NewArticlePage() {
       setMessage("发布成功");
       setTitle("");
       setContent("");
-    } catch (error: any) {
-      setMessage("发布失败: " + error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      setMessage("发布失败: " + message);
     }
   }
 

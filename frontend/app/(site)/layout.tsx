@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./styles-legacy.css";
+import "./styles-legacy.cjs";
 import { SiteFrame } from "@/components/layouts/SiteFrame";
 import { buildSiteMetadata } from "@/components/site/metadata";
 

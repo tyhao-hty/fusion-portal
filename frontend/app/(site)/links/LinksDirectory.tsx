@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { LinkGroup, LinkItem, LinkSection } from "./types";
+import type { LinkItem, LinkSection } from "./types";
 
 type PreparedLink = LinkItem & {
   searchText: string;

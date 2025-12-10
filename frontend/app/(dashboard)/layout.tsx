@@ -1,5 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import React from 'react';
+import "../(site)/styles-legacy.cjs";
+import "../globals.css"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
