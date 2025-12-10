@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import "./(site)/styles-legacy.cjs";
 import { SiteFrame } from "@/components/layouts/SiteFrame";
 import { buildSiteMetadata } from "@/components/site/metadata";
 

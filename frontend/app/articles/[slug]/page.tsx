@@ -5,16 +5,17 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { fetchArticle } from "@/lib/articles";
 
-type PageParams = { params: { slug: string } };
+type PageParams = { params: Promise<{ slug: string }> };
 
 export const dynamic = "force-dynamic";
 
 export default async function ArticleDetailPage({ params }: PageParams) {
+  const { slug } = await params;
   let article;
   try {
-    article = await fetchArticle(params.slug);
-  } catch (error: any) {
-    if (error?.message === "NOT_FOUND") {
+    article = await fetchArticle(slug);
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === "NOT_FOUND") {
       notFound();
     }
     throw error;

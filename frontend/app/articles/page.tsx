@@ -13,12 +13,14 @@ export const dynamic = "force-dynamic";
 export default async function ArticlesPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
-  const page = Number.parseInt(searchParams.page || "1", 10) || 1;
-  const q = searchParams.q?.trim() || "";
-  const sort = searchParams.sort || "published_desc";
-  const status = searchParams.status?.trim() || "published";
+  const resolvedParams = await searchParams;
+
+  const page = Number.parseInt(resolvedParams.page || "1", 10) || 1;
+  const q = resolvedParams.q?.trim() || "";
+  const sort = resolvedParams.sort || "published_desc";
+  const status = resolvedParams.status?.trim() || "published";
 
   let articles: ArticleSummary[] = [];
   let meta = {
@@ -39,8 +41,9 @@ export default async function ArticlesPage({
     });
     articles = resp.data;
     meta = resp.meta;
-  } catch (err: any) {
-    error = err?.message || "文章加载失败";
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    error = message || "文章加载失败";
   }
 
   return (
@@ -140,7 +143,7 @@ export default async function ArticlesPage({
               className="rounded border px-3 py-2 hover:bg-gray-50"
               href={{
                 pathname: "/articles",
-                query: { ...searchParams, page: meta.page - 1 || 1 },
+                query: { ...resolvedParams, page: meta.page - 1 || 1 },
               }}
             >
               上一页
@@ -151,7 +154,7 @@ export default async function ArticlesPage({
               className="rounded border px-3 py-2 hover:bg-gray-50"
               href={{
                 pathname: "/articles",
-                query: { ...searchParams, page: meta.page + 1 },
+                query: { ...resolvedParams, page: meta.page + 1 },
               }}
             >
               下一页

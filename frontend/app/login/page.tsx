@@ -20,8 +20,9 @@ export default function LoginPage() {
       setUser({ email });
       setMessage("登录成功");
       window.location.href = "/";
-    } catch (error: any) {
-      setMessage("登录失败: " + error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      setMessage("登录失败: " + message);
     }
   }
 

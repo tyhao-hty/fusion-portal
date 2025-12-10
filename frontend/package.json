@@ -2,6 +2,7 @@
   "name": "fusion-portal",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
     "build": "next build",
@@ -11,12 +12,18 @@
     "test:e2e": "npm run build && playwright test"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "^3.67.0",
+    "@payloadcms/next": "^3.67.0",
+    "@payloadcms/richtext-lexical": "^3.67.0",
     "@testing-library/dom": "^10.4.1",
-    "next": "^16.0.8",
+    "graphql": "^16.12.0",
+    "next": "^15.4.8",
+    "payload": "^3.67.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "react-markdown": "^9.0.3",
     "remark-gfm": "^4.0.0",
+    "sharp": "^0.34.5",
     "swr": "^2.2.0"
   },
   "devDependencies": {

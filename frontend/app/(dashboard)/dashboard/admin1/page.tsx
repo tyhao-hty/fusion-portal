@@ -55,8 +55,9 @@ export default function AdminPage() {
     try {
       await apiRequest(`/articles/${id}`, "DELETE", undefined, token);
       setArticles((prev) => prev.filter((item) => item.id !== id));
-    } catch (error: any) {
-      setMessage("删除失败: " + error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      setMessage("删除失败: " + message);
     }
   }
 
@@ -71,8 +72,9 @@ export default function AdminPage() {
       const updated = await apiRequest(`/articles/${id}`, "PUT", { status: nextStatus }, token);
       setArticles((prev) => prev.map((item) => (item.id === id ? { ...item, ...updated } : item)));
       setMessage("");
-    } catch (error: any) {
-      setMessage("更新状态失败: " + error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      setMessage("更新状态失败: " + message);
     }
   }
 
