@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { useUser } from "@/components/UserContext";
 
 type NavItem = {
   href: string;
@@ -26,7 +25,6 @@ const NAV_ITEMS: NavItem[] = [
 const MOBILE_MEDIA_QUERY = "(max-width: 991px)";
 
 export function SiteHeader() {
-  const { user, setUser } = useUser();
   const [pathname, setPathname] = useState("");
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -103,14 +101,6 @@ export function SiteHeader() {
       });
     };
   }, []);
-
-  function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("email");
-    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    setUser(null);
-    window.location.href = "/login";
-  }
 
   const handleNavItemClick = (href?: string) => {
     if (isMobile) {
@@ -198,34 +188,6 @@ export function SiteHeader() {
                 )}
               </li>
             ))}
-            {!user ? (
-              <>
-                <li>
-                  <Link
-                    href="/login"
-                    onClick={() => handleNavItemClick("/login")}
-                    className="nav-link nav-link--auth"
-                  >
-                    登录
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/register"
-                    onClick={() => handleNavItemClick("/register")}
-                    className="nav-link nav-link--auth"
-                  >
-                    注册
-                  </Link>
-                </li>
-              </>
-            ) : (
-              <li>
-                <button type="button" className="nav-logout" onClick={handleLogout}>
-                  退出
-                </button>
-              </li>
-            )}
           </ul>
         </nav>
       </div>

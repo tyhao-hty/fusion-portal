@@ -71,6 +71,23 @@
 
 ## 🧩 日志记录区（按时间倒序排列）
 
+### 📅 2025-12-11 16:16
+#### 🧪 任务编号：Phase0 – Legacy Dashboard/HTML 退役
+**[计划阶段]**  
+- 下线 `/dashboard`、`/login`、`/register` 前端入口与 middleware；移除 UserContext；停止对 `public/*.html` 的兼容 rewrites。  
+- 更新导航与文档，确保仅保留站点路由与 Payload Admin。  
+
+**[开发阶段]**  
+- 删除 legacy middleware 与 `(dashboard)` 路由、login/register 页面及相关 Navbar/UserContext。  
+- 清理站点头部导航的登录/注册逻辑，首页模块链接改为 Next 路由。  
+- 移除 `next.config.mjs` 的 `*.html` rewrites；更新 `frontend/README.md` 描述现状。  
+
+**[问题与解决]**  
+- 用户上下文移除后需同步清理导航中的登录/注册/退出分支，已统一为静态导航。  
+
+**[总结与下步计划]**  
+- 前端入口已收口到 Next 路由与 Payload Admin；后续 Phase1 可专注 Payload schema 设计与接口切换。  
+
 ### 📅 2025-12-10 19:01
 #### 🧪 任务编号：T002 – articles 分页链接类型修复
 **[计划阶段]**  

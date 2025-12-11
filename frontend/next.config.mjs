@@ -4,43 +4,6 @@ import { withPayload } from '@payloadcms/next/withPayload'
 const nextConfig = {
   // 你的 Next.js 配置放在这里
     reactStrictMode: true,
-  async rewrites() {
-    return [
-      {
-        source: '/index.html',
-        destination: '/',
-      },
-      {
-        source: '/history.html',
-        destination: '/history',
-      },
-      {
-        source: '/links.html',
-        destination: '/links',
-      },
-      {
-        source: '/papers.html',
-        destination: '/papers',
-      },
-      {
-        source: '/science.html',
-        destination: '/science',
-      },
-      {
-        source: '/theory.html',
-        destination: '/theory',
-      },
-      {
-        source: '/technology.html',
-        destination: '/technology',
-      },
-      {
-        source: '/business.html',
-        destination: '/business',
-      },
-    ];
-    
-  },
 
   experimental: {
     reactCompiler: false,
