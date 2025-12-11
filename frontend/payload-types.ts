@@ -68,7 +68,15 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
+    members: Member;
     media: Media;
+    tags: Tag;
+    articles: Article;
+    papers: Paper;
+    'timeline-events': TimelineEvent;
+    'link-sections': LinkSection;
+    'link-groups': LinkGroup;
+    links: Link;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -77,7 +85,15 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
+    members: MembersSelect<false> | MembersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
+    articles: ArticlesSelect<false> | ArticlesSelect<true>;
+    papers: PapersSelect<false> | PapersSelect<true>;
+    'timeline-events': TimelineEventsSelect<false> | TimelineEventsSelect<true>;
+    'link-sections': LinkSectionsSelect<false> | LinkSectionsSelect<true>;
+    'link-groups': LinkGroupsSelect<false> | LinkGroupsSelect<true>;
+    links: LinksSelect<false> | LinksSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -122,6 +138,8 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  name?: string | null;
+  roles?: ('admin' | 'publisher' | 'editor' | 'author')[] | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -142,11 +160,25 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "members".
+ */
+export interface Member {
+  id: number;
+  email: string;
+  displayName?: string | null;
+  status?: ('active' | 'banned') | null;
+  roles?: ('member' | 'moderator')[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
   id: number;
   alt: string;
+  caption?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -158,6 +190,158 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    feature?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  name: string;
+  slug: string;
+  type: 'category' | 'article_tag' | 'paper_tag';
+  sortOrder?: number | null;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles".
+ */
+export interface Article {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  coverImage?: (number | null) | Media;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  content_html?: string | null;
+  readingTime?: number | null;
+  publishedAt?: string | null;
+  category?: (number | null) | Tag;
+  tags?: (number | Tag)[] | null;
+  author?: (number | null) | User;
+  timelineYear?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "papers".
+ */
+export interface Paper {
+  id: number;
+  title: string;
+  slug: string;
+  authors?:
+    | {
+        name: string;
+        affiliation?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  year: number;
+  venue?: string | null;
+  url?: string | null;
+  pdf?: (number | null) | Media;
+  abstract?: string | null;
+  tags?: (number | Tag)[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "timeline-events".
+ */
+export interface TimelineEvent {
+  id: number;
+  yearLabel: string;
+  date?: string | null;
+  sortOrder?: number | null;
+  title: string;
+  description?: string | null;
+  relatedArticle?: (number | null) | Article;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "link-sections".
+ */
+export interface LinkSection {
+  id: number;
+  title: string;
+  slug: string;
+  description?: string | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "link-groups".
+ */
+export interface LinkGroup {
+  id: number;
+  title?: string | null;
+  slug: string;
+  section: number | LinkSection;
+  description?: string | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "links".
+ */
+export interface Link {
+  id: number;
+  name: string;
+  slug?: string | null;
+  url: string;
+  description?: string | null;
+  section?: (number | null) | LinkSection;
+  group: number | LinkGroup;
+  icon?: (number | null) | Media;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -188,8 +372,40 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
+        relationTo: 'members';
+        value: number | Member;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'tags';
+        value: number | Tag;
+      } | null)
+    | ({
+        relationTo: 'articles';
+        value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'papers';
+        value: number | Paper;
+      } | null)
+    | ({
+        relationTo: 'timeline-events';
+        value: number | TimelineEvent;
+      } | null)
+    | ({
+        relationTo: 'link-sections';
+        value: number | LinkSection;
+      } | null)
+    | ({
+        relationTo: 'link-groups';
+        value: number | LinkGroup;
+      } | null)
+    | ({
+        relationTo: 'links';
+        value: number | Link;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -238,6 +454,8 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  roles?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -257,10 +475,23 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "members_select".
+ */
+export interface MembersSelect<T extends boolean = true> {
+  email?: T;
+  displayName?: T;
+  status?: T;
+  roles?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  caption?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -272,6 +503,143 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        feature?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  type?: T;
+  sortOrder?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles_select".
+ */
+export interface ArticlesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  coverImage?: T;
+  content?: T;
+  content_html?: T;
+  readingTime?: T;
+  publishedAt?: T;
+  category?: T;
+  tags?: T;
+  author?: T;
+  timelineYear?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "papers_select".
+ */
+export interface PapersSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  authors?:
+    | T
+    | {
+        name?: T;
+        affiliation?: T;
+        id?: T;
+      };
+  year?: T;
+  venue?: T;
+  url?: T;
+  pdf?: T;
+  abstract?: T;
+  tags?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "timeline-events_select".
+ */
+export interface TimelineEventsSelect<T extends boolean = true> {
+  yearLabel?: T;
+  date?: T;
+  sortOrder?: T;
+  title?: T;
+  description?: T;
+  relatedArticle?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "link-sections_select".
+ */
+export interface LinkSectionsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "link-groups_select".
+ */
+export interface LinkGroupsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  section?: T;
+  description?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "links_select".
+ */
+export interface LinksSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  url?: T;
+  description?: T;
+  section?: T;
+  group?: T;
+  icon?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
