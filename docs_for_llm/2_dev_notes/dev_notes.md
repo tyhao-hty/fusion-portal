@@ -72,6 +72,55 @@
 ## 🧩 日志记录区（按时间倒序排列）
 
 
+### 📅 2025-12-11 20:11
+#### 🧪 任务：Phase1 – Payload Schema V2 落地（基础集合）
+**[计划阶段]**  
+- 按 schema V2 蓝图在 `payload.config.ts` 落地集合（字段/关系/drafts），不加入 hooks 与 access，确保 Admin 可加载。  
+
+**[开发阶段]**  
+- 更新 `payload.config.ts` 引入集合：Users/Members/Media/Tags/Articles/Papers/TimelineEvents/LinkSections/LinkGroups/Links。  
+- 调整集合定义：  
+  - Users 增加 name、roles 多选；Members 关闭 auth、隐藏 admin、保留 email/status/roles。  
+  - Media 增加 caption，配置 thumbnail/feature 尺寸。  
+  - Tags 支持 type enum、sortOrder、description。  
+  - Articles drafts+versions，字段含 slug/coverImage/content/content_html(hidden)/category/tags(author_tag filter)/author/timelineYear/publishedAt/readingTime。  
+  - Papers drafts，authors 数组、pdf 关系、paper_tag 过滤。  
+  - TimelineEvents 基础字段与 article 关联；Link 三层集合含 sortOrder、group/section 关系、icon。  
+
+**[问题与解决]**  
+- 未新增 hooks/access（按要求暂缓）。  
+
+**[总结与下步计划]**  
+- 下一步可运行 `cd frontend && npx payload dev` 验证 Admin 集合结构；Phase2 再补 access 规则与 hooks（content_html/readingTime/section sync）。  
+
+### 📅 2025-12-11 19:58
+#### 🧪 任务：Schema V2 Payload 增强
+**[计划阶段]**  
+- 根据评审补充作者字段保护、timelineYear 去向、链接冗余一致性、Members 注册策略与 Articles BFF 映射表。  
+
+**[开发阶段]**  
+- 更新 `docs_for_llm/4_design/schema_v2_payload.md`：作者字段仅 admin 可改；timelineYear 标注为过渡字段，长期依赖 TimelineEvents；Link beforeChange 钩子明确以 group.section 写入 section；Members 暂不开放公开注册；新增 Articles 字段兼容映射表。  
+
+**[问题与解决]**  
+- 无阻塞问题。  
+
+**[总结与下步计划]**  
+- 后续在 `payload.config.ts` 落地 access/hooks，并按映射表实现 BFF；迁移脚本保持 timelineYear 兼容，待前端切换后再评估下线。  
+
+### 📅 2025-12-11 19:52
+#### 🧪 任务：Schema V2 Payload 设计
+**[计划阶段]**  
+- 目标：梳理现有 Prisma 字段/关联，并输出 Payload schema V2 蓝图（角色、集合、迁移与 API 兼容策略）。  
+
+**[开发阶段]**  
+- 新增 `docs_for_llm/4_design/schema_v2_payload.md`：总结 Prisma 字段关系；定义 Payload 集合（Users/Members/Media/Tags/Articles/Papers/Timeline/Links）、富文本与 `content_html` 策略、角色权限矩阵、迁移顺序与 BFF 兼容思路。  
+
+**[问题与解决]**  
+- 无阻塞问题。  
+
+**[总结与下步计划]**  
+- 待方案确认后，在 `payload.config.ts` 落地 collections/access/hooks，并编写 Prisma→Payload 迁移脚本与 `DATA_SOURCE` feature flag 切换流程。  
+
 ### 📅 2025-12-11 16:50
 #### 🧪 任务编号：Phase0 – 设计文档对齐（4_design）
 **[计划阶段]**  
