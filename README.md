@@ -1,79 +1,39 @@
-# fusion-portal
-# 项目说明 - 核聚变门户网站
+# Fusion Portal 项目说明
 
 ## 1. 项目简介
-核聚变门户网站旨在以中文为主，为科研人员、工程师与公众提供核聚变领域的系统化信息入口。站点汇集发展历程、理论知识、实验技术、商业进展与外部资源，并以交互式组件和搜索工具提升阅读体验。
+Fusion Portal 是面向科研人员、工程师与公众的核聚变中文知识门户，提供发展历程、理论与技术路线、论文索引、行业资源与未来 AI 辅助内容。目标是逐步演进为可持续的知识基础设施和内容管理平台。
 
-## 2. 技术栈与依赖
-- **前端技术**：原生 HTML5、CSS3、ES6+ JavaScript。
-- **运行环境**：现代浏览器（需支持 `fetch`、`IntersectionObserver`、`matchMedia` 等 API）。
-- **数据来源**：本地 JSON (`data/links.json`、`data/papers.json`、`data/timeline.json`)；无外部构建或打包依赖。
+## 2. 当前架构（2025-12）
+- 前端（`frontend/`）：Next.js 15（App Router，React 19）。站点页面位于根路由（`/`、`/history`、`/links`、`/papers`、`/science`、`/theory`、`/technology`、`/business`），Payload Admin 通过 `(payload)` 挂载在 `/admin`。旧的 dashboard/login/register 与 `*.html` rewrites 已移除。
+- 后端（`backend/`）：Express + Prisma + PostgreSQL（schema=public），当前仍提供文章、时间线、链接、论文及鉴权接口，是现役数据源。
+- CMS（Payload 3.67）：已集成并使用独立测试库（payload-test），尚未接管业务数据；计划通过分阶段迁移成为单一数据与权限来源。
+- 静态资源：`frontend/public/` 仅保留资产与旧 HTML 备份，不再参与路由。
 
-## 3. 文件结构与说明
-```text
-.
-├── CHANGELOG.md                  # 变更记录（片段）
-├── AGENTS.md                     # 贡献指南，面向自动化代理或新增贡献者
-├── admin.html                    # 后台管理界面入口
-├── admin.js                      # 后台管理系统逻辑（数据增删改查）
-├── styles-admin.css              # 后台管理系统独立样式
-├── assets/
-│   └── og-default.png             # Open Graph 与社交分享默认配图
-├── components/
-│   ├── common.js                  # 通用脚本：头尾加载、导航交互、平滑滚动等
-│   ├── footer.html                # 页脚模板，包含版权与导航
-│   ├── head.html                  # `<head>` 模板，插入 SEO 与社交元数据
-│   ├── header.html                # 顶部导航模板，含移动端折叠菜单
-│   └── meta.js                    # 元数据注入逻辑，按页面配置动态生成标签
-├── data/
-│   ├── links.json                 # 资源导航数据，分组列出外部链接
-│   ├── papers.json                # 论文列表与标签信息
-│   ├── schema.md                  # 数据文件结构定义与示例
-│   └── timeline.json              # 发展历程时间线数据
-├── docs/
-│   └── architecture.md            # 架构与模块说明（含后台系统）
-├── history.html                   # 发展历史页：时间线动态加载、科学家介绍
-├── index.html                     # 首页：模块概览与呼叫按钮
-├── links.html                     # 相关链接页：支持搜索与懒加载
-├── papers.html                    # 论文页：按标签渲染并支持关键词筛选
-├── science.html                   # 科普知识页：入门级解读与外部资源
-├── styles.css                     # 全站样式：布局、主题色、动画
-├── technology.html                # 技术路线页：磁约束、惯性约束等对比
-├── theory.html                    # 理论知识页：深入原理与判据
-├── business.html                  # 商业化进展页：公司案例与市场趋势
-├── todo.md                        # 历史计划列表（已全部完成）
-└── README.md                      # 当前文档
-```
+## 3. 站点内容（现有与规划）
+- 发展历史：时间线、里程碑、事件详情。
+- 论文与文献：精选论文索引、标签分类、外链。
+- 资源链接：机构、会议、教育资源等结构化导航。
+- 科普/理论/技术/商业专题：面向不同层次的说明与对比。
+- 文章与动态：后续将迁移到 Payload 后台统一管理。
+- 未来扩展：评论/投稿、AI 摘要与问答、可视化与推荐。
 
-## 4. 页面与模块逻辑
-- **组件装配**：页面内的 `<div data-component="header/footer">` 由 `components/common.js` 使用 `fetch` 注入 `header.html` 与 `footer.html`，确保导航与版权统一管理。
-- **元数据处理**：各页面在 `<head>` 先写入 `window.__PAGE_META__`，`meta.js` 会合并默认配置、渲染 `head.html` 模板并回填 `<title>`、OG/Twitter 标签，实现 SEO 与分享信息的动态同步。
-- **交互脚本**：
-  - `common.js` 管理移动端导航折叠、跳转平滑滚动、页脚年份自动更新以及滚动时的头部背景效果；
-  - `history.html` 内联脚本读取 `data/timeline.json`，按分页渲染时间线卡片并配合 `IntersectionObserver` 做入场动画与懒加载；
-  - `links.html` 载入 `data/links.json`，支持分类懒加载、搜索过滤与统计信息更新；
-  - `papers.html` 载入 `data/papers.json`，按标签映射到对应容器并提供关键词搜索、逐条动画。
-- **数据约定**：JSON 数据通过 `fetch` 本地读取，需与页面脚本约定的字段（如 `id`, `title`, `groups`, `tags`）保持一致。
+## 4. 运行方式
+- 前端：`cd frontend && npm install && npm run dev`（默认 3000）
+- 后端：`cd backend && npm install && npm run dev`（默认 4000）
+环境变量：需要为前端提供 Express API 基址（`NEXT_PUBLIC_API_URL`），为 Express/Prisma 与 Payload 分别提供数据库连接串（两套独立配置）。
 
-## 5. 功能状态
-- **已实现**：
-  - 响应式页面框架与统一导航/页脚组件；
-  - 首页模块入口、各专题内容页（科普、理论、技术、商业等）；
-  - 时间线懒加载、资源导航搜索分页、论文列表筛选等交互功能；
-  - 动态元数据与基础可访问性（跳转链接、ARIA 属性）；
-  - 后台管理系统（`admin.html`）支持对 `data/` 目录 JSON 数据的查看、编辑、导入导出与 localStorage 暂存。
-- **待优化/可扩展方向**：
-  - 已添加后台管理系统，可在浏览器端直接编辑和导出 `data/` 目录数据；
-  - 增设自动化测试或数据校验脚本，避免 JSON 手工错误；
-  - 引入多语言支持或暗黑模式切换；
-  - 将常用交互逻辑拆分为可复用模块并减少重复内联脚本；
-  - 增加内容更新脚本（例如与外部 API 同步最新论文或新闻）。
+## 5. 主要路由
+- 站点：`/`、`/history`、`/links`、`/papers`、`/science`、`/theory`、`/technology`、`/business`
+- 管理：`/admin`（Payload Admin）
 
-## 6. 本地运行与部署
-1. **本地预览**：
-   ```bash
-   cd /path/to/Fusion_Site
-   python3 -m http.server 8080
-   ```
-   在浏览器访问 `http://localhost:8080`，修改文件后刷新即可查看效果。若需指定编码，可使用 `npx serve` 或任意静态服务器。
-2. **部署建议**：将仓库部署到静态托管平台（如 GitHub Pages、Vercel、Netlify 或个人 Nginx）；确保静态服务器允许访问 `components/` 与 `data/` 目录以便 `fetch` 请求加载资源。
+## 6. 开发计划与迁移方向
+- 近期：前端继续消费 Express/Prisma API，完善 Payload schema 设计与数据迁移脚本。
+- 中期：按模块迁移到 Payload（Links → Papers → Timeline → Articles），使用 Next.js Route Handler/BFF 保持前端响应兼容；校验 CRUD 与权限后再切源。
+- 远期：Payload 成为单一数据与权限中心，Express/Prisma 退役为只读直至下线；引入评论/投稿、AI 摘要/问答、推荐与可视化模块。
+
+## 7. 目录速览
+- `frontend/`：Next.js 前端与 Payload Admin
+- `backend/`：Express + Prisma 后端
+- `docs_for_llm/`：规则、任务、设计与计划文档
+- `docs/`：通用文档与报告
+- `frontend/public/`：静态资源备份（不参与路由）
