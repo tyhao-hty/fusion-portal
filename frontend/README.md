@@ -1,6 +1,6 @@
 # Fusion Portal 前端
 
-基于 Next.js 14 + TypeScript + Tailwind CSS 的核聚变门户前端。项目在 `app/(site)/` 下承载迁移后的站点页面（首页、发展历程、科普/理论/技术/商业等），后台管理由 Payload Admin 提供（`/admin`）。
+基于 Next.js 15 + React 19 + TypeScript + Tailwind CSS 的核聚变门户前端。项目在 `app/(site)/` 下承载站点页面（首页、发展历程、科普/理论/技术/商业等），后台管理由 Payload Admin 提供（`/admin`）。
 
 ## 快速开始
 
@@ -12,13 +12,13 @@ npm run dev
 
 启动后访问 [http://localhost:3000](http://localhost:3000)：
 - `/`：站点首页。
-- `/history` / `/links` / `/papers` 等：站点内容页面。
+- `/history` / `/links` / `/papers` / `/science` / `/theory` / `/technology` / `/business`：站点内容页面。
 - `/admin`：Payload Admin。
 
 ## 技术栈
 
-- Next.js 14（App Router）
-- React 18
+- Next.js 15（App Router）
+- React 19
 - TypeScript 5
 - Tailwind CSS 3
 - SWR 2（历史时间线的分页加载与错误重试）
