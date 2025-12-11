@@ -2,7 +2,6 @@
 // 站点样式迁移到各自布局，避免污染 /admin。
 import React from "react";
 import { headers } from "next/headers";
-import { UserProvider } from "../components/UserContext";
 
 
 export const metadata = {
@@ -36,9 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="zh">
       <body className="bg-gray-50 text-gray-900">
-        <UserProvider>
-          {children}
-        </UserProvider>
+        {children}
       </body>
     </html>
   );

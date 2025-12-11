@@ -1,6 +1,6 @@
 # Fusion Portal 前端
 
-基于 Next.js 14 + TypeScript + Tailwind CSS 的核聚变门户前端。项目在 `app/(dashboard)/` 下维护现代交互式页面，同时在 `app/site/` 中承载迁移后的静态站点（首页、发展历程等），并保留 `public/` 目录的原始 HTML 作为回退。
+基于 Next.js 14 + TypeScript + Tailwind CSS 的核聚变门户前端。项目在 `app/(site)/` 下承载迁移后的站点页面（首页、发展历程、科普/理论/技术/商业等），后台管理由 Payload Admin 提供（`/admin`）。
 
 ## 快速开始
 
@@ -11,8 +11,9 @@ npm run dev
 ```
 
 启动后访问 [http://localhost:3000](http://localhost:3000)：
-- `/`：React 管理后台入口（保留原有文章列表、登录/注册等功能）。
-- `/site`：迁移后的静态站首页；`/history.html` 自动重写到 `/site/history`。
+- `/`：站点首页。
+- `/history` / `/links` / `/papers` 等：站点内容页面。
+- `/admin`：Payload Admin。
 
 ## 技术栈
 
@@ -27,11 +28,10 @@ npm run dev
 ```
 frontend/
 ├── app/
-│   ├── (dashboard)/    # 现代交互式页面（首页、登录、后台等）
-│   └── site/           # 静态站迁移页面（保留 legacy 样式与交互）
+│   └── (site)/         # 站点页面（历史/链接/论文/科普/理论/技术/商业等）
 ├── components/
-│   └── site/           # 静态站专用 Header/Footer/Metadata 组件
-├── public/             # 原始静态资源 & 备份
+│   └── site/           # 站点 Header/Footer/Metadata 组件
+├── public/             # 静态资源（不再承载 HTML 回退）
 ├── package.json        # 项目依赖与脚本
 ├── tsconfig.json       # TypeScript 配置
 ├── tailwind.config.js  # Tailwind 配置
@@ -53,17 +53,4 @@ frontend/
 
 ## 路由兼容与 rewrites
 
-`next.config.js` 配置了以下重写规则，确保旧版入口与新版页面共存：
-
-```js
-module.exports = {
-  async rewrites() {
-    return [
-      { source: '/index.html', destination: '/site' },
-      { source: '/history.html', destination: '/site/history' },
-    ];
-  },
-};
-```
-
-上线前请根据迁移进度补全 redirect 计划，并更新 `tasks/T009_static_merge.md` 的清单。
+当前已移除旧版 `*.html` 重写，访问入口统一为 Next 路由和 `/admin`（Payload Admin）。
