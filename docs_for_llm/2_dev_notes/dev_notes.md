@@ -72,6 +72,46 @@
 ## 🧩 日志记录区（按时间倒序排列）
 
 
+### 📅 2025-12-12 17:19
+#### 🧪 任务：Phase2 – Access 类型修复与安全收紧
+**[计划阶段]**  
+- 修正 Payload access 类型错误（payload/types 导入、Where 结构、originalDoc 缺失），并收紧 Papers 编辑权限。  
+
+**[开发阶段]**  
+- `collections/access.ts`：改为从 `payload` 导入 PayloadRequest。  
+  - `Articles`：read 返回合法 Where；update 去除 originalDoc 依赖，publisher 直接允许，editor 仅草稿且不能改状态，author 仅草稿且 author=本人。  
+- `Papers`：read Where 修正；update 去除 originalDoc，editor 仅草稿，author 暂禁更新（无 owner 字段前避免越权）。  
+  - 追加修正：Articles read/update Where 结构去除可选键（or/and），作者更新限定 `_status=draft` 且 `author=本人`，避免 TS 报错。  
+  - 再次修正：Articles access 提取为函数并显式使用 Payload `Access` 类型，保持逻辑不变以解决 TS 校验。  
+  - TS 消除：Articles access 返回值按需 `as any` 断言，消除 Payload Where 类型推断冲突。  
+  - Phase3 增强：新增 `rolePolicy` 结构；Articles/Papers create 自动绑定 author；author 字段 update 禁止且 UI 只读；publishedAt/_status 在非 publisher/admin 下 UI 只读（通过断言消除类型报错）。  
+  - 补充修正：移除 `payload/types` 依赖，自定义 BeforeChange 参数类型，消除隐式 any 与模块缺失报错。  
+  - 19:47 补充：移除 Articles 重复的 `publishedAt` 字段定义，避免 Payload DuplicateFieldName 报错。  
+  - 20:01 补充：移除 Articles/Papers 自定义 `_status` 字段，使用 drafts/versions 内置状态，避免枚举重复添加 draft。  
+  - 20:03 补充：移除动态 readOnly 函数（Articles），改为全局 readOnly，避免 admin UI 函数传递到 Client 组件报错。  
+
+**[问题与解决]**  
+- 原因：Where 结构与不存在的 originalDoc 导致 TS 报错；Papers 无作者字段导致草稿越权风险。  
+- 解决：调整返回类型与逻辑，暂禁 author 更新 Papers。  
+
+**[总结与下步计划]**  
+- 待运行 `cd frontend && npx payload dev` 复验；如需作者级编辑 Papers，需先引入 owner 字段并在 access/fields 约束。  
+
+### 📅 2025-12-12 14:24
+#### 🧪 任务：Phase2 – Payload Schema V2 Access Rules
+**[计划阶段]**  
+- 为 Schema V2 集合落地 access 规则（角色矩阵：匿名/author/editor/publisher/admin），禁止 hooks 改动，确保 Admin 可加载。  
+
+**[开发阶段]**  
+- 为 Users/Members/Media/Tags/Articles/Papers/TimelineEvents/LinkSections/LinkGroups/Links 配置 access：匿名仅读 published 内容（Articles/Papers），公开读基础集合；写入仅限 editor/publisher/admin；作者仅可编辑自己的草稿，不得改作者字段；publisher 可改状态；admin 全权限；Members 仅 admin 可管。  
+- 新增 `collections/access.ts` 提供 role 辅助；在 Articles/Papers 更新读写/状态/作者保护逻辑；Link/Timeline/Tags/Media 等写入限制为 editor/publisher/admin。  
+
+**[问题与解决]**  
+- 无新增阻塞；未实现 hooks/BFF，按要求阶段性搁置。  
+
+**[总结与下步计划]**  
+- 可运行 `cd frontend && npx payload dev` 验证 access 行为；后续阶段再补 hooks（content_html/readingTime/section sync）与 BFF。  
+
 ### 📅 2025-12-11 20:11
 #### 🧪 任务：Phase1 – Payload Schema V2 落地（基础集合）
 **[计划阶段]**  
