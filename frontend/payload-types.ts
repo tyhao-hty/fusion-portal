@@ -250,11 +250,11 @@ export interface Article {
   } | null;
   content_html?: string | null;
   readingTime?: number | null;
-  publishedAt?: string | null;
   category?: (number | null) | Tag;
   tags?: (number | Tag)[] | null;
   author?: (number | null) | User;
   timelineYear?: number | null;
+  publishedAt?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -274,6 +274,7 @@ export interface Paper {
         id?: string | null;
       }[]
     | null;
+  author?: (number | null) | User;
   year: number;
   venue?: string | null;
   url?: string | null;
@@ -553,11 +554,11 @@ export interface ArticlesSelect<T extends boolean = true> {
   content?: T;
   content_html?: T;
   readingTime?: T;
-  publishedAt?: T;
   category?: T;
   tags?: T;
   author?: T;
   timelineYear?: T;
+  publishedAt?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -576,6 +577,7 @@ export interface PapersSelect<T extends boolean = true> {
         affiliation?: T;
         id?: T;
       };
+  author?: T;
   year?: T;
   venue?: T;
   url?: T;
