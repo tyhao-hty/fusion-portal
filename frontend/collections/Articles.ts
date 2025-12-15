@@ -1,5 +1,6 @@
 import type { Access, CollectionConfig, PayloadRequest } from 'payload'
 import { getUserId, hasAnyRole, hasRole, isAdmin } from './access'
+import { applyArticleComputedFields, applyPublishedAt } from './hooks/articles'
 
 type BeforeChangeArgs = {
   req: PayloadRequest
@@ -59,7 +60,7 @@ export const Articles: CollectionConfig = {
     useAsTitle: 'title',
   },
   hooks: {
-    beforeChange: [setArticleAuthorOnCreate],
+    beforeChange: [setArticleAuthorOnCreate, applyArticleComputedFields, applyPublishedAt],
   },
   access: {
     read: articleReadAccess,

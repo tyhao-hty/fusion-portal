@@ -72,6 +72,23 @@
 ## 🧩 日志记录区（按时间倒序排列）
 
 
+### 📅 2025-12-13 23:49
+#### 🧪 任务：Phase3 – Payload Hooks（Articles/Links/Media）
+**[计划阶段]**  
+- 落地 Phase3 hooks：Articles 生成 `content_html`、`readingTime`、`publishedAt`；Links 同步 section；Media 补全缺失 alt。  
+
+**[开发阶段]**  
+- 新增 `frontend/collections/hooks/articles.ts`：Lexical → HTML（`convertLexicalToHTML`），基于 HTML/plaintext 计算阅读时长，发布时填充 `publishedAt`。  
+- 新增 `frontend/collections/hooks/links.ts`：beforeChange 根据 `group` 查 `link-groups` 并同步 `section`。  
+- 新增 `frontend/collections/hooks/media.ts`：beforeChange 在 alt 为空时用 title/filename 兜底。  
+- 更新集合：`Articles` 挂载 hooks（作者绑定 + 计算字段 + 发布时间）、`Links` 挂载 section 同步、`Media` 挂载 alt 兜底。  
+
+**[问题与解决]**  
+- 无阻塞；Lexical 转换与查关系均在 hook 内 try/catch，失败时回退为原数据避免破坏保存。  
+
+**[总结与下步计划]**  
+- 未运行本地测试；需在 `cd frontend && npx payload dev` 下手动创建/发布文章验证 `content_html`/`readingTime`/`publishedAt`；编辑 Link 验证 section 自动同步；上传媒体验证 alt 兜底。  
+
 ### 📅 2025-12-12 17:19
 #### 🧪 任务：Phase2 – Access 类型修复与安全收紧
 **[计划阶段]**  
