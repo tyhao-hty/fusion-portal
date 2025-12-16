@@ -41,5 +41,16 @@ export const TimelineEvents: CollectionConfig = {
       type: 'relationship',
       relationTo: 'articles',
     },
+    {
+      name: 'createdBy',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        readOnly: true,
+      },
+      access: {
+        update: () => false,
+      },
+    },
   ],
 }

@@ -57,5 +57,16 @@ export const Links: CollectionConfig = {
       type: 'number',
       defaultValue: 0,
     },
+    {
+      name: 'createdBy',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        readOnly: true,
+      },
+      access: {
+        update: () => false,
+      },
+    },
   ],
 }

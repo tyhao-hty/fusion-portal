@@ -274,7 +274,7 @@ export interface Paper {
         id?: string | null;
       }[]
     | null;
-  author?: (number | null) | User;
+  createdBy?: (number | null) | User;
   year: number;
   venue?: string | null;
   url?: string | null;
@@ -297,6 +297,7 @@ export interface TimelineEvent {
   title: string;
   description?: string | null;
   relatedArticle?: (number | null) | Article;
+  createdBy?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -341,6 +342,7 @@ export interface Link {
   group: number | LinkGroup;
   icon?: (number | null) | Media;
   sortOrder?: number | null;
+  createdBy?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -577,7 +579,7 @@ export interface PapersSelect<T extends boolean = true> {
         affiliation?: T;
         id?: T;
       };
-  author?: T;
+  createdBy?: T;
   year?: T;
   venue?: T;
   url?: T;
@@ -599,6 +601,7 @@ export interface TimelineEventsSelect<T extends boolean = true> {
   title?: T;
   description?: T;
   relatedArticle?: T;
+  createdBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -640,6 +643,7 @@ export interface LinksSelect<T extends boolean = true> {
   group?: T;
   icon?: T;
   sortOrder?: T;
+  createdBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }
