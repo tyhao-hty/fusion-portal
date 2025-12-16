@@ -1,5 +1,5 @@
-import type { CollectionConfig, PayloadRequest } from 'payload'
-import { hasAnyRole, hasRole, isAdmin } from './access'
+import type { Access, CollectionConfig, PayloadRequest } from 'payload'
+import { getUserId, hasAnyRole, hasRole, isAdmin } from './access'
 
 type BeforeChangeArgs = {
   req: PayloadRequest
@@ -7,14 +7,31 @@ type BeforeChangeArgs = {
   data?: any
 }
 
-const setPaperAuthorOnCreate = ({ req, operation, data }: BeforeChangeArgs) => {
-  if (operation === 'create') {
-    const userId = (req.user as any)?.id
-    if (userId) {
-      return { ...data, author: userId }
-    }
+const setPaperCreatedByOnCreate = ({ req, operation, data }: BeforeChangeArgs) => {
+  if (operation !== 'create') return data
+  if (data?.createdBy) return data
+  const userId = (req.user as any)?.id
+  if (!userId) return data
+  return { ...data, createdBy: userId }
+}
+
+const paperUpdateAccess: Access = ({ req, data }) => {
+  if (!req.user) return false
+  if (isAdmin(req) || hasRole(req, 'publisher')) return true
+
+  if (hasRole(req, 'editor')) {
+    if (data?._status && data._status !== 'draft') return false
+    return { _status: { equals: 'draft' } } as any
   }
-  return data
+
+  if (hasRole(req, 'author')) {
+    const userId = getUserId(req)
+    if (!userId) return false
+    if (data?._status && data._status !== 'draft') return false
+    return { _status: { equals: 'draft' }, createdBy: { equals: userId } } as any
+  }
+
+  return false
 }
 
 export const Papers: CollectionConfig = {
@@ -26,7 +43,7 @@ export const Papers: CollectionConfig = {
     useAsTitle: 'title',
   },
   hooks: {
-    beforeChange: [setPaperAuthorOnCreate],
+    beforeChange: [setPaperCreatedByOnCreate],
   },
   access: {
     read: ({ req }) => {
@@ -37,21 +54,7 @@ export const Papers: CollectionConfig = {
       if (!req.user) return false
       return hasAnyRole(req, ['author', 'editor', 'publisher', 'admin'])
     },
-    update: ({ req, data }) => {
-      if (!req.user) return false
-      if (isAdmin(req) || hasRole(req, 'publisher')) return true
-
-      if (hasRole(req, 'editor')) {
-        if (data?._status && data._status !== 'draft') return false
-        return true
-      }
-
-      if (hasRole(req, 'author')) {
-        return false
-      }
-
-      return false
-    },
+    update: paperUpdateAccess,
     delete: ({ req }) => {
       if (!req.user) return false
       if (isAdmin(req) || hasRole(req, 'publisher')) return true
@@ -86,7 +89,7 @@ export const Papers: CollectionConfig = {
       ],
     },
     {
-      name: 'author',
+      name: 'createdBy',
       type: 'relationship',
       relationTo: 'users',
       admin: {

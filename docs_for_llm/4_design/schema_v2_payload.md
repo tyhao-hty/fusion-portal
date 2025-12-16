@@ -85,7 +85,7 @@
 ### 3.6 LinkSection / LinkGroup / Link
 - 3.6.1 LinkSection（`link-sections`）：`title`、`slug`、`description?`、`sortOrder`。
 - 3.6.2 LinkGroup（`link-groups`）：`title?`、`slug`、`section`(relation -> link-sections)、`description?`、`sortOrder`。
-- 3.6.3 Link（`links`）：`name`、`slug?`(unique)、
+- 3.6.3 Link（`links`）：`name`、`slug?`(unique)、 
   `url`、`description?`、`section`(relation -> link-sections，冗余便于查询)、`group`(relation -> link-groups)、`icon`(relation -> media)、`sortOrder`。
 - Hooks：在 Link `beforeChange` 中，若 `group.section` 存在则自动写入 `link.section`；若 `link.section` 与 `group.section` 不一致，以 `group.section` 为准，保持冗余一致。
 
@@ -93,10 +93,23 @@
 - Slug：`members`；字段见 2.2；当前阶段可隐藏列表/编辑 UI。
 - 认证：暂不启用公开注册；可先关闭 auth 或仅保留登录能力，待评论/论坛方案确定后再开放注册端点，避免暴露未控入口。
 
+## 3.x 内容型集合与 createdBy 语义补充
+- 内容型集合（需具备 createdBy 以表达 CMS 创建者责任）：`articles`（已用 author 承载）、`papers`（createdBy）、`timeline-events`、`links`。  
+- 非内容型集合（当前不需要 createdBy）：`media`、`tags`、`link-sections`、`link-groups`、`users`、`members`。  
+- createdBy 语义：指在 CMS 中首次创建/导入该条内容的用户，用于内容血缘和责任追踪，不等同于业务作者/学术作者。  
+- 当前阶段的设计原则：createdBy 为关系字段（relationTo: users，admin.readOnly），非 required，无默认值，不在本阶段增加 hook/数据补齐；数据回填与自动写入策略待后续迭代。 
+- 血缘字段更新边界：`articles.author` 仅 admin/publisher 可更正；`papers.createdBy` 仅 admin/publisher/系统脚本写入，API 层禁止更新；`links.createdBy`、`timeline-events.createdBy` 为只读血缘，不可被编辑/发布角色修改。
+
+## 3.y System Account 与迁移写入策略
+- System Account（仅用于迁移与数据血缘锚点）：email=`system@fusion-energy.cn`，name=`System Account`，roles=`['admin']`。迁移脚本在运行前幂等确保该账号存在，使用随机强密码，不输出/记录密码。  
+- 迁移写入策略：Articles（author 字段当前承载创建者语义）、Papers/TimelineEvents/Links（createdBy 字段）均由迁移脚本填充 System Account，用于标记“由系统批量导入”；不覆盖已有 createdBy/author。  
+- 本阶段仅在迁移脚本层写入，不修改 schema 必填、权限或 Hook；后续如需自动写入/回填可另行迭代。 
+
 ## 4. RichText 与 content_html 策略
 - 存储：`content` 使用 Lexical JSON。
 - 兼容：`content_html` 隐藏字段，仅由 Hook 生成。
 - Hook 逻辑（概念）：在 `beforeChange/beforeValidate` 中将 Lexical JSON → HTML（统一序列化器），通过白名单过滤后写入 `content_html`，拒绝直接输入。
+- XSS 白名单（服务端）：允许标签 `p/br/strong/em/ul/ol/li/blockquote/code/pre/h2/h3/h4/h5/a/img`；仅允许链接属性 `href/title/target/rel`（协议限 http/https/mailto/tel）、图片属性 `src/alt/title`（协议同上）；移除所有事件处理和脚本/style 标签，拒绝 `javascript:` 等危险协议；过滤逻辑集中在 `sanitizeRichTextHtml`。
 
 ## 5. 访问控制与审批工作流
 - 核心规则（以 Articles 为例）：

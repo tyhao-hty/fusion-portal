@@ -1,0 +1,122 @@
+{
+  "1": {
+    "payloadId": 1,
+    "slug": "international-programs",
+    "createdAt": "2025-12-16T06:03:19.336Z",
+    "source": "07_link_sections",
+    "legacy": {
+      "table": "LinkSection",
+      "id": 1
+    }
+  },
+  "2": {
+    "payloadId": 2,
+    "slug": "research-institutes",
+    "createdAt": "2025-12-16T06:03:19.343Z",
+    "source": "07_link_sections",
+    "legacy": {
+      "table": "LinkSection",
+      "id": 2
+    }
+  },
+  "3": {
+    "payloadId": 3,
+    "slug": "commercial-companies",
+    "createdAt": "2025-12-16T06:03:19.349Z",
+    "source": "07_link_sections",
+    "legacy": {
+      "table": "LinkSection",
+      "id": 3
+    }
+  },
+  "4": {
+    "payloadId": 4,
+    "slug": "academic-journals",
+    "createdAt": "2025-12-16T06:03:19.354Z",
+    "source": "07_link_sections",
+    "legacy": {
+      "table": "LinkSection",
+      "id": 4
+    }
+  },
+  "5": {
+    "payloadId": 5,
+    "slug": "news-media",
+    "createdAt": "2025-12-16T06:03:19.360Z",
+    "source": "07_link_sections",
+    "legacy": {
+      "table": "LinkSection",
+      "id": 5
+    }
+  },
+  "6": {
+    "payloadId": 6,
+    "slug": "education",
+    "createdAt": "2025-12-16T06:03:19.365Z",
+    "source": "07_link_sections",
+    "legacy": {
+      "table": "LinkSection",
+      "id": 6
+    }
+  },
+  "7": {
+    "payloadId": 7,
+    "slug": "databases-tools",
+    "createdAt": "2025-12-16T06:03:19.370Z",
+    "source": "07_link_sections",
+    "legacy": {
+      "table": "LinkSection",
+      "id": 7
+    }
+  },
+  "8": {
+    "payloadId": 8,
+    "slug": "events",
+    "createdAt": "2025-12-16T06:03:19.376Z",
+    "source": "07_link_sections",
+    "legacy": {
+      "table": "LinkSection",
+      "id": 8
+    }
+  },
+  "9": {
+    "payloadId": 9,
+    "slug": "government",
+    "createdAt": "2025-12-16T06:03:19.382Z",
+    "source": "07_link_sections",
+    "legacy": {
+      "table": "LinkSection",
+      "id": 9
+    }
+  },
+  "10": {
+    "payloadId": 10,
+    "slug": "associations",
+    "createdAt": "2025-12-16T06:03:19.386Z",
+    "source": "07_link_sections",
+    "legacy": {
+      "table": "LinkSection",
+      "id": 10
+    }
+  },
+  "11": {
+    "payloadId": 11,
+    "slug": "chinese-resources",
+    "createdAt": "2025-12-16T06:03:19.391Z",
+    "source": "07_link_sections",
+    "legacy": {
+      "table": "LinkSection",
+      "id": 11
+    }
+  },
+  "12": {
+    "payloadId": 12,
+    "slug": "communities",
+    "createdAt": "2025-12-16T06:03:19.395Z",
+    "source": "07_link_sections",
+    "legacy": {
+      "table": "LinkSection",
+      "id": 12
+    }
+  }
+}

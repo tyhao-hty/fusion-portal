@@ -140,10 +140,7 @@ export const Articles: CollectionConfig = {
       type: 'relationship',
       relationTo: 'users',
       access: {
-        update: () => false,
-      },
-      admin: {
-        readOnly: true,
+        update: ({ req }) => hasAnyRole(req, ['admin', 'publisher']),
       },
     },
     {

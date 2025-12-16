@@ -1,0 +1,290 @@
+{
+  "papertag:1": {
+    "payloadId": 1,
+    "name": "经典理论论文",
+    "type": "paper_tag",
+    "slug": "FAOGaRdueD8j68yFBtG-AWf7NM0",
+    "createdAt": "2025-12-15T05:01:01.172Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 1
+    }
+  },
+  "papertag:2": {
+    "payloadId": 2,
+    "name": "经典理论",
+    "type": "paper_tag",
+    "slug": "1JSiMEeK7FKrIQ5Vtr_C3agOKSM",
+    "createdAt": "2025-12-15T05:01:01.181Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 2
+    }
+  },
+  "papertag:3": {
+    "payloadId": 3,
+    "name": "理论基础",
+    "type": "paper_tag",
+    "slug": "iFF0RqQD8DpCBSjl2dF8hLdpwkY",
+    "createdAt": "2025-12-15T05:01:01.188Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 3
+    }
+  },
+  "papertag:4": {
+    "payloadId": 4,
+    "name": "磁约束聚变",
+    "type": "paper_tag",
+    "slug": "PtSjpsbZjupAPTYfqW_G3MgTP5w",
+    "createdAt": "2025-12-15T05:01:01.195Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 4
+    }
+  },
+  "papertag:5": {
+    "payloadId": 5,
+    "name": "磁约束",
+    "type": "paper_tag",
+    "slug": "u9agCq42f6LL9ZCqWeGjMtH-rEI",
+    "createdAt": "2025-12-15T05:01:01.202Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 5
+    }
+  },
+  "papertag:6": {
+    "payloadId": 6,
+    "name": "聚变装置",
+    "type": "paper_tag",
+    "slug": "7LYjddqVTkYjbFCdQyKGxwSVqhE",
+    "createdAt": "2025-12-15T05:01:01.208Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 6
+    }
+  },
+  "papertag:7": {
+    "payloadId": 7,
+    "name": "托卡马克物理",
+    "type": "paper_tag",
+    "slug": "bTIZz6g0Ye6I_GRtykjORDp3EZ4",
+    "createdAt": "2025-12-15T05:01:01.214Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 7
+    }
+  },
+  "papertag:8": {
+    "payloadId": 8,
+    "name": "托卡马克",
+    "type": "paper_tag",
+    "slug": "KNcA_teiul-lqEnYM1kjU_dMOHs",
+    "createdAt": "2025-12-15T05:01:01.220Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 8
+    }
+  },
+  "papertag:9": {
+    "payloadId": 9,
+    "name": "仿星器物理",
+    "type": "paper_tag",
+    "slug": "8bHjw7p5JtPc_--v0RcP2zxD31g",
+    "createdAt": "2025-12-15T05:01:01.227Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 9
+    }
+  },
+  "papertag:10": {
+    "payloadId": 10,
+    "name": "仿星器",
+    "type": "paper_tag",
+    "slug": "ejdlfyULa0F7fx3sdWk5f6W6eoc",
+    "createdAt": "2025-12-15T05:01:01.233Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 10
+    }
+  },
+  "papertag:11": {
+    "payloadId": 11,
+    "name": "惯性约束聚变",
+    "type": "paper_tag",
+    "slug": "VnQUYAl4FKxt-osrriGSJwshMWA",
+    "createdAt": "2025-12-15T05:01:01.239Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 11
+    }
+  },
+  "papertag:12": {
+    "payloadId": 12,
+    "name": "惯性约束",
+    "type": "paper_tag",
+    "slug": "dwCeckm3RxwVAp4LBBYrd02b2Q0",
+    "createdAt": "2025-12-15T05:01:01.246Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 12
+    }
+  },
+  "papertag:13": {
+    "payloadId": 13,
+    "name": "点火",
+    "type": "paper_tag",
+    "slug": "LHWPr6mfSFeInxmu0gALlALoeUk",
+    "createdAt": "2025-12-15T05:01:01.252Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 13
+    }
+  },
+  "papertag:14": {
+    "payloadId": 14,
+    "name": "等离子体物理基础",
+    "type": "paper_tag",
+    "slug": "YDLSq6YkdavtzbE3yzsgagGh9Yo",
+    "createdAt": "2025-12-15T05:01:01.258Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 14
+    }
+  },
+  "papertag:15": {
+    "payloadId": 15,
+    "name": "等离子体物理",
+    "type": "paper_tag",
+    "slug": "VY5SXFUY5KGwfqSDmcbsVs3myp0",
+    "createdAt": "2025-12-15T05:01:01.266Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 15
+    }
+  },
+  "papertag:16": {
+    "payloadId": 16,
+    "name": "材料科学与工程",
+    "type": "paper_tag",
+    "slug": "0cuBetQfd13cVJOR3kaCrPsyhRA",
+    "createdAt": "2025-12-15T05:01:01.274Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 16
+    }
+  },
+  "papertag:17": {
+    "payloadId": 17,
+    "name": "材料科学",
+    "type": "paper_tag",
+    "slug": "qEfM_RR63cpHg_cSyO-e27fbxCY",
+    "createdAt": "2025-12-15T05:01:01.280Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 17
+    }
+  },
+  "papertag:18": {
+    "payloadId": 18,
+    "name": "工程技术",
+    "type": "paper_tag",
+    "slug": "9NRktUiSOT4-dcy2KAzrtdKtNjk",
+    "createdAt": "2025-12-15T05:01:01.286Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 18
+    }
+  },
+  "papertag:19": {
+    "payloadId": 19,
+    "name": "聚变堆设计与技术",
+    "type": "paper_tag",
+    "slug": "pe8JEVEFRXGEOBzFgvmEwp_Gppk",
+    "createdAt": "2025-12-15T05:01:01.291Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 19
+    }
+  },
+  "papertag:20": {
+    "payloadId": 20,
+    "name": "聚变堆",
+    "type": "paper_tag",
+    "slug": "8WyzDhRfMxuka2SMUKvzI5nS-6U",
+    "createdAt": "2025-12-15T05:01:01.297Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 20
+    }
+  },
+  "papertag:21": {
+    "payloadId": 21,
+    "name": "先进约束概念",
+    "type": "paper_tag",
+    "slug": "NvDW4HOGtbRwqG--S3f9pty2xnQ",
+    "createdAt": "2025-12-15T05:01:01.302Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 21
+    }
+  },
+  "papertag:22": {
+    "payloadId": 22,
+    "name": "先进概念",
+    "type": "paper_tag",
+    "slug": "el1p4wI9Rqo6zh-51mP027C4X8U",
+    "createdAt": "2025-12-15T05:01:01.308Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 22
+    }
+  },
+  "papertag:23": {
+    "payloadId": 23,
+    "name": "最新研究进展",
+    "type": "paper_tag",
+    "slug": "eRHyQWMj8xLZz2Gvzp39zOA0WVU",
+    "createdAt": "2025-12-15T05:01:01.313Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 23
+    }
+  },
+  "papertag:24": {
+    "payloadId": 24,
+    "name": "前沿研究",
+    "type": "paper_tag",
+    "slug": "GHSasazpYCJy3fsadQ6S5fxcKOc",
+    "createdAt": "2025-12-15T05:01:01.318Z",
+    "source": "02_tags",
+    "legacy": {
+      "table": "PaperTag",
+      "id": 24
+    }
+  }
+}

@@ -24,7 +24,9 @@ export const syncLinkSection = async ({ data, req }: BeforeChangeArgs) => {
       id: groupId,
     })
     if (group?.section) {
-      return { ...data, section: group.section }
+      const sectionValue =
+        typeof group.section === 'object' && group.section !== null ? (group.section as any).id ?? group.section : group.section
+      return { ...data, section: sectionValue }
     }
   } catch (error) {
     console.error('links: syncLinkSection failed', error)

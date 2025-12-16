@@ -1,0 +1,252 @@
+{
+  "1": {
+    "payloadId": 51,
+    "slug": "paper-001",
+    "createdAt": "2025-12-16T04:07:47.024Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 1
+    }
+  },
+  "2": {
+    "payloadId": 52,
+    "slug": "paper-002",
+    "createdAt": "2025-12-16T04:07:47.042Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 2
+    }
+  },
+  "3": {
+    "payloadId": 53,
+    "slug": "paper-003",
+    "createdAt": "2025-12-16T04:07:47.060Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 3
+    }
+  },
+  "4": {
+    "payloadId": 54,
+    "slug": "paper-004",
+    "createdAt": "2025-12-16T04:07:47.075Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 4
+    }
+  },
+  "5": {
+    "payloadId": 55,
+    "slug": "paper-005",
+    "createdAt": "2025-12-16T04:07:47.092Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 5
+    }
+  },
+  "6": {
+    "payloadId": 56,
+    "slug": "paper-006",
+    "createdAt": "2025-12-16T04:07:47.107Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 6
+    }
+  },
+  "7": {
+    "payloadId": 57,
+    "slug": "paper-007",
+    "createdAt": "2025-12-16T04:07:47.125Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 7
+    }
+  },
+  "8": {
+    "payloadId": 58,
+    "slug": "paper-008",
+    "createdAt": "2025-12-16T04:07:47.141Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 8
+    }
+  },
+  "9": {
+    "payloadId": 59,
+    "slug": "paper-009",
+    "createdAt": "2025-12-16T04:07:47.158Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 9
+    }
+  },
+  "10": {
+    "payloadId": 60,
+    "slug": "paper-010",
+    "createdAt": "2025-12-16T04:07:47.174Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 10
+    }
+  },
+  "11": {
+    "payloadId": 61,
+    "slug": "paper-011",
+    "createdAt": "2025-12-16T04:07:47.189Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 11
+    }
+  },
+  "12": {
+    "payloadId": 62,
+    "slug": "paper-012",
+    "createdAt": "2025-12-16T04:07:47.204Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 12
+    }
+  },
+  "13": {
+    "payloadId": 63,
+    "slug": "paper-013",
+    "createdAt": "2025-12-16T04:07:47.218Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 13
+    }
+  },
+  "14": {
+    "payloadId": 64,
+    "slug": "paper-014",
+    "createdAt": "2025-12-16T04:07:47.232Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 14
+    }
+  },
+  "15": {
+    "payloadId": 65,
+    "slug": "paper-015",
+    "createdAt": "2025-12-16T04:07:47.247Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 15
+    }
+  },
+  "16": {
+    "payloadId": 66,
+    "slug": "paper-016",
+    "createdAt": "2025-12-16T04:07:47.262Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 16
+    }
+  },
+  "17": {
+    "payloadId": 67,
+    "slug": "paper-017",
+    "createdAt": "2025-12-16T04:07:47.277Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 17
+    }
+  },
+  "18": {
+    "payloadId": 68,
+    "slug": "paper-018",
+    "createdAt": "2025-12-16T04:07:47.291Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 18
+    }
+  },
+  "19": {
+    "payloadId": 69,
+    "slug": "paper-019",
+    "createdAt": "2025-12-16T04:07:47.306Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 19
+    }
+  },
+  "20": {
+    "payloadId": 70,
+    "slug": "paper-020",
+    "createdAt": "2025-12-16T04:07:47.320Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 20
+    }
+  },
+  "21": {
+    "payloadId": 71,
+    "slug": "paper-021",
+    "createdAt": "2025-12-16T04:07:47.336Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 21
+    }
+  },
+  "22": {
+    "payloadId": 72,
+    "slug": "paper-022",
+    "createdAt": "2025-12-16T04:07:47.352Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 22
+    }
+  },
+  "23": {
+    "payloadId": 73,
+    "slug": "paper-023",
+    "createdAt": "2025-12-16T04:07:47.367Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 23
+    }
+  },
+  "24": {
+    "payloadId": 74,
+    "slug": "paper-024",
+    "createdAt": "2025-12-16T04:07:47.381Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 24
+    }
+  },
+  "25": {
+    "payloadId": 75,
+    "slug": "paper-025",
+    "createdAt": "2025-12-16T04:07:47.395Z",
+    "source": "04_papers",
+    "legacy": {
+      "table": "Paper",
+      "id": 25
+    }
+  }
+}

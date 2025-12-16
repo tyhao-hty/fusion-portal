@@ -1,6 +1,7 @@
 import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
 import type { PayloadRequest } from 'payload'
+import { sanitizeRichTextHtml } from '../../utils/sanitizeHtml'
 
 type BeforeChangeArgs = {
   data?: any
@@ -43,12 +44,13 @@ export const applyArticleComputedFields = ({ data }: BeforeChangeArgs) => {
   if (!data) return data
 
   const next = { ...data }
-  const html = safeConvertToHTML(data.content)
-  if (html) {
-    next.content_html = html
+  const rawHtml = safeConvertToHTML(data.content)
+  const sanitizedHtml = sanitizeRichTextHtml(rawHtml)
+  if (sanitizedHtml) {
+    next.content_html = sanitizedHtml
   }
 
-  const textForReading = html ? stripHtml(html) : stripHtml(safeConvertToPlaintext(data.content))
+  const textForReading = sanitizedHtml ? stripHtml(sanitizedHtml) : stripHtml(safeConvertToPlaintext(data.content))
   if (textForReading) {
     next.readingTime = calcReadingTimeMinutes(textForReading)
   }

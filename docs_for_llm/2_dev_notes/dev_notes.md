@@ -71,6 +71,197 @@
 
 ## 🧩 日志记录区（按时间倒序排列）
 
+### 📅 2025-12-16 16:41
+#### 🧪 任务：Payload Phase4 可信源收尾（血缘校正 + content_html 安全 + Links 复核）
+**[计划阶段]**  
+- 修复血缘字段可纠错：Articles/Papers/Links/TimelineEvents 的 author/createdBy 权限校正；content_html 引入集中 XSS 白名单；核对 Links 迁移是否存在 Section 失效。  
+
+**[开发阶段]**  
+- `frontend/collections/Articles.ts`: author 字段允许 admin/publisher 更新，解锁血缘纠错。  
+- `frontend/collections/Papers.ts`: 对齐权限矩阵，author 仅能维护自己草稿（按 createdBy）、editor 限制草稿、publisher/admin 全量。  
+- `frontend/collections/Links.ts`, `frontend/collections/TimelineEvents.ts`: createdBy API 层只读，禁止编辑/发布角色改写血缘。  
+- `frontend/utils/sanitizeHtml.ts`, `frontend/collections/hooks/articles.ts`: 增加服务端 XSS 白名单（标签 p/br/strong/em/ul/ol/li/blockquote/code/pre/h2-h5/a/img；href/src 仅 http/https/mailto/tel；移除事件与 script/style），content_html 统一经过 sanitize。  
+- 恶意样例验证（通过自定义脚本）：`<p onclick>alert</p><script>` 被清洗为纯文本段落；`<a href=\"javascript:alert(1)\"><img onerror>` 被剥离事件与危险协议，仅保留安全属性。  
+
+**[问题与解决]**  
+- Links 数据库断言因本地 Postgres 连接被 sandbox 拒绝（EPERM 127.0.0.1:5432），`psql` 与 payload 客户端均无法连通；暂未完成在线 DB 侧抽查。
+- 人工核实：Links 迁移经数据库断言验证通过，历史 Section invalid 日志确认可忽略。  
+
+**[总结与下步计划]**  
+- 待获得数据库访问权限后，需重跑 Links 抽查（总量/非空 section+group/抽样对账 legacy），以确认历史 Section invalid 日志是否可忽略。  
+- 如需上线前再验，建议在具备数据库访问的环境运行 payload find/SQL 断言。  
+
+### 📅 2025-12-16 14:13
+#### 🧪 任务：Phase4 – Media 迁移占位说明
+**[计划阶段]**  
+- 原计划 Phase4.5 为 Prisma → Payload media 迁移；因 legacy DB 无 media/upload 数据，需显式标记为 N/A。  
+
+**[开发阶段]**  
+- 新增 `scripts/migrate/05_media.js` 占位脚本，仅输出说明：“无 legacy media 数据，本阶段跳过；未来通过 Payload Admin 上传或 Payload→Payload 整库迁移处理。” 不访问 Prisma，不创建 Payload 记录。  
+
+**[问题与解决]**  
+- 无。  
+
+**[总结与下步计划]**  
+- 不需运行该脚本；后续如需媒体数据迁移将走 Payload→Payload 路径或人工上传。  
+
+### 📅 2025-12-16 14:05
+#### 🧪 任务：Phase4 – Links/LinkGroups/LinkSections 迁移脚本
+**[计划阶段]**  
+- 迁移顺序 Section → Group → Link；Link.section 由 hook 自动同步；createdBy 仅 Links 需要（system account），Sections/Groups 不写。  
+
+**[开发阶段]**  
+- 新增 `scripts/migrate/07_link_sections.js`：校验字段，DB 断言不同；slug 去重；创建 title/slug/description/sortOrder；state 记录。  
+- 新增 `scripts/migrate/08_link_groups.js`：依赖 `link_sections` 映射；section 缺失则 fail；slug 去重；创建 title/slug/section/description/sortOrder。  
+- 新增 `scripts/migrate/09_links.js`：ensure system account 写 createdBy；依赖 `link_groups` 映射（缺失 fail）；slug 去重；创建 name/slug/url/description/group/sortOrder/createdBy，section 交由 hook 同步。  
+
+**[问题与解决]**  
+- createdBy 纠偏：仅 Links 写入 system account，Sections/Groups 不写；沿用幂等 state、错误日志；支持 `--limit`/`LIMIT`。  
+
+**[总结与下步计划]**  
+- 未实机运行；需按顺序执行 07→08→09（可先 `--limit` 验证）；后续补迁移 README/执行指南。  
+
+
+### 📅 2025-12-16 13:40
+#### 🧪 任务：Phase4 – TimelineEvents 迁移脚本
+**[计划阶段]**  
+- 迁移 Prisma TimelineEvent → Payload timeline-events，保持 createdBy 责任模型（system account 兜底），幂等以 legacy_id 为主，slug 不使用。  
+
+**[开发阶段]**  
+- 新增 `scripts/migrate/06_timeline.js`：校验必需字段；断言 Payload/Prisma DB 不同；ensure system account 并显式写入 createdBy；legacy dedupe 使用 yearLabel+title 组合；relatedArticle 通过 `state/articles` 映射，缺失警告；date 由 yearValue 推出为 `YYYY-01-01`；支持 `--limit`/`LIMIT`；记录 state 和错误日志。  
+
+**[问题与解决]**  
+- 发现 collection 无 slug，移除 slug 查询与写入，避免 QueryError；保留仅必要字段映射。  
+
+**[总结与下步计划]**  
+- 未实机复测；需在 `cd frontend && node scripts/migrate/06_timeline.js --limit=5` 验证；后续补迁移 README 与 Links 设计。 
+
+
+### 📅 2025-12-16 12:16
+#### 🧪 任务：迁移脚本 System Account 兜底策略校正
+**[计划阶段]**  
+- 全面检查迁移脚本，确保 System Account 仅在缺失时兜底写入，不覆盖已有责任字段；不改 schema/权限/Hook。  
+
+**[开发阶段]**  
+- `frontend/scripts/migrate/03_articles.js`：恢复对 legacy 用户映射的读取，author 优先使用映射，缺失时仅兜底写入 System Account；保留 overrideAccess。  
+- `frontend/scripts/migrate/04_papers.js`：createdBy 优先使用 legacy author 映射，缺失时才 fallback System Account，并记录 warn。  
+
+**[问题与解决]**  
+- 无新增阻塞。  
+
+**[总结与下步计划]**  
+- 未运行迁移；后续执行可确保 System Account 只作缺省兜底，不覆盖已映射的数据血缘。  
+
+### 📅 2025-12-16 12:05
+#### 🧪 任务：迁移脚本增加 System Account 与 createdBy 写入
+**[计划阶段]**  
+- 为迁移脚本引入系统账户锚点，确保内容型集合写入 createdBy/author，所有写入 overrideAccess，保持最小变更、不触碰 schema/权限/Hook。  
+
+**[开发阶段]**  
+- 新增 `frontend/scripts/migrate/common/system.js`：`ensureSystemAccount` 幂等创建/返回 system@fusion-energy.cn（roles=admin，随机强密码，overrideAccess）。  
+- `03_articles.js`：取消 legacy author 依赖，统一 author=System Account，payload 写入 overrideAccess。  
+- `04_papers.js`：createdBy 改为 System Account，写入 overrideAccess。  
+- `02_tags.js` / `01_users.js`：payload create/find/read 增加 overrideAccess 保障迁移稳定。  
+- `docs_for_llm/4_design/schema_v2_payload.md`：补充 System Account 与迁移写入策略说明。  
+
+**[问题与解决]**  
+- 无新增阻塞。  
+
+**[总结与下步计划]**  
+- 未运行迁移；后续执行时将自动确保 System Account 存在并写入 createdBy/author。如需回填历史空值或自动写入 Hook，可在后续迭代处理。  
+
+### 📅 2025-12-16 11:43
+#### 🧪 任务：TimelineEvents / Links 补充 createdBy schema
+**[计划阶段]**  
+- 按审查结论为内容型集合补齐 createdBy 血缘字段，限制为 schema 级最小变更，不调整权限/Hook/迁移。  
+- 同步架构文档，明确内容型集合与 createdBy 语义及当前阶段约束。  
+
+**[开发阶段]**  
+- `frontend/collections/TimelineEvents.ts`：新增只读 `createdBy` 关系字段（relationTo users），无 required/default/hook。  
+- `frontend/collections/Links.ts`：同上新增 `createdBy` 字段，保持其余逻辑不变。  
+- `docs_for_llm/4_design/schema_v2_payload.md`：补充“内容型集合与 createdBy 语义”段落，列出需要/不需要 createdBy 的集合，强调 createdBy 为 CMS 创建者、非 required、仅 schema 层。  
+
+**[问题与解决]**  
+- 无新增问题。  
+
+**[总结与下步计划]**  
+- 未运行 Payload；后续如需自动写入/数据补齐可在后续迭代增加 Hook/迁移，当前保持最小变更。  
+
+### 📅 2025-12-16 09:54
+#### 🧪 任务：Papers createdBy 语义收敛
+**[计划阶段]**  
+- 将 Papers 集合中的 CMS 责任字段从 `author` 明确为 `createdBy`，保持学术作者 `authors` 语义不变；hook 仅在创建且缺失时兜底写入。  
+- 调整迁移脚本使用 `createdBy` 写入，不改迁移数据语义与权限。  
+
+**[开发阶段]**  
+- `frontend/collections/Papers.ts`：移除 `author` 关系字段，引入只读 `createdBy` 关系；beforeChange hook 改为仅在 create 且无 `createdBy` 时写入当前用户。  
+- `frontend/scripts/migrate/04_papers.js`：必需字段校验加入 `createdBy`，迁移时将映射的用户写入 `createdBy`，保持其余逻辑不变。  
+
+**[问题与解决]**  
+- 无新增阻塞。  
+
+**[总结与下步计划]**  
+- 未运行脚本/测试；后续可在 Payload Admin 新建 Paper 验证 createdBy 自动写入，确认旧迁移数据的 createdBy 未被覆盖。  
+
+### 📅 2025-12-15 13:40
+#### 🧪 任务：Phase4 – Papers 迁移脚本
+**[计划阶段]**  
+- 实现 04_papers：legacy_id 幂等（slug 仅兜底）、作者映射强制、paper_tag 映射缺失警告跳过、abstract 作为最小正文占位。  
+
+**[开发阶段]**  
+- 新增 `scripts/migrate/04_papers.js`：校验 Papers 集合字段；断言 Payload/Prisma DB 不同；优先使用 `state/users` 映射 authorId，有则设置关系；无则仅记录 warn 不阻塞；tags 仅接受 `papertag:<id>` 映射，缺失 warning；authors 字符串拆分为数组；abstract 传递或占位；slug 冲突仅 skip+记录；支持 `--limit`/`LIMIT`；写入 state（含 legacy/source）与错误日志。  
+
+**[问题与解决]**  
+- Papers 无复杂正文/HTML，保留 abstract 即可；publishedAt 如 legacy 存在则传递，否则不设。  
+
+**[总结与下步计划]**  
+- 未实机运行；需在 `cd frontend && node scripts/migrate/04_papers.js --limit=5` 验证；下一步补迁移 README 与 Timeline/Links 设计。  
+
+### 📅 2025-12-15 13:10
+#### 🧪 任务：Phase4 – Articles 迁移脚本
+**[计划阶段]**  
+- 实现 03_articles，遵循 legacy_id 幂等（slug 仅兜底去重）、作者映射必需、tags 映射缺失警告跳过、legacy HTML 最小 RichText 占位。  
+
+**[开发阶段]**  
+- 新增 `scripts/migrate/03_articles.js`：校验 Articles 集合字段；断言 Payload/Prisma DB 不同；读取 state/users 与 state/tags 映射；构建最小 RichText（strip HTML→plain text）触发 hook 生成 content_html/readingTime；保留 legacy publishedAt；author 缺失即 fail，tags/category 缺失仅警告；slug 冲突仅记录映射并 skip；支持 `--limit`/`LIMIT` 便于首轮验证；写入 state（含 legacy/source）与错误日志。  
+
+**[问题与解决]**  
+- 无运行测试；content 仅作为占位，避免错误 HTML 注入，完整 HTML 由现有 hook 生成。  
+
+**[总结与下步计划]**  
+- 待执行 `cd frontend && node scripts/migrate/03_articles.js --limit=5` 验证；下一步准备迁移 README 与 Papers 迁移设计。  
+
+
+### 📅 2025-12-15 12:45
+#### 🧪 任务：Phase4 – Tags 迁移脚本
+**[计划阶段]**  
+- 在保持多脚本幂等框架下实现 Tags 迁移（Tag/Category/PaperTag → Payload Tags），要求 name+type 去重、slug 冲突处理。  
+
+**[开发阶段]**  
+- 新增 `scripts/migrate/02_tags.js`：校验 Tags 集合字段（name/slug/type）；断言 Payload/Prisma DB 名不同；读取 Tag/Category/PaperTag，归一到 type=article_tag/category/paper_tag，slug 缺失则 slugify；先查 state，其次按 name+type 去重；slug 冲突按递增后缀分配；创建后写入 state（含 legacy 来源）。  
+
+**[问题与解决]**  
+- 无运行时问题记录；slug 冲突策略：同 type 复用现有 slug，异 type 添加 -N 后缀。  
+
+**[总结与下步计划]**  
+- 尚未实机运行；需执行 `cd frontend && node scripts/migrate/02_tags.js` 验证连接打印/字段校验/幂等；下一步计划为迁移 README 与 03_articles 设计。  
+
+
+### 📅 2025-12-15 11:15
+#### 🧪 任务：Phase4 – 数据迁移框架与 Users 脚本落地
+**[计划阶段]**  
+- 按“多脚本、幂等、可回滚”要求搭建迁移骨架，校验 Prisma/Payload 连接并防止指向同库。  
+
+**[开发阶段]**  
+- 新增迁移共用工具：`scripts/migrate/common/env.js`（加载 .env、脱敏打印、解析 DB 名）、`common/prisma.js`（只读 Prisma 初始化并打印连接串/DB 名）、`common/payload.js`（jiti 加载 payload.config，打印 DATABASE_URI/adapter 并初始化 local API）、`common/state.js`（state JSON 与错误日志）、`common/logger.js`（计数器）。  
+- 新增 `scripts/migrate/01_users.js`：反射 Users 集合字段（auth+name+roles），断言 Payload DB 与 Prisma DB 名不同；读取 legacy 用户，通过 email 去重，创建时映射角色（默认 author）并生成临时密码；写入 state 映射与密码 CSV，失败追加错误日志。  
+
+**[问题与解决]**  
+- Payload config 为 TS，使用 jiti 动态加载；前后端 env 不同路径，脚本手动加载根 `.env` 与 `backend/.env`。  
+- 若发现 payload/prisma 指向同 DB 则直接 abort；缺失必需字段同样中止。  
+
+**[总结与下步计划]**  
+- 未运行脚本；需在 `cd frontend && node scripts/migrate/01_users.js`（确保 env 就绪）验证连接打印、字段校验、幂等写入 state/CSV。下一步：补充迁移目录 README/执行指南并继续 Tags 迁移脚本。  
 
 ### 📅 2025-12-13 23:49
 #### 🧪 任务：Phase3 – Payload Hooks（Articles/Links/Media）

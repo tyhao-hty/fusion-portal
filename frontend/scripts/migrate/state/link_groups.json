@@ -1,0 +1,142 @@
+{
+  "1": {
+    "payloadId": 1,
+    "slug": "global-initiatives",
+    "createdAt": "2025-12-16T06:03:50.231Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 1
+    }
+  },
+  "2": {
+    "payloadId": 2,
+    "slug": "research-us",
+    "createdAt": "2025-12-16T06:03:50.239Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 2
+    }
+  },
+  "3": {
+    "payloadId": 3,
+    "slug": "research-europe",
+    "createdAt": "2025-12-16T06:03:50.247Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 3
+    }
+  },
+  "4": {
+    "payloadId": 4,
+    "slug": "research-asia",
+    "createdAt": "2025-12-16T06:03:50.253Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 4
+    }
+  },
+  "5": {
+    "payloadId": 5,
+    "slug": "commercial-global",
+    "createdAt": "2025-12-16T06:03:50.261Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 5
+    }
+  },
+  "6": {
+    "payloadId": 6,
+    "slug": "journal-main",
+    "createdAt": "2025-12-16T06:03:50.267Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 6
+    }
+  },
+  "7": {
+    "payloadId": 7,
+    "slug": "media-main",
+    "createdAt": "2025-12-16T06:03:50.273Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 7
+    }
+  },
+  "8": {
+    "payloadId": 8,
+    "slug": "education-main",
+    "createdAt": "2025-12-16T06:03:50.279Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 8
+    }
+  },
+  "9": {
+    "payloadId": 9,
+    "slug": "database-main",
+    "createdAt": "2025-12-16T06:03:50.286Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 9
+    }
+  },
+  "10": {
+    "payloadId": 10,
+    "slug": "events-main",
+    "createdAt": "2025-12-16T06:03:50.293Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 10
+    }
+  },
+  "11": {
+    "payloadId": 11,
+    "slug": "government-main",
+    "createdAt": "2025-12-16T06:03:50.298Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 11
+    }
+  },
+  "12": {
+    "payloadId": 12,
+    "slug": "associations-main",
+    "createdAt": "2025-12-16T06:03:50.304Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 12
+    }
+  },
+  "13": {
+    "payloadId": 13,
+    "slug": "chinese-main",
+    "createdAt": "2025-12-16T06:03:50.308Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 13
+    }
+  },
+  "14": {
+    "payloadId": 14,
+    "slug": "communities-main",
+    "createdAt": "2025-12-16T06:03:50.314Z",
+    "source": "08_link_groups",
+    "legacy": {
+      "table": "LinkGroup",
+      "id": 14
+    }
+  }
+}
