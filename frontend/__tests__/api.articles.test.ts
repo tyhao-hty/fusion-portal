@@ -1,0 +1,137 @@
+/**
+ * @jest-environment node
+ */
+
+import { NextRequest } from 'next/server'
+import { GET } from '@/app/api/articles/route'
+
+jest.mock('@/app/api/_lib/articles/payload', () => ({
+  fetchArticles: jest.fn(),
+}))
+
+jest.mock('@/app/api/_lib/flags', () => ({
+  useArticlesPayload: jest.fn(() => true),
+  useTimelinePayload: jest.fn(() => true),
+  useLinksPayload: jest.fn(() => true),
+  usePapersPayload: jest.fn(() => true),
+}))
+
+jest.mock('@/app/api/_lib/legacy', () => ({
+  getArticlesLegacy: jest.fn(),
+  getTimelineLegacy: jest.fn(),
+  getLinksLegacy: jest.fn(),
+  getPapersLegacy: jest.fn(),
+}))
+
+const mockedFetchArticles = jest.requireMock('@/app/api/_lib/articles/payload').fetchArticles as jest.Mock
+const mockedUseArticlesPayload = jest.requireMock('@/app/api/_lib/flags').useArticlesPayload as jest.Mock
+const mockedGetArticlesLegacy = jest.requireMock('@/app/api/_lib/legacy').getArticlesLegacy as jest.Mock
+
+describe('GET /api/articles', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockedUseArticlesPayload.mockReturnValue(true)
+  })
+
+  it('returns 400 on invalid year range', async () => {
+    const req = new NextRequest(new URL('http://localhost/api/articles?yearFrom=2025&yearTo=2024'))
+    const res = await GET(req)
+    const body = await res.json()
+
+    expect(res.status).toBe(400)
+    expect(body).toEqual({
+      message: 'Invalid year range: yearFrom must be less than or equal to yearTo',
+      error: { code: 400, message: 'Bad Request' },
+    })
+  })
+
+  it('applies defaults and shapes meta', async () => {
+    mockedFetchArticles.mockResolvedValue({ total: 0, items: [] })
+
+    const req = new NextRequest(new URL('http://localhost/api/articles'))
+    const res = await GET(req)
+    const body = await res.json()
+
+    expect(mockedFetchArticles).toHaveBeenCalledWith(
+      expect.objectContaining({ page: 1, pageSize: 10, sort: 'published_desc', status: 'published' }),
+      expect.any(Array),
+    )
+    expect(res.status).toBe(200)
+    expect(body.meta).toMatchObject({
+      total: 0,
+      page: 1,
+      pageSize: 10,
+      totalPages: 0,
+      hasNext: false,
+    })
+    expect(body.data).toEqual([])
+  })
+
+  it('returns shaped data with ids, content, tags and status mapping', async () => {
+    mockedFetchArticles.mockResolvedValue({
+      total: 3,
+      items: [
+        {
+          id: '99',
+          legacyId: 7,
+          slug: 'a-1',
+          title: 'T1',
+          excerpt: 'E1',
+          coverImageUrl: 'http://img',
+          content_markdown: 'M1',
+          status: 'published',
+          publishedAt: '2024-01-01',
+          updatedAt: '2024-01-02',
+          readingTime: 5,
+          timelineYear: 2024,
+          author: { id: '5', email: 'a@b.com' },
+          category: { id: '6', slug: 'cat', name: 'Cat' },
+          tags: [
+            { id: '10', slug: 't1', name: 'Tag1' },
+            { id: 11, slug: 't2', name: 'Tag2' },
+          ],
+        },
+      ],
+    })
+
+    const req = new NextRequest(new URL('http://localhost/api/articles?page=1&pageSize=2'))
+    const res = await GET(req)
+    const body = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(body.data[0]).toMatchObject({
+      id: 7,
+      slug: 'a-1',
+      title: 'T1',
+      excerpt: 'E1',
+      coverImageUrl: 'http://img',
+      content: 'M1',
+      status: 'published',
+      publishedAt: '2024-01-01',
+      updatedAt: '2024-01-02',
+      readingTime: 5,
+      timelineYear: 2024,
+      author: { id: 5, email: 'a@b.com' },
+      category: { id: 6, slug: 'cat', name: 'Cat' },
+      tags: [
+        { id: 10, slug: 't1', name: 'Tag1' },
+        { id: 11, slug: 't2', name: 'Tag2' },
+      ],
+    })
+    expect(body.meta).toMatchObject({ total: 3, pageSize: 2, totalPages: 2, hasNext: true })
+  })
+
+  it('feature flag off delegates to legacy', async () => {
+    mockedUseArticlesPayload.mockReturnValue(false)
+    mockedGetArticlesLegacy.mockResolvedValue(
+      new Response(JSON.stringify({ data: 'legacy' }), { status: 200 }) as any,
+    )
+
+    const req = new NextRequest(new URL('http://localhost/api/articles'))
+    const res = await GET(req)
+
+    expect(mockedGetArticlesLegacy).toHaveBeenCalledTimes(1)
+    expect(mockedFetchArticles).not.toHaveBeenCalled()
+    expect(res.status).toBe(200)
+  })
+})

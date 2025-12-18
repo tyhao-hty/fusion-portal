@@ -2,7 +2,7 @@
   "1": {
     "payloadId": 1,
     "slug": "international-programs",
-    "createdAt": "2025-12-16T06:03:19.336Z",
+    "createdAt": "2025-12-16T09:20:20.312Z",
     "source": "07_link_sections",
     "legacy": {
       "table": "LinkSection",
@@ -12,7 +12,7 @@
   "2": {
     "payloadId": 2,
     "slug": "research-institutes",
-    "createdAt": "2025-12-16T06:03:19.343Z",
+    "createdAt": "2025-12-16T09:20:22.234Z",
     "source": "07_link_sections",
     "legacy": {
       "table": "LinkSection",
@@ -22,7 +22,7 @@
   "3": {
     "payloadId": 3,
     "slug": "commercial-companies",
-    "createdAt": "2025-12-16T06:03:19.349Z",
+    "createdAt": "2025-12-16T09:20:23.832Z",
     "source": "07_link_sections",
     "legacy": {
       "table": "LinkSection",
@@ -32,7 +32,7 @@
   "4": {
     "payloadId": 4,
     "slug": "academic-journals",
-    "createdAt": "2025-12-16T06:03:19.354Z",
+    "createdAt": "2025-12-16T09:20:25.754Z",
     "source": "07_link_sections",
     "legacy": {
       "table": "LinkSection",
@@ -42,7 +42,7 @@
   "5": {
     "payloadId": 5,
     "slug": "news-media",
-    "createdAt": "2025-12-16T06:03:19.360Z",
+    "createdAt": "2025-12-16T09:20:27.512Z",
     "source": "07_link_sections",
     "legacy": {
       "table": "LinkSection",
@@ -52,7 +52,7 @@
   "6": {
     "payloadId": 6,
     "slug": "education",
-    "createdAt": "2025-12-16T06:03:19.365Z",
+    "createdAt": "2025-12-16T09:20:29.594Z",
     "source": "07_link_sections",
     "legacy": {
       "table": "LinkSection",
@@ -62,7 +62,7 @@
   "7": {
     "payloadId": 7,
     "slug": "databases-tools",
-    "createdAt": "2025-12-16T06:03:19.370Z",
+    "createdAt": "2025-12-16T09:20:31.514Z",
     "source": "07_link_sections",
     "legacy": {
       "table": "LinkSection",
@@ -72,7 +72,7 @@
   "8": {
     "payloadId": 8,
     "slug": "events",
-    "createdAt": "2025-12-16T06:03:19.376Z",
+    "createdAt": "2025-12-16T09:20:33.433Z",
     "source": "07_link_sections",
     "legacy": {
       "table": "LinkSection",
@@ -82,7 +82,7 @@
   "9": {
     "payloadId": 9,
     "slug": "government",
-    "createdAt": "2025-12-16T06:03:19.382Z",
+    "createdAt": "2025-12-16T09:20:35.516Z",
     "source": "07_link_sections",
     "legacy": {
       "table": "LinkSection",
@@ -92,7 +92,7 @@
   "10": {
     "payloadId": 10,
     "slug": "associations",
-    "createdAt": "2025-12-16T06:03:19.386Z",
+    "createdAt": "2025-12-16T09:20:37.432Z",
     "source": "07_link_sections",
     "legacy": {
       "table": "LinkSection",
@@ -102,7 +102,7 @@
   "11": {
     "payloadId": 11,
     "slug": "chinese-resources",
-    "createdAt": "2025-12-16T06:03:19.391Z",
+    "createdAt": "2025-12-16T09:20:39.387Z",
     "source": "07_link_sections",
     "legacy": {
       "table": "LinkSection",
@@ -112,7 +112,7 @@
   "12": {
     "payloadId": 12,
     "slug": "communities",
-    "createdAt": "2025-12-16T06:03:19.395Z",
+    "createdAt": "2025-12-16T09:20:41.040Z",
     "source": "07_link_sections",
     "legacy": {
       "table": "LinkSection",

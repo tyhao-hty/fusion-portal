@@ -71,6 +71,54 @@
 
 ## 🧩 日志记录区（按时间倒序排列）
 
+### 📅 2025-12-18 20:12
+#### 🧪 任务：Phase5.1–5.4 BFF（Timeline/Links/Papers/Articles）
+**[计划阶段]**  
+- 为 Timeline、Links、Papers、Articles 提供 Payload BFF，保持 legacy 合同与路径不变，支持 feature flag 回滚。  
+
+**[开发阶段]**  
+- Timeline（5.1）：新增 `app/api/timeline/route.ts` 及公共 helpers（errors/flags/query/sorting/responses/payload/legacy），实现 year/search 过滤、稳定排序、legacyId→slug=`String(id)`，并添加 `__tests__/api.timeline.test.ts`。  
+- Links（5.2）：按 Inverted Assembly 实现 `app/api/links/route.ts`、links helpers（query/payload/assembly/responses/types），DB 过滤 keyword/section/group，内存组装/prune，排序稳定；测试 `__tests__/api.links.test.ts`。  
+- Papers（5.3）：新增 `app/api/papers/route.ts` 与 papers helpers（query/payload/sorting/responses/types），支持 tags OR（paper_tag）、search/title/abstract/venue/authors.name，year 过滤、排序稳定、authors flatten；测试 `__tests__/api.papers.test.ts`。  
+- Articles（5.4）：列表与详情 BFF（见下条 20:08 详情）；列表/详情遵循 status 映射、year/search/tags/category 过滤、legacyId 优先、content 直接取预生成字段、timelineEvents 仅详情；测试 `__tests__/api.articles.test.ts`、`__tests__/api.articles.detail.test.ts`。  
+
+**[问题与解决]**  
+- 无阻塞；所有新增测试通过。  
+
+**[总结与下步计划]**  
+- BFF 四个阶段已落地并可通过 flags 分批启用；上线前需在联调环境再跑端到端验证和回滚演练。  
+
+### 📅 2025-12-18 20:08
+#### 🧪 任务：Phase5.4 Articles BFF（列表 + 详情）
+**[计划阶段]**  
+- 完成 Articles 列表与详情 BFF，严格保持 legacy 路径、过滤/排序/分页/状态映射与 404 行为，支持 feature flag 回滚。  
+
+**[开发阶段]**  
+- 列表：新增 `app/api/articles/route.ts`、`_lib/articles/{types,query,sorting,payload,responses}.ts`，实现 status 映射（published/draft/review/all）、year/search/category/tags DB 过滤，稳定排序（publishedAt/createdAt），content 使用预生成字段，无 runtime 转换；新增 `__tests__/api.articles.test.ts` 覆盖默认参数、yearFrom>yearTo 400、字段/ID 映射、flag off。  
+- 详情：新增 `app/api/articles/[slugOrId]/route.ts`，严格 numeric→legacyId / 非 numeric→slug 互斥查询，无 fallback，404 文案 `文章不存在`；仅详情查 timelineEvents（relatedArticle），复用列表字段映射；新增 `__tests__/api.articles.detail.test.ts` 覆盖 numeric/slug 分支、数值型 slug 不回退、flag off。  
+- Flags/legacy：在 `_lib/flags.ts` 增加 `useArticlesPayload`；`_lib/legacy.ts` 增补 articles legacy 占位。  
+
+**[问题与解决]**  
+- 无阻塞，全部测试通过。  
+
+**[总结与下步计划]**  
+- Articles BFF 已完成列表与详情，可按 flag 分阶段启用；后续若需扩展 author 限制或更多筛选，需在不破坏 legacy 合同的前提下增量调整。  
+
+### 📅 2025-12-18 18:08
+#### 🧪 任务：Phase5 BFF 设计输出
+**[计划阶段]**  
+- 核对 legacy API 合约（调用位置、查询参数、响应结构、排序、错误）并形成表格。  
+- 编写 Phase5 BFF 兼容设计文档，覆盖子阶段 5.1–5.4、风险与回滚、补丁结构与测试计划。  
+
+**[开发阶段]**  
+- 新增 `docs_for_llm/4_design/phase5_bff_compat.md`，记录合同校验、子阶段方案、风险/缓解、特性开关与最小补丁结构。  
+
+**[问题与解决]**  
+- 无阻塞问题。  
+
+**[总结与下步计划]**  
+- 下一步：按文档实施 Route Handler 适配层，启用特性开关并补充测试/回滚验证。  
+
 ### 📅 2025-12-16 16:41
 #### 🧪 任务：Payload Phase4 可信源收尾（血缘校正 + content_html 安全 + Links 复核）
 **[计划阶段]**  
