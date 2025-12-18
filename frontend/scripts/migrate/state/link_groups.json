@@ -2,7 +2,7 @@
   "1": {
     "payloadId": 1,
     "slug": "global-initiatives",
-    "createdAt": "2025-12-16T06:03:50.231Z",
+    "createdAt": "2025-12-16T09:21:07.908Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -12,7 +12,7 @@
   "2": {
     "payloadId": 2,
     "slug": "research-us",
-    "createdAt": "2025-12-16T06:03:50.239Z",
+    "createdAt": "2025-12-16T09:21:10.232Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -22,7 +22,7 @@
   "3": {
     "payloadId": 3,
     "slug": "research-europe",
-    "createdAt": "2025-12-16T06:03:50.247Z",
+    "createdAt": "2025-12-16T09:21:12.794Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -32,7 +32,7 @@
   "4": {
     "payloadId": 4,
     "slug": "research-asia",
-    "createdAt": "2025-12-16T06:03:50.253Z",
+    "createdAt": "2025-12-16T09:21:14.812Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -42,7 +42,7 @@
   "5": {
     "payloadId": 5,
     "slug": "commercial-global",
-    "createdAt": "2025-12-16T06:03:50.261Z",
+    "createdAt": "2025-12-16T09:21:16.867Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -52,7 +52,7 @@
   "6": {
     "payloadId": 6,
     "slug": "journal-main",
-    "createdAt": "2025-12-16T06:03:50.267Z",
+    "createdAt": "2025-12-16T09:21:18.871Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -62,7 +62,7 @@
   "7": {
     "payloadId": 7,
     "slug": "media-main",
-    "createdAt": "2025-12-16T06:03:50.273Z",
+    "createdAt": "2025-12-16T09:21:20.996Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -72,7 +72,7 @@
   "8": {
     "payloadId": 8,
     "slug": "education-main",
-    "createdAt": "2025-12-16T06:03:50.279Z",
+    "createdAt": "2025-12-16T09:21:23.193Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -82,7 +82,7 @@
   "9": {
     "payloadId": 9,
     "slug": "database-main",
-    "createdAt": "2025-12-16T06:03:50.286Z",
+    "createdAt": "2025-12-16T09:21:25.276Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -92,7 +92,7 @@
   "10": {
     "payloadId": 10,
     "slug": "events-main",
-    "createdAt": "2025-12-16T06:03:50.293Z",
+    "createdAt": "2025-12-16T09:21:27.513Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -102,7 +102,7 @@
   "11": {
     "payloadId": 11,
     "slug": "government-main",
-    "createdAt": "2025-12-16T06:03:50.298Z",
+    "createdAt": "2025-12-16T09:21:29.467Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -112,7 +112,7 @@
   "12": {
     "payloadId": 12,
     "slug": "associations-main",
-    "createdAt": "2025-12-16T06:03:50.304Z",
+    "createdAt": "2025-12-16T09:21:31.512Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -122,7 +122,7 @@
   "13": {
     "payloadId": 13,
     "slug": "chinese-main",
-    "createdAt": "2025-12-16T06:03:50.308Z",
+    "createdAt": "2025-12-16T09:21:33.676Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
@@ -132,7 +132,7 @@
   "14": {
     "payloadId": 14,
     "slug": "communities-main",
-    "createdAt": "2025-12-16T06:03:50.314Z",
+    "createdAt": "2025-12-16T09:21:35.832Z",
     "source": "08_link_groups",
     "legacy": {
       "table": "LinkGroup",
