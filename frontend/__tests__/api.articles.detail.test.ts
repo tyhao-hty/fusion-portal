@@ -6,7 +6,6 @@ import { NextRequest } from 'next/server'
 import { GET } from '@/app/api/articles/[slugOrId]/route'
 
 jest.mock('@/app/api/_lib/articles/payload', () => ({
-  fetchArticleByLegacyId: jest.fn(),
   fetchArticleBySlug: jest.fn(),
   fetchTimelineEventsForArticle: jest.fn(),
 }))
@@ -26,8 +25,6 @@ jest.mock('@/app/api/_lib/legacy', () => ({
   getPapersLegacy: jest.fn(),
 }))
 
-const mockedFetchByLegacyId = jest.requireMock('@/app/api/_lib/articles/payload')
-  .fetchArticleByLegacyId as jest.Mock
 const mockedFetchBySlug = jest.requireMock('@/app/api/_lib/articles/payload')
   .fetchArticleBySlug as jest.Mock
 const mockedFetchTimeline = jest.requireMock('@/app/api/_lib/articles/payload')
@@ -43,33 +40,7 @@ describe('GET /api/articles/:slugOrId', () => {
     mockedUseArticlesPayload.mockReturnValue(true)
   })
 
-  it('fetches by legacyId when numeric', async () => {
-    mockedFetchByLegacyId.mockResolvedValue({
-      id: '1',
-      legacyId: 1,
-      slug: 'a-1',
-      title: 'T',
-      content_markdown: 'M',
-    })
-    mockedFetchTimeline.mockResolvedValue([
-      { id: '10', slug: 't', yearLabel: '2020', yearValue: 2020, title: 'TL' },
-    ])
-
-    const req = new NextRequest(new URL('http://localhost/api/articles/123'))
-    const res = await GET(req, { params: { slugOrId: '123' } })
-    const body = await res.json()
-
-    expect(mockedFetchByLegacyId).toHaveBeenCalledWith(123, 'published')
-    expect(mockedFetchBySlug).not.toHaveBeenCalled()
-    expect(res.status).toBe(200)
-    expect(body).toMatchObject({
-      id: 1,
-      slug: 'a-1',
-      timelineEvents: [{ id: 10, slug: 't', yearLabel: '2020', yearValue: 2020, title: 'TL' }],
-    })
-  })
-
-  it('fetches by slug when non-numeric', async () => {
+  it('fetches by slug', async () => {
     mockedFetchBySlug.mockResolvedValue({
       id: '2',
       legacyId: 2,
@@ -83,21 +54,19 @@ describe('GET /api/articles/:slugOrId', () => {
     const res = await GET(req, { params: { slugOrId: 'slug-1' } })
 
     expect(mockedFetchBySlug).toHaveBeenCalledWith('slug-1', 'all')
-    expect(mockedFetchByLegacyId).not.toHaveBeenCalled()
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body).toMatchObject({ id: 2, content: '<p>M</p>' })
   })
 
-  it('numeric-looking slug uses legacyId only and returns 404 if missing', async () => {
-    mockedFetchByLegacyId.mockResolvedValue(null)
+  it('numeric-looking slug is treated as slug and returns 404 if missing', async () => {
+    mockedFetchBySlug.mockResolvedValue(null)
     mockedFetchTimeline.mockResolvedValue([])
 
     const req = new NextRequest(new URL('http://localhost/api/articles/2025'))
     const res = await GET(req, { params: { slugOrId: '2025' } })
 
-    expect(mockedFetchByLegacyId).toHaveBeenCalledTimes(1)
-    expect(mockedFetchBySlug).not.toHaveBeenCalled()
+    expect(mockedFetchBySlug).toHaveBeenCalledWith('2025', 'published')
     expect(res.status).toBe(404)
     expect(await res.json()).toEqual({ message: '文章不存在' })
   })
@@ -112,7 +81,6 @@ describe('GET /api/articles/:slugOrId', () => {
     const res = await GET(req, { params: { slugOrId: 'slug-1' } })
 
     expect(mockedGetArticleDetailLegacy).toHaveBeenCalledTimes(1)
-    expect(mockedFetchByLegacyId).not.toHaveBeenCalled()
     expect(mockedFetchBySlug).not.toHaveBeenCalled()
     expect(res.status).toBe(200)
   })

@@ -34,6 +34,16 @@ export type ArticleRecord = {
   tags?: Array<{ id?: number | string; slug?: string; name?: string }> | null
 }
 
+export type ArticleDetailRecord = ArticleRecord
+
+export type TimelineEventRecord = {
+  id: number | string
+  slug: string
+  yearLabel: string
+  yearValue: number | null
+  title: string
+}
+
 export type ArticlesListResponse = {
   data: Array<{
     id: number
@@ -52,4 +62,22 @@ export type ArticlesListResponse = {
     tags: Array<{ id: number; slug: string; name: string }>
   }>
   meta: { total: number; page: number; pageSize: number; totalPages: number; hasNext: boolean }
+}
+
+export type ArticleDetailResponse = {
+  id: number
+  slug: string
+  title: string
+  excerpt: string | null
+  coverImageUrl: string | null
+  content: string | null
+  status: string | null
+  publishedAt: string | null
+  updatedAt: string | null
+  readingTime: number | null
+  timelineYear: number | null
+  author: { id: number; email: string | null } | null
+  category: { id: number; slug: string; name: string } | null
+  tags: Array<{ id: number; slug: string; name: string }>
+  timelineEvents: TimelineEventRecord[]
 }

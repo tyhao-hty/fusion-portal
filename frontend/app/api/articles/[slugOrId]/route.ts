@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { isNumericId, parseStatus } from '../../_lib/articles/query'
-import { fetchArticleByLegacyId, fetchArticleBySlug, fetchTimelineEventsForArticle } from '../../_lib/articles/payload'
+import { parseStatus } from '../../_lib/articles/query'
+import { fetchArticleBySlug, fetchTimelineEventsForArticle } from '../../_lib/articles/payload'
 import { buildArticleDetailResponse } from '../../_lib/articles/responses'
 import { badRequest, internalError, ValidationError } from '../../_lib/errors'
 import { useArticlesPayload } from '../../_lib/flags'
@@ -18,10 +18,7 @@ export async function GET(
       return getArticleDetailLegacy(req)
     }
 
-    const byLegacyId = isNumericId(slugOrId)
-    const article = byLegacyId
-      ? await fetchArticleByLegacyId(Number.parseInt(slugOrId, 10), status)
-      : await fetchArticleBySlug(slugOrId, status)
+    const article = await fetchArticleBySlug(slugOrId, status)
 
     if (!article) {
       return NextResponse.json({ message: '文章不存在' }, { status: 404 })
