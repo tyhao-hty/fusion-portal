@@ -4,7 +4,7 @@ import { mapPapersSort } from '../_lib/papers/sorting'
 import { fetchPapers, lookupPaperTagIds } from '../_lib/papers/payload'
 import { buildPapersResponse } from '../_lib/papers/responses'
 import { badRequest, internalError, ValidationError } from '../_lib/errors'
-import { usePapersPayload } from '../_lib/flags'
+import { shouldUsePapersPayload } from '../_lib/flags'
 import { getPapersLegacy } from '../_lib/legacy'
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const query = parsePapersQuery(req)
     validateYearRange(query.yearFrom ?? null, query.yearTo ?? null)
 
-    if (!usePapersPayload()) {
+    if (!shouldUsePapersPayload()) {
       return getPapersLegacy(req)
     }
 

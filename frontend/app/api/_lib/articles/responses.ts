@@ -26,7 +26,7 @@ export function buildArticlesListResponse(params: {
 
   const data = items.map((item) => {
     const id = toNumberId(item.legacyId, toNumberId(item.id))
-    const status = (item as any).status ?? (item as any)._status ?? null
+    const status = item.status ?? item._status ?? null
     const author =
       item.author && (item.author.id || item.author.email)
         ? {
@@ -87,7 +87,7 @@ export function buildArticleDetailResponse(params: {
 }): ArticleDetailResponse {
   const { article, timelineEvents } = params
   const id = toNumberId(article.legacyId, toNumberId(article.id))
-  const status = (article as any).status ?? (article as any)._status ?? null
+  const status = article.status ?? article._status ?? null
   const author =
     article.author && (article.author.id || article.author.email)
       ? {

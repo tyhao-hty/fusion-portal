@@ -3,18 +3,18 @@ import { parseStatus } from '../../_lib/articles/query'
 import { fetchArticleBySlug, fetchTimelineEventsForArticle } from '../../_lib/articles/payload'
 import { buildArticleDetailResponse } from '../../_lib/articles/responses'
 import { badRequest, internalError, ValidationError } from '../../_lib/errors'
-import { useArticlesPayload } from '../../_lib/flags'
+import { shouldUseArticlesPayload } from '../../_lib/flags'
 import { getArticleDetailLegacy } from '../../_lib/legacy'
 
 export async function GET(
   req: NextRequest,
-  context: { params: { slugOrId: string } },
+  { params }: { params: Promise<{ slugOrId: string }> },
 ): Promise<NextResponse> {
   try {
     const status = parseStatus(req.nextUrl.searchParams.get('status'))
-    const { slugOrId } = context.params
+    const { slugOrId } = await params
 
-    if (!useArticlesPayload()) {
+    if (!shouldUseArticlesPayload()) {
       return getArticleDetailLegacy(req)
     }
 

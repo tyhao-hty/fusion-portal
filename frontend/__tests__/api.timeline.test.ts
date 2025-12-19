@@ -10,7 +10,7 @@ jest.mock('@/app/api/_lib/payload', () => ({
 }))
 
 jest.mock('@/app/api/_lib/flags', () => ({
-  useTimelinePayload: jest.fn(() => true),
+  shouldUseTimelinePayload: jest.fn(() => true),
 }))
 
 jest.mock('@/app/api/_lib/legacy', () => ({
@@ -19,17 +19,17 @@ jest.mock('@/app/api/_lib/legacy', () => ({
 
 const mockedFetchTimelineFromPayload = jest.requireMock('@/app/api/_lib/payload')
   .fetchTimelineFromPayload as jest.Mock
-const mockedUseTimelinePayload = jest.requireMock('@/app/api/_lib/flags')
-  .useTimelinePayload as jest.Mock
+const mockedShouldUseTimelinePayload = jest.requireMock('@/app/api/_lib/flags')
+  .shouldUseTimelinePayload as jest.Mock
 const mockedGetTimelineLegacy = jest.requireMock('@/app/api/_lib/legacy')
   .getTimelineLegacy as jest.Mock
 
 describe('GET /api/timeline', () => {
   beforeEach(() => {
     mockedFetchTimelineFromPayload.mockReset()
-    mockedUseTimelinePayload.mockReset()
+    mockedShouldUseTimelinePayload.mockReset()
     mockedGetTimelineLegacy.mockReset()
-    mockedUseTimelinePayload.mockReturnValue(true)
+    mockedShouldUseTimelinePayload.mockReturnValue(true)
   })
 
   it('returns 400 for invalid year range with legacy envelope', async () => {
@@ -91,7 +91,7 @@ describe('GET /api/timeline', () => {
   })
 
   it('falls back to legacy handler when flag is off', async () => {
-    mockedUseTimelinePayload.mockReturnValue(false)
+    mockedShouldUseTimelinePayload.mockReturnValue(false)
     mockedGetTimelineLegacy.mockResolvedValue(
       new Response(JSON.stringify({ data: ['legacy'] }), { status: 200 }) as any,
     )

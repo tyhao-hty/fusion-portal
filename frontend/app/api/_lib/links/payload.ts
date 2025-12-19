@@ -1,4 +1,4 @@
-import type { Payload } from 'payload'
+import type { Payload, Where } from 'payload'
 import { getPayload } from 'payload'
 import payloadConfig from '@payload-config'
 import type { LinksQuery, LinkRecord, GroupRecord, SectionRecord } from './types'
@@ -18,7 +18,7 @@ const sectionSort = ['-sortOrder', '-createdAt']
 export async function fetchLinks(query: LinksQuery): Promise<LinkRecord[]> {
   const client = await getClient()
 
-  const where: any = {}
+  const where: Where = {}
 
   if (query.keyword) {
     where.or = [
@@ -57,7 +57,7 @@ export async function fetchLinks(query: LinksQuery): Promise<LinkRecord[]> {
 export async function fetchGroups(query: LinksQuery): Promise<GroupRecord[]> {
   const client = await getClient()
 
-  const where: any = {}
+  const where: Where = {}
 
   if (query.group) {
     where.slug = { equals: query.group }
@@ -78,7 +78,7 @@ export async function fetchGroups(query: LinksQuery): Promise<GroupRecord[]> {
 export async function fetchSections(query: LinksQuery): Promise<SectionRecord[]> {
   const client = await getClient()
 
-  const where: any = {}
+  const where: Where = {}
 
   if (query.section) {
     where.slug = { equals: query.section }

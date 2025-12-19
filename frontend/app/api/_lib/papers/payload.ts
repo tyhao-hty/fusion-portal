@@ -13,15 +13,12 @@ const getClient = async () => {
 
 export async function lookupPaperTagIds(tags: string[]): Promise<string[]> {
   const client = await getClient()
-  const tagWhere: any = {
-    and: [
-      { type: { equals: 'paper_tag' } },
-      {
-        or: tags.map((value) => ({
-          or: [{ slug: { equals: value } }, { name: { equals: value } }],
-        })),
-      },
-    ],
+  const tagConditions = tags.map((value) => ({
+    or: [{ slug: { equals: value } }, { name: { equals: value } }],
+  })) as unknown as Where[]
+
+  const tagWhere: Where = {
+    and: [{ type: { equals: 'paper_tag' } }, { or: tagConditions }],
   }
   const result = await client.find({
     collection: 'tags',
@@ -29,7 +26,8 @@ export async function lookupPaperTagIds(tags: string[]): Promise<string[]> {
     depth: 0,
     limit: 1000,
   })
-  return (result.docs || []).map((doc: any) => String(doc.id))
+  const docs = (result.docs || []) as Array<{ id: string | number }>
+  return docs.map((doc) => String(doc.id))
 }
 
 export async function fetchPapers(
@@ -80,19 +78,19 @@ export async function fetchPapers(
         tags: {
           in: tagIds,
         },
-      } as any)
+      })
     } else {
-      const tagFilter: any = {
+      const tagFilter: Where = {
         tags: {
           some: {
             or: query.tags.map((value) => ({
               or: [{ slug: { equals: value } }, { name: { equals: value } }],
-            })),
+            })) as unknown as Where[],
           },
         },
-      }
+      } as unknown as Where
       and.push(tagFilter)
-      and.push({ 'tags.type': { equals: 'paper_tag' } } as any)
+      and.push({ 'tags.type': { equals: 'paper_tag' } })
     }
   }
 

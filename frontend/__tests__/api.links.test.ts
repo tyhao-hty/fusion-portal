@@ -12,8 +12,8 @@ jest.mock('@/app/api/_lib/links/payload', () => ({
 }))
 
 jest.mock('@/app/api/_lib/flags', () => ({
-  useLinksPayload: jest.fn(() => true),
-  useTimelinePayload: jest.fn(() => true),
+  shouldUseLinksPayload: jest.fn(() => true),
+  shouldUseTimelinePayload: jest.fn(() => true),
 }))
 
 jest.mock('@/app/api/_lib/legacy', () => ({
@@ -25,13 +25,14 @@ const mockedFetchLinks = jest.requireMock('@/app/api/_lib/links/payload').fetchL
 const mockedFetchGroups = jest.requireMock('@/app/api/_lib/links/payload').fetchGroups as jest.Mock
 const mockedFetchSections = jest.requireMock('@/app/api/_lib/links/payload')
   .fetchSections as jest.Mock
-const mockedUseLinksPayload = jest.requireMock('@/app/api/_lib/flags').useLinksPayload as jest.Mock
+const mockedShouldUseLinksPayload = jest.requireMock('@/app/api/_lib/flags')
+  .shouldUseLinksPayload as jest.Mock
 const mockedGetLinksLegacy = jest.requireMock('@/app/api/_lib/legacy').getLinksLegacy as jest.Mock
 
 describe('GET /api/links', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockedUseLinksPayload.mockReturnValue(true)
+    mockedShouldUseLinksPayload.mockReturnValue(true)
   })
 
   it('returns empty data/meta when no records', async () => {
@@ -158,7 +159,7 @@ describe('GET /api/links', () => {
   })
 
   it('flag off calls legacy', async () => {
-    mockedUseLinksPayload.mockReturnValue(false)
+    mockedShouldUseLinksPayload.mockReturnValue(false)
     mockedGetLinksLegacy.mockResolvedValue(
       new Response(JSON.stringify({ data: 'legacy' }), { status: 200 }) as any,
     )

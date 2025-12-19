@@ -3,7 +3,6 @@ import type {
   GroupRecord,
   SectionRecord,
   NestedSection,
-  LinksView,
 } from './types'
 
 export type AssemblyResult = {
@@ -127,8 +126,8 @@ export function assembleLinks(options: {
 
   // Build nested structure
   const sortedSections = Array.from(sectionMap.entries()).sort((a, b) => {
-    const [slugA, sectionA] = a
-    const [slugB, sectionB] = b
+    const [, sectionA] = a
+    const [, sectionB] = b
     if (sectionA.sortOrder !== sectionB.sortOrder) return sectionB.sortOrder - sectionA.sortOrder
     return sectionB.createdAt - sectionA.createdAt
   })

@@ -71,6 +71,28 @@
 
 ## 🧩 日志记录区（按时间倒序排列）
 
+### 📅 2025-12-19 17:23
+#### 🧪 任务：API Route Hooks/Lint 修复 + Build 验证
+**[计划阶段]**  
+- 移除 API Route 中的 `use*Payload` 调用，改用非 Hook 命名；收敛 Payload 边界层的 any/no-unused-vars；确保 `npm run build` 可通过。  
+
+**[开发阶段]**  
+- Flags：在 `frontend/app/api/_lib/flags.ts` 增加 `shouldUse*Payload`，API Routes 改用新函数，保留原导出别名但不在 Route 中使用。  
+- Articles：`fetchArticles` 默认 `_status=published`；补 dev/test guard；补 `publishedAt` parity 测试；消除 payload/responses any，添加 `_status` 可选字段类型。  
+- Links/Papers：`payload.ts` 使用 `Where` 类型替换 any；清理 `assembly.ts` 未用变量。  
+- Legacy 兜底：`_lib/legacy.ts` 参数显式消费以清除 unused。  
+- 样式：`app/(site)/styles-legacy.cjs` 添加局部 eslint disable 以允许 require。  
+- Tests：更新所有 API 测试使用 `shouldUse*Payload` mock；修复 detail 测试参数 Promise；跑 API 相关测试套件。  
+
+**[问题与解决]**  
+- `next build` 初次失败因 ESLint any/unused-vars；逐项类型化后通过。  
+- `next lint` 曾阻塞于 require 导入，已局部 disable 规则。  
+- `next build` worker 退出原因是 TS 校验未过，改为 Promise params 并用 `tsc --noEmit` 确认后通过。  
+
+**[总结与下步计划]**  
+- `npm test -- --runInBand __tests__/api.*` 与 `npm run build` 均已通过；API Routes 不再触发 hooks lint。  
+- 后续如再遇 Payload where 类型收敛，可按 `Where` + `unknown as Where` 方式处理边界层，避免回退到 any。  
+
 ### 📅 2025-12-19 10:00
 #### 🧪 任务：Articles List 默认 published 行为回归修复
 **[计划阶段]**  
