@@ -64,7 +64,7 @@ export function TimelineFeed() {
     const toNum = appliedFilters.yearTo.trim();
     if (fromNum) params.set("yearFrom", fromNum);
     if (toNum) params.set("yearTo", toNum);
-    return `/api/timeline?${params.toString()}`;
+    return `/api/bff/timeline?${params.toString()}`;
   };
 
   const {

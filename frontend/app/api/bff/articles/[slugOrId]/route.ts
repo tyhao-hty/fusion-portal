@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { parseStatus } from '../../_lib/articles/query'
-import { fetchArticleBySlug, fetchTimelineEventsForArticle } from '../../_lib/articles/payload'
-import { buildArticleDetailResponse } from '../../_lib/articles/responses'
-import { badRequest, internalError, ValidationError } from '../../_lib/errors'
-import { shouldUseArticlesPayload } from '../../_lib/flags'
-import { getArticleDetailLegacy } from '../../_lib/legacy'
+import { parseStatus } from '../../../_lib/articles/query'
+import { fetchArticleBySlug, fetchTimelineEventsForArticle } from '../../../_lib/articles/payload'
+import { buildArticleDetailResponse } from '../../../_lib/articles/responses'
+import { badRequest, internalError, ValidationError } from '../../../_lib/errors'
+import { shouldUseArticlesPayload } from '../../../_lib/flags'
+import { getArticleDetailLegacy } from '../../../_lib/legacy'
 
 export async function GET(
   req: NextRequest,

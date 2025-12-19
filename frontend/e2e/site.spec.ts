@@ -34,7 +34,7 @@ test.describe('Public site', () => {
   });
 
   test('history page loads entries', async ({ page }) => {
-    await page.route('**/api/timeline**', async (route) => {
+    await page.route('**/api/bff/timeline**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -67,7 +67,7 @@ test.describe('Public site', () => {
     await expect(page.getByRole('heading', { name: '核聚变发展历史' })).toBeVisible();
     await expect(page.getByRole('button', { name: /加载更多里程碑/ })).toBeVisible({ timeout: 15000 });
 
-    await page.unroute('**/api/timeline**');
+    await page.unroute('**/api/bff/timeline**');
   });
 
   test('history page supports manual “加载更多里程碑” interaction', async ({ page }) => {
@@ -130,7 +130,7 @@ test.describe('Public site', () => {
 
     const requestedPages: string[] = [];
 
-    await page.route('**/api/timeline**', async (route) => {
+    await page.route('**/api/bff/timeline**', async (route) => {
       const url = new URL(route.request().url());
       const pageParam = url.searchParams.get('page') ?? '1';
       requestedPages.push(pageParam);
@@ -158,11 +158,11 @@ test.describe('Public site', () => {
     await expect(page.getByText('里程碑 2')).toBeVisible();
     await expect(page.getByRole('button', { name: '已经到底啦' })).toBeDisabled();
 
-    await page.unroute('**/api/timeline**');
+    await page.unroute('**/api/bff/timeline**');
   });
 
   test('links page renders mocked data', async ({ page }) => {
-    await page.route('**/api/links**', async (route) => {
+    await page.route('**/api/bff/links**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -205,7 +205,7 @@ test.describe('Public site', () => {
     await expect(page.getByRole('heading', { name: '教育资源' })).toBeVisible();
     await expect(page.getByRole('link', { name: '示例资源' })).toHaveAttribute('href', 'https://example.com');
 
-    await page.unroute('**/api/links**');
+    await page.unroute('**/api/bff/links**');
   });
 
   test('science page accessible via nav', async ({ page }) => {

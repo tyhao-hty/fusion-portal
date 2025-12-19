@@ -163,9 +163,9 @@ export function PapersCatalog({ papers, initialMeta, initialError = null }: Pape
       setLoading(true);
       setError(null);
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
         const params = new URLSearchParams({
-          limit: "24",
+          // Phase 6 transitional: align SSR/CSR limits until pagination UI is ready.
+          limit: "100",
           sort,
         });
         if (query.trim()) params.set("q", query.trim());
@@ -175,7 +175,7 @@ export function PapersCatalog({ papers, initialMeta, initialError = null }: Pape
         if (tagFilters.length) {
           params.set("tags", tagFilters.join(","));
         }
-        const response = await fetch(`${baseUrl}/api/papers?${params.toString()}`, {
+        const response = await fetch(`/api/bff/papers?${params.toString()}`, {
           signal: controller.signal,
         });
         if (!response.ok) {

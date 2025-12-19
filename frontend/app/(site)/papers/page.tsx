@@ -10,10 +10,8 @@ export const metadata: Metadata = buildSiteMetadata({
 });
 
 async function fetchPapers(): Promise<PapersResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-  const response = await fetch(`${baseUrl}/api/papers?limit=100`, {
-    cache: "no-store",
-  });
+  // Phase 6 transitional: align SSR/CSR limits until pagination UI is ready.
+  const response = await fetch("/api/bff/papers?limit=100", { cache: "no-store" });
 
   if (!response.ok) {
     throw new Error(`拉取论文数据失败：HTTP ${response.status}`);

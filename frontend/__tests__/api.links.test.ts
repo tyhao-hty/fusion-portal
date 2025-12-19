@@ -3,7 +3,7 @@
  */
 
 import { NextRequest } from 'next/server'
-import { GET } from '@/app/api/links/route'
+import { GET } from '@/app/api/bff/links/route'
 
 jest.mock('@/app/api/_lib/links/payload', () => ({
   fetchLinks: jest.fn(),
@@ -29,7 +29,7 @@ const mockedShouldUseLinksPayload = jest.requireMock('@/app/api/_lib/flags')
   .shouldUseLinksPayload as jest.Mock
 const mockedGetLinksLegacy = jest.requireMock('@/app/api/_lib/legacy').getLinksLegacy as jest.Mock
 
-describe('GET /api/links', () => {
+describe('GET /api/bff/links', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockedShouldUseLinksPayload.mockReturnValue(true)
@@ -40,7 +40,7 @@ describe('GET /api/links', () => {
     mockedFetchGroups.mockResolvedValue([])
     mockedFetchSections.mockResolvedValue([])
 
-    const req = new NextRequest(new URL('http://localhost/api/links'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/links'))
     const res = await GET(req)
     const body = await res.json()
 
@@ -102,7 +102,7 @@ describe('GET /api/links', () => {
       { id: 's3', slug: 's3', title: 'S3', sortOrder: 0, createdAt: '2024-01-12' },
     ])
 
-    const req = new NextRequest(new URL('http://localhost/api/links'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/links'))
     const res = await GET(req)
     const body = await res.json()
 
@@ -150,7 +150,7 @@ describe('GET /api/links', () => {
       { id: 21, slug: 's1', title: 'S1', sortOrder: 2, createdAt: '2024-01-10' },
     ])
 
-    const req = new NextRequest(new URL('http://localhost/api/links?view=flat'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/links?view=flat'))
     const res = await GET(req)
     const body = await res.json()
 
@@ -164,7 +164,7 @@ describe('GET /api/links', () => {
       new Response(JSON.stringify({ data: 'legacy' }), { status: 200 }) as any,
     )
 
-    const req = new NextRequest(new URL('http://localhost/api/links'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/links'))
     const res = await GET(req)
 
     expect(mockedGetLinksLegacy).toHaveBeenCalledTimes(1)

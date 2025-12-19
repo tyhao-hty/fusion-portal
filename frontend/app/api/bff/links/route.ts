@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { parseLinksQuery } from '../_lib/links/query'
-import { fetchLinks, fetchGroups, fetchSections } from '../_lib/links/payload'
-import { assembleLinks } from '../_lib/links/assembly'
-import { buildLinksResponse } from '../_lib/links/responses'
-import { badRequest, internalError, ValidationError } from '../_lib/errors'
-import { shouldUseLinksPayload } from '../_lib/flags'
-import { getLinksLegacy } from '../_lib/legacy'
+import { parseLinksQuery } from '../../_lib/links/query'
+import { fetchLinks, fetchGroups, fetchSections } from '../../_lib/links/payload'
+import { assembleLinks } from '../../_lib/links/assembly'
+import { buildLinksResponse } from '../../_lib/links/responses'
+import { badRequest, internalError, ValidationError } from '../../_lib/errors'
+import { shouldUseLinksPayload } from '../../_lib/flags'
+import { getLinksLegacy } from '../../_lib/legacy'
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {

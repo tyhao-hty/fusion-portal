@@ -26,9 +26,16 @@ export function assembleLinks(options: {
 }): AssemblyResult {
   const { links, groups, sections } = options
 
+  const resolveKey = (slug?: string | null, id?: number | string | null) => {
+    if (slug && String(slug).trim().length > 0) return String(slug)
+    if (id !== undefined && id !== null) return String(id)
+    return null
+  }
+
   const groupMap = new Map<
     string,
     {
+      slug: string
       title: string | null
       sortOrder: number
       createdAt: number
@@ -47,6 +54,7 @@ export function assembleLinks(options: {
   const sectionMap = new Map<
     string,
     {
+      slug: string
       title: string
       sortOrder: number
       createdAt: number
@@ -59,8 +67,10 @@ export function assembleLinks(options: {
 
   // Build section map
   sections.forEach((section) => {
-    const slug = String(section.slug)
-    sectionMap.set(slug, {
+    const key = resolveKey(section.slug, section.id)
+    if (!key) return
+    sectionMap.set(key, {
+      slug: section.slug ? String(section.slug) : key,
       title: section.title,
       sortOrder: toNumberDesc(section.sortOrder, 0),
       createdAt: toNumberDesc(section.createdAt ? Date.parse(section.createdAt) : null, 0),
@@ -70,22 +80,24 @@ export function assembleLinks(options: {
 
   // Build group map
   groups.forEach((group) => {
-    const slug = String(group.slug)
-    const sectionSlug = group.section?.slug ? String(group.section.slug) : null
-    groupMap.set(slug, {
+    const key = resolveKey(group.slug, group.id)
+    if (!key) return
+    const sectionKey = resolveKey(group.section?.slug ?? null, group.section?.id ?? null)
+    groupMap.set(key, {
+      slug: group.slug ? String(group.slug) : key,
       title: group.title ?? null,
       sortOrder: toNumberDesc(group.sortOrder, 0),
       createdAt: toNumberDesc(group.createdAt ? Date.parse(group.createdAt) : null, 0),
-      sectionSlug,
+      sectionSlug: sectionKey,
       links: [],
     })
   })
 
   // Attach links to groups
   links.forEach((link) => {
-    const groupSlug = link.group?.slug ? String(link.group.slug) : null
-    if (!groupSlug) return
-    const group = groupMap.get(groupSlug)
+    const groupKey = resolveKey(link.group?.slug ?? null, link.group?.id ?? null)
+    if (!groupKey) return
+    const group = groupMap.get(groupKey)
     if (!group) return
 
     group.links.push({
@@ -104,12 +116,12 @@ export function assembleLinks(options: {
       groupMap.delete(groupSlug)
       return
     }
-    const sectionSlug = group.sectionSlug
-    if (!sectionSlug) {
+    const sectionKey = group.sectionSlug
+    if (!sectionKey) {
       groupMap.delete(groupSlug)
       return
     }
-    const section = sectionMap.get(sectionSlug)
+    const section = sectionMap.get(sectionKey)
     if (!section) {
       groupMap.delete(groupSlug)
       return
@@ -163,7 +175,7 @@ export function assembleLinks(options: {
     })
 
     return {
-      slug: sectionSlug,
+      slug: section.slug,
       title: section.title,
       sortOrder: section.sortOrder,
       groups,

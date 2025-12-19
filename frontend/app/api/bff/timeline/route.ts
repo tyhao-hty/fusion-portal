@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { buildTimelineResponse } from '../_lib/responses'
-import { fetchTimelineFromPayload } from '../_lib/payload'
-import { parseTimelineQuery, validateTimelineRange } from '../_lib/query'
-import { timelineSort } from '../_lib/sorting'
-import { badRequest, internalError, ValidationError } from '../_lib/errors'
-import { shouldUseTimelinePayload } from '../_lib/flags'
-import { getTimelineLegacy } from '../_lib/legacy'
+import { buildTimelineResponse } from '../../_lib/responses'
+import { fetchTimelineFromPayload } from '../../_lib/payload'
+import { parseTimelineQuery, validateTimelineRange } from '../../_lib/query'
+import { timelineSort } from '../../_lib/sorting'
+import { badRequest, internalError, ValidationError } from '../../_lib/errors'
+import { shouldUseTimelinePayload } from '../../_lib/flags'
+import { getTimelineLegacy } from '../../_lib/legacy'
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
