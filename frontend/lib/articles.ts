@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+import { headers } from "next/headers";
 
 export type ArticleSummary = {
   id: number;
@@ -17,7 +17,7 @@ export type ArticleSummary = {
 };
 
 export type ArticleDetail = ArticleSummary & {
-  content: string;
+  contentHtml: string | null;
   timelineEvents?: { id: number; slug: string; yearLabel: string; yearValue: number | null; title: string }[];
 };
 
@@ -62,15 +62,34 @@ const buildQuery = (params: ListParams) => {
 
 export async function fetchArticles(params: ListParams = {}): Promise<ArticleListResponse> {
   const query = buildQuery({ status: 'published', ...params });
-  const res = await fetch(`${API_BASE}/articles?${query}`, { cache: 'no-store' });
+  let url = `/api/bff/articles?${query}`;
+  if (typeof window === 'undefined') {
+    const incomingHeaders = await headers();
+    const proto = incomingHeaders.get('x-forwarded-proto') ?? 'http';
+    const host = incomingHeaders.get('host');
+    if (host) {
+      url = `${proto}://${host}${url}`;
+    }
+  }
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) {
     throw new Error(`文章列表加载失败：${res.statusText}`);
   }
   return res.json();
 }
 
+// Phase 6-3: detail now uses BFF routes.
 export async function fetchArticle(slugOrId: string): Promise<ArticleDetail> {
-  const res = await fetch(`${API_BASE}/articles/${slugOrId}`, { cache: 'no-store' });
+  let url = `/api/bff/articles/${slugOrId}`;
+  if (typeof window === 'undefined') {
+    const incomingHeaders = await headers();
+    const proto = incomingHeaders.get('x-forwarded-proto') ?? 'http';
+    const host = incomingHeaders.get('host');
+    if (host) {
+      url = `${proto}://${host}${url}`;
+    }
+  }
+  const res = await fetch(url, { cache: 'no-store' });
   if (res.status === 404) {
     throw new Error('NOT_FOUND');
   }

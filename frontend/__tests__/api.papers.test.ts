@@ -3,7 +3,7 @@
  */
 
 import { NextRequest } from 'next/server'
-import { GET } from '@/app/api/papers/route'
+import { GET } from '@/app/api/bff/papers/route'
 
 jest.mock('@/app/api/_lib/papers/payload', () => ({
   fetchPapers: jest.fn(),
@@ -28,14 +28,14 @@ const mockedShouldUsePapersPayload = jest.requireMock('@/app/api/_lib/flags')
   .shouldUsePapersPayload as jest.Mock
 const mockedGetPapersLegacy = jest.requireMock('@/app/api/_lib/legacy').getPapersLegacy as jest.Mock
 
-describe('GET /api/papers', () => {
+describe('GET /api/bff/papers', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockedShouldUsePapersPayload.mockReturnValue(true)
   })
 
   it('returns 400 on invalid year range', async () => {
-    const req = new NextRequest(new URL('http://localhost/api/papers?yearFrom=2025&yearTo=2024'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/papers?yearFrom=2025&yearTo=2024'))
     const res = await GET(req)
     const body = await res.json()
 
@@ -49,7 +49,7 @@ describe('GET /api/papers', () => {
   it('returns empty result when tag lookup is empty', async () => {
     mockedLookupTagIds.mockResolvedValue([])
 
-    const req = new NextRequest(new URL('http://localhost/api/papers?tags=unknown'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/papers?tags=unknown'))
     const res = await GET(req)
     const body = await res.json()
 
@@ -85,7 +85,7 @@ describe('GET /api/papers', () => {
       ],
     })
 
-    const req = new NextRequest(new URL('http://localhost/api/papers?page=1&limit=2'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/papers?page=1&limit=2'))
     const res = await GET(req)
     const body = await res.json()
 
@@ -118,7 +118,7 @@ describe('GET /api/papers', () => {
       new Response(JSON.stringify({ data: 'legacy' }), { status: 200 }) as any,
     )
 
-    const req = new NextRequest(new URL('http://localhost/api/papers'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/papers'))
     const res = await GET(req)
 
     expect(mockedGetPapersLegacy).toHaveBeenCalledTimes(1)

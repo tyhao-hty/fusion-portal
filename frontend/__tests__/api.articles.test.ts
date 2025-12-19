@@ -3,7 +3,7 @@
  */
 
 import { NextRequest } from 'next/server'
-import { GET } from '@/app/api/articles/route'
+import { GET } from '@/app/api/bff/articles/route'
 
 jest.mock('@/app/api/_lib/articles/payload', () => ({
   fetchArticles: jest.fn(),
@@ -28,14 +28,14 @@ const mockedShouldUseArticlesPayload = jest.requireMock('@/app/api/_lib/flags')
   .shouldUseArticlesPayload as jest.Mock
 const mockedGetArticlesLegacy = jest.requireMock('@/app/api/_lib/legacy').getArticlesLegacy as jest.Mock
 
-describe('GET /api/articles', () => {
+describe('GET /api/bff/articles', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockedShouldUseArticlesPayload.mockReturnValue(true)
   })
 
   it('returns 400 on invalid year range', async () => {
-    const req = new NextRequest(new URL('http://localhost/api/articles?yearFrom=2025&yearTo=2024'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/articles?yearFrom=2025&yearTo=2024'))
     const res = await GET(req)
     const body = await res.json()
 
@@ -49,7 +49,7 @@ describe('GET /api/articles', () => {
   it('applies defaults and shapes meta', async () => {
     mockedFetchArticles.mockResolvedValue({ total: 0, items: [] })
 
-    const req = new NextRequest(new URL('http://localhost/api/articles'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/articles'))
     const res = await GET(req)
     const body = await res.json()
 
@@ -95,7 +95,7 @@ describe('GET /api/articles', () => {
       ],
     })
 
-    const req = new NextRequest(new URL('http://localhost/api/articles'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/articles'))
     const res = await GET(req)
     const body = await res.json()
 
@@ -134,7 +134,7 @@ describe('GET /api/articles', () => {
       ],
     })
 
-    const req = new NextRequest(new URL('http://localhost/api/articles?page=1&pageSize=2'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/articles?page=1&pageSize=2'))
     const res = await GET(req)
     const body = await res.json()
 
@@ -167,7 +167,7 @@ describe('GET /api/articles', () => {
       new Response(JSON.stringify({ data: 'legacy' }), { status: 200 }) as any,
     )
 
-    const req = new NextRequest(new URL('http://localhost/api/articles'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/articles'))
     const res = await GET(req)
 
     expect(mockedGetArticlesLegacy).toHaveBeenCalledTimes(1)

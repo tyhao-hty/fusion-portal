@@ -71,7 +71,7 @@ export type ArticleDetailResponse = {
   title: string
   excerpt: string | null
   coverImageUrl: string | null
-  content: string | null
+  contentHtml: string | null
   status: string | null
   publishedAt: string | null
   updatedAt: string | null

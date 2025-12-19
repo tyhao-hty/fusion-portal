@@ -123,7 +123,7 @@ export function buildArticleDetailResponse(params: {
     title: article.title,
     excerpt: article.excerpt ?? null,
     coverImageUrl: article.coverImageUrl ?? null,
-    content: article.content_markdown ?? article.content_html ?? null,
+    contentHtml: article.content_html ?? null,
     status,
     publishedAt: article.publishedAt ?? null,
     updatedAt: article.updatedAt ?? null,

@@ -3,7 +3,7 @@
  */
 
 import { NextRequest } from 'next/server'
-import { GET } from '@/app/api/articles/[slugOrId]/route'
+import { GET } from '@/app/api/bff/articles/[slugOrId]/route'
 
 jest.mock('@/app/api/_lib/articles/payload', () => ({
   fetchArticleBySlug: jest.fn(),
@@ -34,7 +34,7 @@ const mockedShouldUseArticlesPayload = jest.requireMock('@/app/api/_lib/flags')
 const mockedGetArticleDetailLegacy = jest.requireMock('@/app/api/_lib/legacy')
   .getArticleDetailLegacy as jest.Mock
 
-describe('GET /api/articles/:slugOrId', () => {
+describe('GET /api/bff/articles/:slugOrId', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockedShouldUseArticlesPayload.mockReturnValue(true)
@@ -50,7 +50,7 @@ describe('GET /api/articles/:slugOrId', () => {
     })
     mockedFetchTimeline.mockResolvedValue([])
 
-    const req = new NextRequest(new URL('http://localhost/api/articles/slug-1?status=all'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/articles/slug-1?status=all'))
     const res = await GET(req, { params: Promise.resolve({ slugOrId: 'slug-1' }) })
 
     expect(mockedFetchBySlug).toHaveBeenCalledWith('slug-1', 'all')
@@ -63,7 +63,7 @@ describe('GET /api/articles/:slugOrId', () => {
     mockedFetchBySlug.mockResolvedValue(null)
     mockedFetchTimeline.mockResolvedValue([])
 
-    const req = new NextRequest(new URL('http://localhost/api/articles/2025'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/articles/2025'))
     const res = await GET(req, { params: Promise.resolve({ slugOrId: '2025' }) })
 
     expect(mockedFetchBySlug).toHaveBeenCalledWith('2025', 'published')
@@ -77,7 +77,7 @@ describe('GET /api/articles/:slugOrId', () => {
       new Response(JSON.stringify({ data: 'legacy' }), { status: 200 }) as any,
     )
 
-    const req = new NextRequest(new URL('http://localhost/api/articles/slug-1'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/articles/slug-1'))
     const res = await GET(req, { params: Promise.resolve({ slugOrId: 'slug-1' }) })
 
     expect(mockedGetArticleDetailLegacy).toHaveBeenCalledTimes(1)

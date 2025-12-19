@@ -3,7 +3,7 @@
  */
 
 import { NextRequest } from 'next/server'
-import { GET } from '@/app/api/timeline/route'
+import { GET } from '@/app/api/bff/timeline/route'
 
 jest.mock('@/app/api/_lib/payload', () => ({
   fetchTimelineFromPayload: jest.fn(),
@@ -24,7 +24,7 @@ const mockedShouldUseTimelinePayload = jest.requireMock('@/app/api/_lib/flags')
 const mockedGetTimelineLegacy = jest.requireMock('@/app/api/_lib/legacy')
   .getTimelineLegacy as jest.Mock
 
-describe('GET /api/timeline', () => {
+describe('GET /api/bff/timeline', () => {
   beforeEach(() => {
     mockedFetchTimelineFromPayload.mockReset()
     mockedShouldUseTimelinePayload.mockReset()
@@ -34,7 +34,7 @@ describe('GET /api/timeline', () => {
 
   it('returns 400 for invalid year range with legacy envelope', async () => {
     const req = new NextRequest(
-      new URL('http://localhost/api/timeline?yearFrom=2025&yearTo=2024'),
+      new URL('http://localhost/api/bff/timeline?yearFrom=2025&yearTo=2024'),
     )
 
     const res = await GET(req)
@@ -64,7 +64,7 @@ describe('GET /api/timeline', () => {
       ],
     })
 
-    const req = new NextRequest(new URL('http://localhost/api/timeline?page=2&limit=2'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/timeline?page=2&limit=2'))
     const res = await GET(req)
     const body = await res.json()
 
@@ -96,7 +96,7 @@ describe('GET /api/timeline', () => {
       new Response(JSON.stringify({ data: ['legacy'] }), { status: 200 }) as any,
     )
 
-    const req = new NextRequest(new URL('http://localhost/api/timeline'))
+    const req = new NextRequest(new URL('http://localhost/api/bff/timeline'))
     const res = await GET(req)
 
     expect(mockedGetTimelineLegacy).toHaveBeenCalledTimes(1)

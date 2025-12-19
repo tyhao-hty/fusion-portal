@@ -213,12 +213,11 @@ export function LinksDirectory({ sections, initialMeta, initialError = null }: L
       setLoading(true);
       setError(null);
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
         const params = new URLSearchParams();
         if (sectionFilter !== "all") params.set("section", sectionFilter);
         if (groupFilter !== "all") params.set("group", groupFilter);
         if (query.trim()) params.set("q", query.trim());
-        const response = await fetch(`${baseUrl}/api/links?${params.toString()}`, {
+        const response = await fetch(`/api/bff/links?${params.toString()}`, {
           signal: controller.signal,
         });
         if (!response.ok) {
@@ -273,7 +272,7 @@ export function LinksDirectory({ sections, initialMeta, initialError = null }: L
               aria-label="选择资源分类"
             >
               <option value="all">全部分类</option>
-              {preparedSections.map((section) => (
+              {sectionsData.map((section) => (
                 <option key={section.slug} value={section.slug}>
                   {section.title}
                 </option>

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { parsePapersQuery, validateYearRange } from '../_lib/papers/query'
-import { mapPapersSort } from '../_lib/papers/sorting'
-import { fetchPapers, lookupPaperTagIds } from '../_lib/papers/payload'
-import { buildPapersResponse } from '../_lib/papers/responses'
-import { badRequest, internalError, ValidationError } from '../_lib/errors'
-import { shouldUsePapersPayload } from '../_lib/flags'
-import { getPapersLegacy } from '../_lib/legacy'
+import { parsePapersQuery, validateYearRange } from '../../_lib/papers/query'
+import { mapPapersSort } from '../../_lib/papers/sorting'
+import { fetchPapers, lookupPaperTagIds } from '../../_lib/papers/payload'
+import { buildPapersResponse } from '../../_lib/papers/responses'
+import { badRequest, internalError, ValidationError } from '../../_lib/errors'
+import { shouldUsePapersPayload } from '../../_lib/flags'
+import { getPapersLegacy } from '../../_lib/legacy'
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
@@ -17,10 +17,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     }
 
     const sort = mapPapersSort(query.sort)
-    const tagIds = query.tags?.length ? await lookupPaperTagIds(query.tags) : undefined
-    if (query.tags?.length && tagIds && tagIds.length === 0) {
-      const emptyBody = buildPapersResponse({ query, total: 0, items: [] })
-      return NextResponse.json(emptyBody)
+    let tagIds: string[] | undefined
+    if (query.tags?.length) {
+      const resolved = await lookupPaperTagIds(query.tags)
+      tagIds = resolved.length ? resolved : undefined
     }
     const { total, items } = await fetchPapers(query, sort, tagIds)
     const body = buildPapersResponse({ query, total, items })

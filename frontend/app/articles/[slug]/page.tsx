@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { fetchArticle } from "@/lib/articles";
 
 type PageParams = { params: Promise<{ slug: string }> };
@@ -64,9 +62,7 @@ export default async function ArticleDetailPage({ params }: PageParams) {
         </div>
           ) : null}
 
-          <article className="prose-article mt-4">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{article.content}</ReactMarkdown>
-          </article>
+          <ArticleRichText html={article.contentHtml} />
         </div>
 
         {article.timelineEvents?.length ? (
@@ -83,5 +79,17 @@ export default async function ArticleDetailPage({ params }: PageParams) {
         ) : null}
       </div>
     </div>
+  );
+}
+
+function ArticleRichText({ html }: { html: string | null }) {
+  if (!html) {
+    return <div className="prose-article mt-4">暂无正文内容。</div>;
+  }
+  return (
+    <div
+      className="prose-article mt-4"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   );
 }

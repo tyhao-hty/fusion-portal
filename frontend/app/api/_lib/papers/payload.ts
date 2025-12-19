@@ -35,10 +35,6 @@ export async function fetchPapers(
   sort: string[],
   tagIds?: string[],
 ): Promise<{ total: number; items: PaperRecord[] }> {
-  if (query.tags && query.tags.length && tagIds && tagIds.length === 0) {
-    return { total: 0, items: [] }
-  }
-
   const client = await getClient()
   const where: Where = {}
   const and: Where[] = []

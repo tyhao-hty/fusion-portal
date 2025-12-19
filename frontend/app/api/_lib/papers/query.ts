@@ -30,7 +30,9 @@ const normalizeSort = (value: string | null | undefined): PapersSort => {
 
 const parseTags = (input: string | string[] | null): string[] | undefined => {
   if (!input) return undefined
-  const arr = Array.isArray(input) ? input : input.split(',')
+  const arr = Array.isArray(input)
+    ? input.flatMap((item) => item.split(','))
+    : input.split(',')
   const cleaned = arr
     .map((item) => item.trim())
     .filter((item) => item.length > 0)
