@@ -1,7 +1,5 @@
 import { headers } from "next/headers";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-
 export type ArticleSummary = {
   id: number;
   slug: string;
@@ -80,7 +78,7 @@ export async function fetchArticles(params: ListParams = {}): Promise<ArticleLis
   return res.json();
 }
 
-// Phase 6-3: keep detail on legacy until detail migration.
+// Phase 6-3: detail now uses BFF routes.
 export async function fetchArticle(slugOrId: string): Promise<ArticleDetail> {
   let url = `/api/bff/articles/${slugOrId}`;
   if (typeof window === 'undefined') {

@@ -130,11 +130,11 @@ export function assembleLinks(options: {
   })
 
   // Prune empty sections
-  sectionMap.forEach((section, sectionSlug) => {
+  for (const [sectionSlug, section] of sectionMap.entries()) {
     if (section.groups.length === 0) {
       sectionMap.delete(sectionSlug)
     }
-  })
+  }
 
   // Build nested structure
   const sortedSections = Array.from(sectionMap.entries()).sort((a, b) => {
@@ -144,7 +144,7 @@ export function assembleLinks(options: {
     return sectionB.createdAt - sectionA.createdAt
   })
 
-  const nestedSections: NestedSection[] = sortedSections.map(([sectionSlug, section]) => {
+  const nestedSections: NestedSection[] = sortedSections.map(([, section]) => {
     const sortedGroups = section.groups
       .map((groupSlug) => [groupSlug, groupMap.get(groupSlug)!] as const)
       .sort((a, b) => {
