@@ -30,8 +30,12 @@ export async function fetchArticles(
   const client = await getClient()
   const and: Where[] = []
 
-  const statusFilter = mapStatusFilter(query.status)
-  if (statusFilter) and.push(statusFilter)
+  // Enforce default published-only behavior
+  if (query.status === 'published') {
+    and.push({ _status: { equals: 'published' } })
+  } else if (query.status === 'draft' || query.status === 'review') {
+    and.push({ _status: { equals: 'draft' } })
+  }
 
   if (query.search) {
     and.push({
@@ -53,7 +57,7 @@ export async function fetchArticles(
           or: query.tags.map((value) => ({ slug: { equals: value } })),
         },
       },
-    })
+    } as any)
   }
 
   if (typeof query.year === 'number') {
@@ -83,34 +87,29 @@ export async function fetchArticles(
     page: query.page,
     limit: query.pageSize,
     depth: 1,
+    overrideAccess: true,
   })
+
+  const items = (result.docs || []) as ArticleRecord[]
+
+  // Dev/test guard: published list should not include missing publishedAt
+  if (query.status === 'published' && process.env.NODE_ENV !== 'production') {
+    const invalid = items.filter((item) => !item.publishedAt)
+    if (invalid.length > 0) {
+      const message = `articles: published list contains ${invalid.length} items without publishedAt`
+      if (process.env.NODE_ENV === 'test') {
+        throw new Error(message)
+      }
+      console.warn(message, {
+        slugs: invalid.slice(0, 5).map((item) => item.slug),
+      })
+    }
+  }
 
   return {
     total: result.totalDocs ?? 0,
-    items: (result.docs || []) as ArticleRecord[],
+    items,
   }
-}
-
-export async function fetchArticleByLegacyId(
-  legacyId: number,
-  status: ArticlesStatus,
-): Promise<ArticleRecord | null> {
-  const client = await getClient()
-  const statusFilter = mapStatusFilter(status)
-
-  const result = await client.find({
-    collection: 'articles',
-    where: {
-      and: [
-        { legacyId: { equals: legacyId } },
-        ...(statusFilter ? [statusFilter] : []),
-      ],
-    },
-    limit: 1,
-    depth: 1,
-  })
-
-  return (result.docs?.[0] as ArticleRecord) ?? null
 }
 
 export async function fetchArticleBySlug(
@@ -118,7 +117,7 @@ export async function fetchArticleBySlug(
   status: ArticlesStatus,
 ): Promise<ArticleRecord | null> {
   const client = await getClient()
-  const statusFilter = mapStatusFilter(status)
+  const statusFilter = mapStatusFilter(status) as Where | undefined
 
   const result = await client.find({
     collection: 'articles',
@@ -130,6 +129,7 @@ export async function fetchArticleBySlug(
     },
     limit: 1,
     depth: 1,
+    overrideAccess: true,
   })
 
   return (result.docs?.[0] as ArticleRecord) ?? null
@@ -149,7 +149,21 @@ export async function fetchTimelineEventsForArticle(
     },
     limit: 1000,
     depth: 0,
+    overrideAccess: true,
   })
 
-  return (result.docs || []) as TimelineEventRecord[]
+  const docs = (result.docs || []) as any[]
+  return docs.map((doc) => {
+    const yearValue =
+      doc?.date && !Number.isNaN(new Date(doc.date).getFullYear())
+        ? new Date(doc.date).getFullYear()
+        : doc?.yearValue ?? null
+    return {
+      id: doc?.id,
+      slug: doc?.slug ? String(doc.slug) : String(doc?.id ?? ''),
+      yearLabel: doc?.yearLabel ?? '',
+      yearValue: Number.isNaN(yearValue) ? null : yearValue,
+      title: doc?.title ?? '',
+    }
+  })
 }

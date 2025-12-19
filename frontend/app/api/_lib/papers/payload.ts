@@ -13,14 +13,19 @@ const getClient = async () => {
 
 export async function lookupPaperTagIds(tags: string[]): Promise<string[]> {
   const client = await getClient()
+  const tagWhere: any = {
+    and: [
+      { type: { equals: 'paper_tag' } },
+      {
+        or: tags.map((value) => ({
+          or: [{ slug: { equals: value } }, { name: { equals: value } }],
+        })),
+      },
+    ],
+  }
   const result = await client.find({
     collection: 'tags',
-    where: {
-      and: [
-        { type: { equals: 'paper_tag' } },
-        { or: tags.map((value) => ({ or: [{ slug: { equals: value } }, { name: { equals: value } }] })) },
-      ],
-    },
+    where: tagWhere,
     depth: 0,
     limit: 1000,
   })
@@ -75,9 +80,9 @@ export async function fetchPapers(
         tags: {
           in: tagIds,
         },
-      })
+      } as any)
     } else {
-      and.push({
+      const tagFilter: any = {
         tags: {
           some: {
             or: query.tags.map((value) => ({
@@ -85,8 +90,9 @@ export async function fetchPapers(
             })),
           },
         },
-      })
-      and.push({ 'tags.type': { equals: 'paper_tag' } })
+      }
+      and.push(tagFilter)
+      and.push({ 'tags.type': { equals: 'paper_tag' } } as any)
     }
   }
 
@@ -101,6 +107,7 @@ export async function fetchPapers(
     page: query.page,
     limit: query.limit,
     depth: 1,
+    overrideAccess: true,
   })
 
   return {

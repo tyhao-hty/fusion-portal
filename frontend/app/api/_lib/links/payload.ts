@@ -46,7 +46,9 @@ export async function fetchLinks(query: LinksQuery): Promise<LinkRecord[]> {
     collection: 'links',
     where,
     sort: linkSort,
-    depth: 0,
+    // Need depth>0 so group.section slugs are populated; depth 0 returns IDs and prunes everything in assembly.
+    depth: 1,
+    limit: 0,
   })
 
   return (result.docs || []) as LinkRecord[]
@@ -65,7 +67,9 @@ export async function fetchGroups(query: LinksQuery): Promise<GroupRecord[]> {
     collection: 'link-groups',
     where,
     sort: groupSort,
-    depth: 0,
+    // Hydrate section relation so assembly can attach groups; depth 0 only returns IDs.
+    depth: 1,
+    limit: 0,
   })
 
   return (result.docs || []) as GroupRecord[]
@@ -85,6 +89,7 @@ export async function fetchSections(query: LinksQuery): Promise<SectionRecord[]>
     where,
     sort: sectionSort,
     depth: 0,
+    limit: 0,
   })
 
   return (result.docs || []) as SectionRecord[]

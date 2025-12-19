@@ -67,6 +67,45 @@ describe('GET /api/articles', () => {
     expect(body.data).toEqual([])
   })
 
+  it('defaults to published and requires publishedAt', async () => {
+    mockedFetchArticles.mockResolvedValue({
+      total: 2,
+      items: [
+        {
+          id: 1,
+          legacyId: 1,
+          slug: 'pub-1',
+          title: 'Published 1',
+          content_markdown: 'M1',
+          status: 'published',
+          publishedAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-02T00:00:00.000Z',
+        },
+        {
+          id: 2,
+          legacyId: 2,
+          slug: 'pub-2',
+          title: 'Published 2',
+          content_markdown: 'M2',
+          status: 'published',
+          publishedAt: '2024-02-01T00:00:00.000Z',
+          updatedAt: '2024-02-02T00:00:00.000Z',
+        },
+      ],
+    })
+
+    const req = new NextRequest(new URL('http://localhost/api/articles'))
+    const res = await GET(req)
+    const body = await res.json()
+
+    expect(mockedFetchArticles).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'published' }),
+      expect.any(Array),
+    )
+    expect(res.status).toBe(200)
+    expect(body.data.every((item: any) => item.publishedAt)).toBe(true)
+  })
+
   it('returns shaped data with ids, content, tags and status mapping', async () => {
     mockedFetchArticles.mockResolvedValue({
       total: 3,

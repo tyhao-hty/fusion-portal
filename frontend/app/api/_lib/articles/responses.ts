@@ -26,6 +26,7 @@ export function buildArticlesListResponse(params: {
 
   const data = items.map((item) => {
     const id = toNumberId(item.legacyId, toNumberId(item.id))
+    const status = (item as any).status ?? (item as any)._status ?? null
     const author =
       item.author && (item.author.id || item.author.email)
         ? {
@@ -54,7 +55,7 @@ export function buildArticlesListResponse(params: {
       excerpt: item.excerpt ?? null,
       coverImageUrl: item.coverImageUrl ?? null,
       content: item.content_markdown ?? item.content_html ?? null,
-      status: item.status ?? null,
+      status,
       publishedAt: item.publishedAt ?? null,
       updatedAt: item.updatedAt ?? null,
       readingTime: item.readingTime ?? null,
@@ -86,6 +87,7 @@ export function buildArticleDetailResponse(params: {
 }): ArticleDetailResponse {
   const { article, timelineEvents } = params
   const id = toNumberId(article.legacyId, toNumberId(article.id))
+  const status = (article as any).status ?? (article as any)._status ?? null
   const author =
     article.author && (article.author.id || article.author.email)
       ? {
@@ -122,7 +124,7 @@ export function buildArticleDetailResponse(params: {
     excerpt: article.excerpt ?? null,
     coverImageUrl: article.coverImageUrl ?? null,
     content: article.content_markdown ?? article.content_html ?? null,
-    status: article.status ?? null,
+    status,
     publishedAt: article.publishedAt ?? null,
     updatedAt: article.updatedAt ?? null,
     readingTime: article.readingTime ?? null,

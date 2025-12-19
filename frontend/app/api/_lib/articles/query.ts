@@ -20,10 +20,6 @@ const clampPageSize = (value: number | null) => {
   return Math.min(bounded, MAX_PAGE_SIZE)
 }
 
-export function isNumericId(input: string): boolean {
-  return /^\d+$/.test(input)
-}
-
 export function parseStatus(value: string | null | undefined): ArticlesStatus {
   if (!value) return DEFAULT_STATUS
   const lower = value.toLowerCase()
