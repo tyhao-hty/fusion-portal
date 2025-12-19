@@ -24,6 +24,7 @@ export type ArticleRecord = {
   coverImageUrl?: string | null
   content_markdown?: string | null
   content_html?: string | null
+  _status?: string | null
   status?: string | null
   publishedAt?: string | null
   updatedAt?: string | null

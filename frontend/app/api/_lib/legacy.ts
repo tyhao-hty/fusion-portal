@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function getTimelineLegacy(req: NextRequest): Promise<NextResponse> {
+export async function getTimelineLegacy(_req: NextRequest): Promise<NextResponse> {
+  void _req
   // Placeholder for real legacy handler invocation; should be replaced with actual legacy logic wiring.
   return NextResponse.json(
     {
@@ -20,7 +21,8 @@ export async function getTimelineLegacy(req: NextRequest): Promise<NextResponse>
   )
 }
 
-export async function getLinksLegacy(req: NextRequest): Promise<NextResponse> {
+export async function getLinksLegacy(_req: NextRequest): Promise<NextResponse> {
+  void _req
   // Placeholder for real legacy handler invocation; should be replaced with actual legacy logic wiring.
   return NextResponse.json(
     {
@@ -41,7 +43,8 @@ export async function getLinksLegacy(req: NextRequest): Promise<NextResponse> {
   )
 }
 
-export async function getPapersLegacy(req: NextRequest): Promise<NextResponse> {
+export async function getPapersLegacy(_req: NextRequest): Promise<NextResponse> {
+  void _req
   // Placeholder for real legacy handler invocation; should be replaced with actual legacy logic wiring.
   return NextResponse.json(
     {
@@ -60,7 +63,8 @@ export async function getPapersLegacy(req: NextRequest): Promise<NextResponse> {
   )
 }
 
-export async function getArticlesLegacy(req: NextRequest): Promise<NextResponse> {
+export async function getArticlesLegacy(_req: NextRequest): Promise<NextResponse> {
+  void _req
   // Placeholder for real legacy handler invocation; should be replaced with actual legacy logic wiring.
   return NextResponse.json(
     {
@@ -77,7 +81,8 @@ export async function getArticlesLegacy(req: NextRequest): Promise<NextResponse>
   )
 }
 
-export async function getArticleDetailLegacy(req: NextRequest): Promise<NextResponse> {
+export async function getArticleDetailLegacy(_req: NextRequest): Promise<NextResponse> {
+  void _req
   // Placeholder for real legacy handler invocation; should be replaced with actual legacy logic wiring.
   return NextResponse.json({ message: '文章不存在' }, { status: 404 })
 }

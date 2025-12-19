@@ -10,10 +10,10 @@ jest.mock('@/app/api/_lib/articles/payload', () => ({
 }))
 
 jest.mock('@/app/api/_lib/flags', () => ({
-  useArticlesPayload: jest.fn(() => true),
-  useTimelinePayload: jest.fn(() => true),
-  useLinksPayload: jest.fn(() => true),
-  usePapersPayload: jest.fn(() => true),
+  shouldUseArticlesPayload: jest.fn(() => true),
+  shouldUseTimelinePayload: jest.fn(() => true),
+  shouldUseLinksPayload: jest.fn(() => true),
+  shouldUsePapersPayload: jest.fn(() => true),
 }))
 
 jest.mock('@/app/api/_lib/legacy', () => ({
@@ -24,13 +24,14 @@ jest.mock('@/app/api/_lib/legacy', () => ({
 }))
 
 const mockedFetchArticles = jest.requireMock('@/app/api/_lib/articles/payload').fetchArticles as jest.Mock
-const mockedUseArticlesPayload = jest.requireMock('@/app/api/_lib/flags').useArticlesPayload as jest.Mock
+const mockedShouldUseArticlesPayload = jest.requireMock('@/app/api/_lib/flags')
+  .shouldUseArticlesPayload as jest.Mock
 const mockedGetArticlesLegacy = jest.requireMock('@/app/api/_lib/legacy').getArticlesLegacy as jest.Mock
 
 describe('GET /api/articles', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockedUseArticlesPayload.mockReturnValue(true)
+    mockedShouldUseArticlesPayload.mockReturnValue(true)
   })
 
   it('returns 400 on invalid year range', async () => {
@@ -161,7 +162,7 @@ describe('GET /api/articles', () => {
   })
 
   it('feature flag off delegates to legacy', async () => {
-    mockedUseArticlesPayload.mockReturnValue(false)
+    mockedShouldUseArticlesPayload.mockReturnValue(false)
     mockedGetArticlesLegacy.mockResolvedValue(
       new Response(JSON.stringify({ data: 'legacy' }), { status: 200 }) as any,
     )

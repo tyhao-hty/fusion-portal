@@ -57,7 +57,7 @@ export async function fetchArticles(
           or: query.tags.map((value) => ({ slug: { equals: value } })),
         },
       },
-    } as any)
+    } as Where)
   }
 
   if (typeof query.year === 'number') {
@@ -117,7 +117,7 @@ export async function fetchArticleBySlug(
   status: ArticlesStatus,
 ): Promise<ArticleRecord | null> {
   const client = await getClient()
-  const statusFilter = mapStatusFilter(status) as Where | undefined
+  const statusFilter = mapStatusFilter(status)
 
   const result = await client.find({
     collection: 'articles',
@@ -152,14 +152,23 @@ export async function fetchTimelineEventsForArticle(
     overrideAccess: true,
   })
 
-  const docs = (result.docs || []) as any[]
+  const docs =
+    (result.docs || []) as Array<{
+      id?: number | string
+      slug?: number | string
+      yearLabel?: string
+      yearValue?: number | null
+      title?: string
+      date?: string | null
+    }>
+
   return docs.map((doc) => {
     const yearValue =
       doc?.date && !Number.isNaN(new Date(doc.date).getFullYear())
         ? new Date(doc.date).getFullYear()
         : doc?.yearValue ?? null
     return {
-      id: doc?.id,
+      id: doc?.id ?? '',
       slug: doc?.slug ? String(doc.slug) : String(doc?.id ?? ''),
       yearLabel: doc?.yearLabel ?? '',
       yearValue: Number.isNaN(yearValue) ? null : yearValue,

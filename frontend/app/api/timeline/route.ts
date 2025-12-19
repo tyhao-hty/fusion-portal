@@ -4,7 +4,7 @@ import { fetchTimelineFromPayload } from '../_lib/payload'
 import { parseTimelineQuery, validateTimelineRange } from '../_lib/query'
 import { timelineSort } from '../_lib/sorting'
 import { badRequest, internalError, ValidationError } from '../_lib/errors'
-import { useTimelinePayload } from '../_lib/flags'
+import { shouldUseTimelinePayload } from '../_lib/flags'
 import { getTimelineLegacy } from '../_lib/legacy'
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const query = parseTimelineQuery(req)
     validateTimelineRange(query.yearFrom ?? null, query.yearTo ?? null)
 
-    if (!useTimelinePayload()) {
+    if (!shouldUseTimelinePayload()) {
       return getTimelineLegacy(req)
     }
 
